@@ -4,7 +4,6 @@
  * Tech Stack: Node.js, Express, TypeScript, MongoDB
  * Purpose: Bootstraps server, loads middleware, connects DB
  */
-
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
