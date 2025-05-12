@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db';
 import healthRoute from './routes/healthRoute';
+import authRoutes from './routes/authRoutes';
 
 dotenv.config();
 
@@ -21,8 +22,9 @@ app.use(express.json());
 
 // Routes
 app.use('/api', healthRoute);
+app.use('/api/auth', authRoutes);
 
-// DB + Server Boot
+// DB + Server Boot 
 connectDB()
   .then(() => {
     app.listen(PORT, () => {
