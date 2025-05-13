@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, HydratedDocument, Schema } from "mongoose";
 
 interface ILink {
     label: string;
@@ -83,3 +83,4 @@ const profileSchema = new Schema<IProfile>(
 );
 
 export const Profile = mongoose.model<IProfile>("Profile", profileSchema);
+export type IProfileDocument = HydratedDocument<IProfile>;
