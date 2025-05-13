@@ -76,7 +76,7 @@ const profileSchema = new Schema<IProfile>(
                 url: { type: String },
             }
         ],
-        profilePicture: { type: String },
+        profilePicture: { type: String, default: '' },
         projectImages: [{ type: String }],
     },
     { timestamps: true }

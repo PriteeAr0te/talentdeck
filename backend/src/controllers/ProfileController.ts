@@ -25,10 +25,28 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
             return;
         }
 
-        const newProfile = new Profile({
+        const newProfileData: any = {
             userId,
-            ...parsedData.data,
-        });
+            ...parsedData.data
+        }
+
+        const files = req.files as {
+            [fieldName: string]: Express.Multer.File[];
+        }
+
+        if(files?.profilePicture[0]) {
+            newProfileData.profilePicture = files.profilePicture[0].path;
+        }
+
+        if(files?.projectImages.length) {
+            newProfileData.projectImages = files.projectImages.map((file: Express.Multer.File) => file.path);
+        }
+
+        // if(req.file) {
+        //     newProfileData.profilePicture = req.file.path;
+        // }
+
+        const newProfile = new Profile(newProfileData);
 
         await newProfile.save();
 
@@ -63,9 +81,26 @@ export const getMyProfile = async (req: Request, res: Response): Promise<void> =
 export const updateProfile = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = req.user?.id;
+        const updateData: any = {...req.body}
+
+        const files = req.files as {
+            [fieldName: string]: Express.Multer.File[];
+        }
+
+        if(files?.profilePicture[0]) {
+            updateData.profilePicture = files.profilePicture[0].path;
+        }
+
+        if(files?.projectImages.length) {
+            updateData.projectImages = files.projectImages.map((file: Express.Multer.File) => file.path);
+        }
+
+        // if(req.file) {
+        //     updateData.profilePicture = req.file.path;
+        // }
         const updateProfile = await Profile.findOneAndUpdate(
             { userId },
-            { $set: req.body },
+            { $set: updateData },
             { new: true }
         );
 
