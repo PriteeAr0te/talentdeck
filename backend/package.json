@@ -12,12 +12,15 @@
   "license": "MIT",
   "description": "Backend for TalentDeck – a public talent directory platform",
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.9",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.14.2"
+    "mongoose": "^8.14.2",
+    "zod": "^3.24.4"
   },
   "devDependencies": {
     "@types/cors": "^2.8.18",
