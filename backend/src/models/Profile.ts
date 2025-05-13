@@ -82,5 +82,16 @@ const profileSchema = new Schema<IProfile>(
     { timestamps: true }
 );
 
+profileSchema.index({
+    username: 'text',
+    headline: 'text',
+    bio: 'text',
+    skills: 'text',
+    tags: 'text',
+    'location.city': 'text',
+    'location.state': 'text',
+    'location.country': 'text',
+});
+
 export const Profile = mongoose.model<IProfile>("Profile", profileSchema);
 export type IProfileDocument = HydratedDocument<IProfile>;
