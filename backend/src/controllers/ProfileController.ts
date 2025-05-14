@@ -2,10 +2,13 @@ import { Request, Response } from "express";
 import { Profile } from '../models/Profile';
 import { createProfileSchema } from '../validators/profileValidators';
 import { profileSearchSchema } from "../validators/ProfileSearch";
+import sanitizeHtml from 'sanitize-html';
 
 export const createProfile = async (req: Request, res: Response): Promise<void> => {
     try {
         const parsedData = createProfileSchema.safeParse(req.body);
+        const sanitizeBio = sanitizeHtml(parsedData.data?.bio || '');
+        const sanitizeHeadline = sanitizeHtml(parsedData.data?.headline || '');
 
         if (!parsedData.success) {
             res.status(400).json({ error: parsedData.error.flatten() });
@@ -28,7 +31,9 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
 
         const newProfileData: any = {
             userId,
-            ...parsedData.data
+            ...parsedData.data,
+            bio: sanitizeBio,
+            headline: sanitizeHeadline,
         }
 
         const files = req.files as {
@@ -84,6 +89,14 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
         const userId = req.user?.id;
         const updateData: any = { ...req.body }
 
+        if (updateData.bio) {
+            updateData.bio = sanitizeHtml(updateData.bio);
+        }
+
+        if (updateData.headline) {
+            updateData.headline = sanitizeHtml(updateData.headline);
+        }
+
         const files = req.files as {
             [fieldName: string]: Express.Multer.File[];
         }
@@ -99,6 +112,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
         // if(req.file) {
         //     updateData.profilePicture = req.file.path;
         // }
+        
         const updateProfile = await Profile.findOneAndUpdate(
             { userId },
             { $set: updateData },
