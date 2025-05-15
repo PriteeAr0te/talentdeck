@@ -26,7 +26,7 @@ app.use(express.json());
 app.use('/api', healthRoute);
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.resolve(__dirname, './uploads')));
 
 // DB + Server Boot 
 connectDB()

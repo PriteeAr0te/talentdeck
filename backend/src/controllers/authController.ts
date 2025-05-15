@@ -26,7 +26,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
             _id: user._id.toString(),
             fullName: user.fullName,
             email: user.email,
-            token: generateToken(user._id.toString()),
+            token: generateToken(user._id.toString(), user.role),
         });
     } catch (error: any) {
         if (error instanceof ZodError) {
@@ -49,7 +49,8 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
                 _id: user._id.toString(),
                 fullName: user.fullName,
                 email: user.email,
-                token: generateToken(user._id.toString()),
+                token: generateToken(user._id.toString(), user.role),
+                message: "Login Successfully"
             })
         } else {
             res.status(401).json({ message: "Invalid Email or Password" });

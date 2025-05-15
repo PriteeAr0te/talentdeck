@@ -4,7 +4,8 @@ import path from 'path';
 
 const storage = multer.diskStorage({
     destination: function (_req, _file, cb) {
-        cb(null, 'uploads/');
+        // Absolute path to backend/src/uploads
+        cb(null, path.resolve(__dirname, '../uploads'));
     },
     filename: function (_req, file, cb) {
         const uniqueName = `${Date.now()}-${file.originalname}`;
@@ -12,12 +13,13 @@ const storage = multer.diskStorage({
     },
 });
 
+
 const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const fileTypes = /jpeg|jpg|png/;
     const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
     const mimeType = fileTypes.test(file.mimetype);
 
-    if(extName && mimeType) {
+    if (extName && mimeType) {
         return cb(null, true);
     } else {
         cb(new Error('Invalid file type'));

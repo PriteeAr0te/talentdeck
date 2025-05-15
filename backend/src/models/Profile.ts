@@ -51,9 +51,9 @@ const profileSchema = new Schema<IProfile>(
             enum: ["Graphic Designer", "UI/UX Designer", "Software Developer", "Content Creator", "Video Editor", "Other"],
         },
         location: {
-            city: { type: String, required: true },
-            state: { type: String, required: true },
-            country: { type: String, required: true },
+            city: { type: String },
+            state: { type: String },
+            country: { type: String },
         },
         bio: {
             type: String,
