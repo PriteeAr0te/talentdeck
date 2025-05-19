@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { User, IUserDocument } from "../models/User";
+import { User, IUserDocument, IUser } from "../models/User";
 import { generateToken } from "../utils/generateToken";
 import { registerUserSchema, loginUserSchema } from "../validators/authValidators";
 import { ZodError } from "zod";
+import { HydratedDocument } from "mongoose";
 
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
     // const { fullName, email, password } = req.body;
@@ -38,29 +39,43 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
 };
 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
-    // const { email, password } = req.body;
-
     try {
         const validatedData = loginUserSchema.parse(req.body);
-        const user = await User.findOne({ email: validatedData.email });
 
-        if (user?._id && (await user.matchPassword(validatedData.password))) {
-            res.status(200).json({
+        const user = await User.findOne({ email: validatedData.email }) as HydratedDocument<IUser> | null;
+
+        if (!user) {
+            res.status(404).json({ message: "User not found with this email" });
+            return;
+        }
+
+        const isMatch = await user.matchPassword(validatedData.password);
+        if (!isMatch) {
+            res.status(401).json({ message: "Incorrect password" });
+            return;
+        }
+
+        res.status(200).json({
+            token: generateToken(user._id.toString(), user.role),
+            user: {
                 _id: user._id.toString(),
                 fullName: user.fullName,
                 email: user.email,
-                token: generateToken(user._id.toString(), user.role),
-                message: "Login Successfully"
-            })
-        } else {
-            res.status(401).json({ message: "Invalid Email or Password" });
-            return;
-        }
+                role: user.role
+            },
+            message: "Login Successfully"
+        });
+
     } catch (error: any) {
         if (error instanceof ZodError) {
             res.status(400).json({ message: error.errors[0].message });
             return;
         }
+
         res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
+
+
+
+

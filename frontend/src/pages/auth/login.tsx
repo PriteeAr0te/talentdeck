@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
@@ -27,34 +25,46 @@ const Login = () => {
 
     const onSubmit = async (data: LoginFormValues) => {
         try {
-            setError(""); // clear old errors
+            setError(""); // Clear old errors
 
-            // 1. Call backend
             const response = await API.post("/auth/login", {
                 email: data.email,
                 password: data.password,
             });
 
-            // 2. Check response
             const { token, user } = response.data;
 
             if (!token || !user) {
-                throw new Error("Login failed. Missing token or user.");
+                throw new Error("Invalid response: Token or user missing.");
             }
 
-            // 3. Set context
             login(token, user);
-
-            // 4. Redirect
             router.push("/");
 
         } catch (err: any) {
-            console.error("Login error:", err);
-            setError(
-                err.response?.data?.message || "Invalid email or password"
-            );
+            const status = err.response?.status;
+            const message = err.response?.data?.message || "Login failed. Please try again.";
+
+            if (status === 400) {
+                setError(message); // Zod errors
+            } else if (status === 404) {
+                setError("No account found with this email.");
+            } else if (status === 401) {
+                setError("Incorrect password. Please try again.");
+            } else if (status === 500) {
+                setError("Something went wrong on our end. Please try again later.");
+            } else {
+                setError(message);
+            }
+
+            // Only log unexpected errors in dev
+            if (process.env.NODE_ENV !== "production") {
+                console.warn("Handled login error:", status, message);
+            }
         }
     };
+
+
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-50">
