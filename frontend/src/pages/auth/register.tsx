@@ -31,7 +31,6 @@ const Register = () => {
         }
     }
 
-
     return (
         <>
             <Head>
@@ -42,9 +41,9 @@ const Register = () => {
                 />
             </Head>
 
-            <main className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+            <main className="flex items-center justify-center bg-gray-50 p-4 py-14">
                 <div className="w-full max-w-md bg-white shadow-md rounded-2xl p-8">
-                    <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+                    <h1 className="text-2xl font-bold text-primary mb-6 text-center">
                         Create an Account
                     </h1>
 

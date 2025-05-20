@@ -7,6 +7,7 @@ import InputField from "@/components/ui/InputComponent";
 import { loginUserSchema } from "@/lib/validators/authValidators";
 import API from "@/lib/api";
 import { z } from "zod";
+import Link from "next/link";
 
 type LoginFormValues = z.infer<typeof loginUserSchema>;
 
@@ -64,47 +65,55 @@ const Login = () => {
         }
     };
 
-
-
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-50">
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="max-w-md mx-auto p-6 border rounded-xl shadow-md bg-white space-y-4"
-            >
-                <h2 className="text-2xl font-semibold text-center text-black">
-                    Login to TalentDeck
-                </h2>
+        <>
+            <main className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+                <div className="w-full max-w-md bg-white shadow-md rounded-2xl p-8">
+                    <h1 className="text-2xl font-bold text-primary mb-6 text-center">
+                        Login to TalentDeck
+                    </h1>
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                    >
 
-                <InputField
-                    label="Email"
-                    type="email"
-                    id="email"
-                    registration={register("email")}
-                    error={errors.email?.message}
-                />
+                        <InputField
+                            label="Email"
+                            type="email"
+                            id="email"
+                            registration={register("email")}
+                            error={errors.email?.message}
+                        />
 
-                <InputField
-                    label="Password"
-                    type="password"
-                    id="password"
-                    registration={register("password")}
-                    error={errors.password?.message}
-                />
+                        <InputField
+                            label="Password"
+                            type="password"
+                            id="password"
+                            registration={register("password")}
+                            error={errors.password?.message}
+                        />
 
-                {error && (
-                    <p className="text-sm text-red-500 text-center">{error}</p>
-                )}
+                        {error && (
+                            <p className="text-sm text-red-500 text-center">{error}</p>
+                        )}
 
-                <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-all duration-150"
-                >
-                    {isSubmitting ? "Logging in..." : "Login"}
-                </button>
-            </form>
-        </div>
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-secondary transition-all duration-150"
+                        >
+                            {isSubmitting ? "Logging in..." : "Login"}
+                        </button>
+                        <p className="mt-4 text-center text-sm text-gray-600">
+                            Don’t have an account?{' '}
+                            <Link href="/register" className="text-indigo-600 hover:underline">
+                                Create one
+                            </Link>
+                        </p>
+
+                    </form>
+                </div>
+            </main>
+        </>
     );
 }
 

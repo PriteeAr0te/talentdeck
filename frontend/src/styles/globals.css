@@ -3,6 +3,7 @@
 :root {
   --primary: #4B0082;
   --secondary: #9333ea;
+  --dark: #21004B;
   --light: #DBCCE6;
   --background-hover: #D396FF;
   --background-active: #AC3BFF;
@@ -16,18 +17,19 @@
 }
 
 .dark {
-  --primary: #480082;
+  --primary: #7E21D4;
   --secondary: #030105;
   --background: #111827;
   --text: #DBCCE6;
 }
 
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme {
+  --color-primary: var(--primary);
+  --color-secondary: var(--text);
+  --color-dark: var(--dark);
+  --color-light: var(--light);
+  --color-background-hover: var(--background-hover);
 }
 
 @media (prefers-color-scheme: dark) {
