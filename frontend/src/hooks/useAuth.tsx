@@ -9,7 +9,8 @@ export const useAuth = () => {
     const {user, token, login, logout} = context;
     const isLoggedIn = !!token;
     const isCreator = user?.role === "creator";
+    const isProfileCreated = user?.profileCreated ?? false;
 
-    return {user, token, login, logout, isLoggedIn, isCreator};
+    return {user, token, login, logout, isLoggedIn, isCreator, isProfileCreated};
 
   };

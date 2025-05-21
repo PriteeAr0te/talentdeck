@@ -8,10 +8,12 @@ import { loginUserSchema } from "@/lib/validators/authValidators";
 import API from "@/lib/api";
 import { z } from "zod";
 import Link from "next/link";
+import { Slide, ToastContainer, toast } from "react-toastify";
 
 type LoginFormValues = z.infer<typeof loginUserSchema>;
 
 const Login = () => {
+
     const {
         register,
         handleSubmit,
@@ -41,6 +43,10 @@ const Login = () => {
 
             login(token, user);
             router.push("/");
+            console.log("Login successful");
+            setTimeout(() => {
+                toast.success("Login Successful!");
+            }, 5000);
 
         } catch (err: any) {
             const status = err.response?.status;
@@ -67,8 +73,9 @@ const Login = () => {
 
     return (
         <>
-            <main className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-                <div className="w-full max-w-md bg-white shadow-md rounded-2xl p-8">
+            <ToastContainer position="top-right" transition={Slide} className="z-50" autoClose={6000} closeButton={true} pauseOnHover={true} />
+            <main className="min-h-[calc(100vh-70px)] flex items-center justify-center bg-primary-bg dark:bg-[#0a0011] p-4">
+                <div className="w-full max-w-md bg-white shadow-custom rounded-2xl p-8">
                     <h1 className="text-2xl font-bold text-primary mb-6 text-center">
                         Login to TalentDeck
                     </h1>

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/useAuth';
 
 const Header: React.FC = () => {
   const [darkMode, setDarkMode] = useState<boolean>(false);
+  const { logout, isLoggedIn, isProfileCreated, user } = useAuth();
 
   const toggleDarkMode = () => {
     setDarkMode((prev) => !prev);
@@ -16,7 +18,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow">
+    <nav className="bg-dark shadow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
@@ -26,71 +28,92 @@ const Header: React.FC = () => {
               src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
               alt="TalentDeck Logo"
             />
-            <span className="ml-2 font-bold text-lg text-gray-800 dark:text-white">TalentDeck</span>
+            <span className="ml-2 font-bold text-lg text-white">TalentDeck</span>
           </Link>
 
           {/* Right Side */}
           <div className="flex items-center space-x-4">
             {/* Browse Talents */}
             <Link href="/search">
-              <span className="text-sm font-medium px-4 py-2.5 rounded-md bg-light text-dark transition hover:bg-[#7E21D4] hover:text-white cursor-pointer">
+              <span className="hidden sm:block text-sm 2xl:text-base font-medium px-4 py-2.5 rounded-md text-primary bg-white transition hover:bg-[#7E21D4] hover:text-white cursor-pointer">
                 Browse Talents
               </span>
             </Link>
 
             {/* Dark Mode Toggle */}
-            <button
-              onClick={toggleDarkMode}
-              className="w-12 h-6 flex items-center bg-gray-300 dark:bg-gray-700 rounded-full px-1 transition-colors duration-300"
-              aria-label="Toggle dark mode"
-            >
-              <div
-                className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${darkMode ? 'translate-x-6' : 'translate-x-0'
-                  }`}
-              />
+            <button onClick={toggleDarkMode}
+              className="h-10 w-10 mr-2 sm:mr-4 rounded-lg p-1 cursor-pointer">
+              <svg className="fill-white block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+              </svg>
+              <svg className="fill-white hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                  fillRule="evenodd" clipRule="evenodd"></path>
+              </svg>
             </button>
 
             {/* Profile Dropdown */}
-            <details
-              id="profile-dropdown"
-              className="relative group"
-            >
-              <summary className="cursor-pointer flex items-center list-none focus:outline-none">
-                <img
-                  className="h-8 w-8 rounded-full"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"
-                  alt="Profile"
-                />
-              </summary>
+            {isLoggedIn ? (
+              <details
+                id="profile-dropdown"
+                className="relative group"
+              >
+                <summary className="cursor-pointer flex items-center list-none focus:outline-none">
+                  <img
+                    className="h-8 w-8 rounded-full"
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"
+                    alt="Profile"
+                  />
+                </summary>
 
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-100 dark:border-gray-700">
-                <Link href="/talent/your-username">
-                  <span
-                    onClick={handleClose}
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-100 dark:border-gray-700">
+                  {isProfileCreated ?
+                    (
+                      <Link href={`/${user.username}`}>
+                        <span
+                          onClick={handleClose}
+                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
+                        >
+                          My Profile
+                        </span>
+                      </Link>
+                    ) : (
+                      <Link href="/profile/create">
+                        <span
+                          onClick={handleClose}
+                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
+                        >
+                          Create Profile
+                        </span>
+                      </Link>
+                    )}
+                  <Link href="/profile/edit">
+                    <span
+                      onClick={handleClose}
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
+                    >
+                      Edit Profile
+                    </span>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      logout();
+                      handleClose();
+                    }}
+                    className="w-full text-left cursor-pointer px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover"
                   >
-                    View Profile
-                  </span>
-                </Link>
-                <Link href="/profile/edit">
-                  <span
-                    onClick={handleClose}
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                  >
-                    Edit Profile
-                  </span>
-                </Link>
-                <button
-                  onClick={() => {
-                    console.log('Logging out...');
-                    handleClose();
-                  }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  Logout
-                </button>
-              </div>
-            </details>
+                    Logout
+                  </button>
+                </div>
+              </details>
+            ) : (
+              <Link href="/login">
+                <span className="hidden sm:block text-sm 2xl:text-base font-medium px-4 py-2.5 rounded-md text-white transition hover:bg-[#7E21D4] hover:text-white cursor-pointer">
+                  Login
+                </span>
+              </Link>
+            )}
           </div>
         </div>
       </div>

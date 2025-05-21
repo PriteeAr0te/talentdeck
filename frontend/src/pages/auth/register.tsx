@@ -8,11 +8,14 @@ import Link from "next/link";
 import Head from "next/head";
 import InputField from "@/components/ui/InputComponent";
 import Button from "@/components/ui/Button";
+import {Slide, ToastContainer, toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 type RegisterFormValues = z.infer<typeof registerUserSchema>;
 
 
 const Register = () => {
+    const router = useRouter();
     const [serverError, setServerError] = useState<string | null>(null);
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterFormValues>({
@@ -25,6 +28,8 @@ const Register = () => {
         try {
             const response = await API.post("/auth/register", data);
             console.log("Registration successful", response.data);
+            toast.success("Registration successful");
+            router.push("/login");
 
         } catch (error: any) {
             setServerError(error.response?.data?.message || "Something went wrong.");
@@ -33,6 +38,7 @@ const Register = () => {
 
     return (
         <>
+            <ToastContainer position="top-right" transition={Slide} autoClose={6000} closeButton={true} pauseOnHover={true} />
             <Head>
                 <title>Register | TalentDeck</title>
                 <meta
@@ -41,8 +47,8 @@ const Register = () => {
                 />
             </Head>
 
-            <main className="flex items-center justify-center bg-gray-50 p-4 py-14">
-                <div className="w-full max-w-md bg-white shadow-md rounded-2xl p-8">
+            <main className="flex items-center justify-center bg-primary-bg dark:bg-[#0a0011] p-4 py-14">
+                <div className="w-full max-w-md bg-white shadow-custom rounded-2xl p-8">
                     <h1 className="text-2xl font-bold text-primary mb-6 text-center">
                         Create an Account
                     </h1>

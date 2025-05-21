@@ -1,12 +1,15 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --primary: #4B0082;
-  --secondary: #9333ea;
-  --dark: #21004B;
+  --primary: #51008c;
+  --background: #ffffff;
+  --secondary: #420073;
+  --dark: #250040;
   --light: #DBCCE6;
-  --background-hover: #D396FF;
-  --background-active: #AC3BFF;
+  --background-hover: #f8eeff;
+  --background-active: #e9ccff;
   --text: #2D004E;
   --text-dark: #030105;
   --text-light: #212529;
@@ -14,33 +17,37 @@
   --border-focus: #A57FC0;
   --border-primary: #ced4da;
   --border-hover: #4B0082;
+  --primary-bg: white;
 }
 
 .dark {
   --primary: #7E21D4;
-  --secondary: #030105;
-  --background: #111827;
+  --secondary: #160026;
+  --background: #101828;
   --text: #DBCCE6;
+  --dark: #160026;
+  --primary-bg: #0a0011;
+  --background-hover: #364153;
 }
 
 
 @theme {
   --color-primary: var(--primary);
   --color-secondary: var(--text);
+  --color-black: var(--black);
   --color-dark: var(--dark);
   --color-light: var(--light);
   --color-background-hover: var(--background-hover);
+  --color-background: var(--background);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: "Inter", sans-serif;
+}
+
+.shadow-custom {
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }

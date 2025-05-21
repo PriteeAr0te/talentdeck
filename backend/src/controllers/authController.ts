@@ -4,6 +4,7 @@ import { generateToken } from "../utils/generateToken";
 import { registerUserSchema, loginUserSchema } from "../validators/authValidators";
 import { ZodError } from "zod";
 import { HydratedDocument } from "mongoose";
+import { Profile } from "../models/Profile";
 
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
     // const { fullName, email, password } = req.body;
@@ -23,11 +24,20 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
             return;
         }
 
+        const profile = await Profile.create({ user: user._id });
+
+        const profileCreated = profile ? true : false;
+
         res.status(201).json({
-            _id: user._id.toString(),
-            fullName: user.fullName,
-            email: user.email,
             token: generateToken(user._id.toString(), user.role),
+            user: {
+                _id: user._id.toString(),
+                fullName: user.fullName,
+                email: user.email,
+                role: user.role,
+                profileCreated,
+            },
+            message: "Registered Successfully"
         });
     } catch (error: any) {
         if (error instanceof ZodError) {
@@ -55,13 +65,18 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
+        const profile = await Profile.findOne({ user: user._id });
+
+        const profileCreated = profile ? true : false;
+
         res.status(200).json({
             token: generateToken(user._id.toString(), user.role),
             user: {
                 _id: user._id.toString(),
                 fullName: user.fullName,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                profileCreated,
             },
             message: "Login Successfully"
         });
