@@ -27,17 +27,9 @@ export const createProfileSchema = z.object({
 
     isVisible: z.boolean().optional(),
 
-    profilePicture: z
-        .any()
-        .refine((file) => file instanceof File || file === undefined || file === null, {
-            message: "Profile picture must be a valid file",
-        }),
+    profilePicture: urlSchema.optional(),
 
-    projectImages: z
-        .any()
-        .refine((files) => Array.isArray(files) && files.every((f) => f instanceof File), {
-            message: "Each project image must be a valid file",
-        }),
+    projectImages: z.array(urlSchema).optional(),
 
     portfolioLinks: z.array(
         z.object({

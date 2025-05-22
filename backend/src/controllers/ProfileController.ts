@@ -6,22 +6,38 @@ import sanitizeHtml from 'sanitize-html';
 
 export const createProfile = async (req: Request, res: Response): Promise<void> => {
     try {
-        const parsedData = createProfileSchema.safeParse(req.body);
-        const sanitizeBio = sanitizeHtml(parsedData.data?.bio || '');
-        const sanitizeHeadline = sanitizeHtml(parsedData.data?.headline || '');
+        if (!req.user) {
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+        }
+
+        const files = req.files as {
+            [fieldName: string]: Express.Multer.File[];
+        };
+
+        // Step 1: Build full input including files
+        const profilePicture = files?.profilePicture?.[0];
+        const projectImages = files?.projectImages || [];
+
+        const fullInput = {
+            ...req.body,
+            profilePicture: profilePicture,
+            projectImages: projectImages,
+        };
+
+        // Step 2: Run schema validation
+        const parsedData = createProfileSchema.safeParse(fullInput);
 
         if (!parsedData.success) {
             res.status(400).json({ error: parsedData.error.flatten() });
             return;
         }
 
-        if (!req.user) {
-            res.status(401).json({ error: "Unauthorized" });
-            return;
-        }
+        // Step 3: Clean up inputs
+        const sanitizeBio = sanitizeHtml(parsedData.data?.bio || '');
+        const sanitizeHeadline = sanitizeHtml(parsedData.data?.headline || '');
 
         const userId = req.user.id;
-
         const existingProfile = await Profile.findOne({ userId });
 
         if (existingProfile) {
@@ -34,37 +50,21 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
             ...parsedData.data,
             bio: sanitizeBio,
             headline: sanitizeHeadline,
-        }
-
-        const files = req.files as {
-            [fieldName: string]: Express.Multer.File[];
-        }
-
-        if (files?.profilePicture[0]) {
-            newProfileData.profilePicture = files.profilePicture[0].path;
-        }
-
-        if (files?.projectImages.length) {
-            newProfileData.projectImages = files.projectImages.map((file: Express.Multer.File) => file.path);
-        }
-
-        // if(req.file) {
-        //     newProfileData.profilePicture = req.file.path;
-        // }
+            profilePicture: profilePicture?.path || "",
+            projectImages: projectImages.map((file) => file.path),
+        };
 
         const newProfile = new Profile(newProfileData);
-
         await newProfile.save();
 
         res.status(201).json({ message: "Profile created successfully." });
-        return;
 
     } catch (error) {
         console.error("Error creating profile:", error);
         res.status(500).json({ error: "Internal server error" });
-        return;
     }
 };
+
 
 export const getMyProfile = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -112,7 +112,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
         // if(req.file) {
         //     updateData.profilePicture = req.file.path;
         // }
-        
+
         const updateProfile = await Profile.findOneAndUpdate(
             { userId },
             { $set: updateData },

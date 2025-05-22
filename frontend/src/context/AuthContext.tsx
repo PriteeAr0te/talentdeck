@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 interface AuthContextType {
     user: any;
     token: string | null;
-    login: (user: any, token: string) => void;
+    login:(user: any, token: string) => void;
     logout: () => void;
 }
 

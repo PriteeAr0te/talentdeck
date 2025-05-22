@@ -6,7 +6,7 @@ import API from "@/lib/api";
 import { registerUserSchema } from "@/lib/validators/authValidators";
 import Link from "next/link";
 import Head from "next/head";
-import InputField from "@/components/ui/InputComponent";
+import InputComponent from "@/components/ui/InputComponent";
 import Button from "@/components/ui/Button";
 import {Slide, ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
@@ -54,7 +54,7 @@ const Register = () => {
                     </h1>
 
                     <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                        <InputField
+                        <InputComponent
                             id="fullName"
                             label="Full Name"
                             type="text"
@@ -64,7 +64,7 @@ const Register = () => {
                             error={errors.fullName?.message}
                         />
 
-                        <InputField
+                        <InputComponent
                             id="email"
                             label="Email ID"
                             type="email"
@@ -74,7 +74,7 @@ const Register = () => {
                             error={errors.email?.message}
                         />
 
-                        <InputField
+                        <InputComponent
                             id="password"
                             label="Password"
                             type="password"

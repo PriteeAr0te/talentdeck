@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import InputField from "@/components/ui/InputComponent";
+import InputComponent from "@/components/ui/InputComponent";
 import { loginUserSchema } from "@/lib/validators/authValidators";
 import API from "@/lib/api";
 import { z } from "zod";
@@ -83,7 +83,7 @@ const Login = () => {
                         onSubmit={handleSubmit(onSubmit)}
                     >
 
-                        <InputField
+                        <InputComponent
                             label="Email"
                             type="email"
                             id="email"
@@ -91,7 +91,7 @@ const Login = () => {
                             error={errors.email?.message}
                         />
 
-                        <InputField
+                        <InputComponent
                             label="Password"
                             type="password"
                             id="password"
@@ -106,7 +106,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-secondary transition-all duration-150"
+                            className="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-secondary cursor-pointer dark:hover:bg-[#250040] transition-all duration-150"
                         >
                             {isSubmitting ? "Logging in..." : "Login"}
                         </button>

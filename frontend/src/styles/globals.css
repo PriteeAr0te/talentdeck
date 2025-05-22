@@ -3,6 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
+  --black: #000000;
   --primary: #51008c;
   --background: #ffffff;
   --secondary: #420073;
@@ -21,13 +22,15 @@
 }
 
 .dark {
-  --primary: #7E21D4;
+  --black: #ffffff;
+  --primary: #330059;
   --secondary: #160026;
   --background: #101828;
   --text: #DBCCE6;
   --dark: #160026;
   --primary-bg: #0a0011;
-  --background-hover: #364153;
+  --background-hover: #101828;
+  --background-active: #101828;
 }
 
 
@@ -38,6 +41,7 @@
   --color-dark: var(--dark);
   --color-light: var(--light);
   --color-background-hover: var(--background-hover);
+  --color-background-active: var(--background-active);
   --color-background: var(--background);
 }
 
