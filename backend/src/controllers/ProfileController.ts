@@ -3,6 +3,7 @@ import { Profile } from '../models/Profile';
 import { createProfileSchema } from '../validators/profileValidators';
 import { profileSearchSchema } from "../validators/ProfileSearch";
 import sanitizeHtml from 'sanitize-html';
+import { slugifyUserName } from "../utils/slagifyUserName";
 
 export const createProfile = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -73,10 +74,12 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
             res.status(400).json({ error: "You have already created a profile." });
             return;
         }
+        const slugifiedUsername = slugifyUserName(parsedData.data.username);
 
         const newProfileData = {
             userId,
             ...parsedData.data,
+            username: slugifiedUsername,
             bio: sanitizeBio,
             headline: sanitizeHeadline,
             profilePicture: profilePicture.path,
@@ -241,4 +244,32 @@ export const searchProfiles = async (req: Request, res: Response): Promise<void>
     });
 
 
+}
+
+export const getProfileByUsername = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { username } = req.params;
+
+        if (!username) {
+            res.status(400).json({ error: "Username parameter is required." });
+            return;
+        }
+
+        const profile = await Profile.findOne({ username, isVisible: true }).lean();
+
+        if (!profile) {
+            res.status(404).json({ error: "Profile not found." });
+            return;
+        }
+
+        profile.bio = sanitizeHtml(profile.bio || "");
+        profile.headline = sanitizeHtml(profile.headline || "");
+
+
+        res.status(200).json({ data: profile });
+
+    } catch (error) {
+        console.error("Error fetching profile by username:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 }

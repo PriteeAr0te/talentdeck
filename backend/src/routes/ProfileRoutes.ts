@@ -1,5 +1,5 @@
 import express from "express";
-import { createProfile, getMyProfile, updateProfile, deleteProfile, searchProfiles } from "../controllers/ProfileController";
+import { createProfile, getMyProfile, updateProfile, deleteProfile, searchProfiles, getProfileByUsername } from "../controllers/ProfileController";
 import { protect } from "../middleware/authMiddleware";
 import upload from "../middleware/profileUploadMiddleware";
 import { publicLimiter } from "../middleware/rateLimiter";
@@ -29,5 +29,6 @@ router.put(
 router.get("/me", protect, getMyProfile);
 router.delete("/", protect, deleteProfile);
 router.get("/", publicLimiter, searchProfiles);
+router.get("/:username", publicLimiter, getProfileByUsername);
 
 export default router;
