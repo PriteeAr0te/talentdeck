@@ -1,5 +1,5 @@
 import React, { useReducer, useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProfileSchema, CreateProfileSchema } from "@/lib/validators/profileValidators";
 import InputComponent from "@/components/ui/InputComponent";
@@ -17,7 +17,7 @@ import API from "@/lib/api";
 const CreateProfileForm: React.FC = () => {
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
     const [projectImagesFiles, setProjectImagesFiles] = useState<File[]>([]);
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string>("");
 
     const {
         register,
@@ -28,16 +28,16 @@ const CreateProfileForm: React.FC = () => {
         reset,
         formState: { errors },
     } = useForm<CreateProfileSchema>({
-        resolver: zodResolver(createProfileSchema),
+        resolver: zodResolver(createProfileSchema) as any,
         defaultValues: {
             skills: [],
             socialLinks: [{ label: '', url: '' }],
             portfolioLinks: [{ label: '', url: '' }],
             availableforwork: false,
             isVisible: true,
-            projectImages: [],
         },
     });
+
 
     const { fields: socialFields, append: appendSocial, remove: removeSocial } = useFieldArray({
         control,
@@ -51,67 +51,60 @@ const CreateProfileForm: React.FC = () => {
 
     const router = useRouter();
 
-    // const onSubmit = async (data: CreateProfileSchema) => {
-    //     console.log("Data");
-    //     try {
-    //         setError("");
+    const onSubmit: SubmitHandler<CreateProfileSchema> = async (data: CreateProfileSchema) => {
+        try {
+            setError("");
+            const formData = new FormData();
 
-    //         const formData = new FormData();
+            // Structured data
+            formData.append("username", data.username);
+            formData.append("headline", data.headline || "");
+            formData.append("bio", data.bio || "");
+            formData.append("category", data.category);
+            formData.append("location", JSON.stringify(data.location));
+            formData.append("skills", JSON.stringify(data.skills));
+            formData.append("availableforwork", String(data.availableforwork));
+            formData.append("isVisible", String(data.isVisible));
+            formData.append("portfolioLinks", JSON.stringify(data.portfolioLinks));
+            formData.append("socialLinks", JSON.stringify(data.socialLinks));
 
-    //         Object.entries(data).forEach(([key, value]) => {
-    //             if (key === "profilePicture" || key === "projectImages") return;
-    //             formData.append(key, value as string);
-    //         });
+            // ✅ Profile Picture (must match multer field name)
+            if (profilePicFile) {
+                formData.append("profilePicture", profilePicFile);
+            }
 
-    //         if (profilePicFile) {
-    //             formData.append("profilePicture", profilePicFile);
-    //         }
+            // ✅ Project Images (must match multer field name)
+            if (projectImagesFiles && projectImagesFiles.length > 0) {
+                projectImagesFiles.forEach((file) => {
+                    formData.append("projectImages", file);
+                });
+            }
 
-    //         if (projectImagesFiles.length > 0) {
-    //             projectImagesFiles.forEach((file) => {
-    //                 formData.append("projectImages", file);
-    //             });
-    //         }
+            const response = await API.post("/profile", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
 
-    //         const response = await API.post("/profile", formData, {
-    //             headers: {
-    //                 "Content-Type": "multipart/form-data",
-    //             },
-    //         });
+            toast.success("Profile created successfully!");
+            reset();
+            setProfilePicFile(null);
+            setProjectImagesFiles([]);
+            router.push("/");
 
-    //         console.log("Response", response);
+        } catch (err: any) {
+            const status = err.response?.status;
+            const fieldErrors = err.response?.data?.error?.fieldErrors;
+            if (status === 400 && fieldErrors) {
+                if (fieldErrors.profilePicture) setError(fieldErrors.profilePicture[0]);
+                else if (fieldErrors.projectImages) setError(fieldErrors.projectImages[0]);
+                else setError("Invalid form data.");
+            } else {
+                setError("Something went wrong. Please try again.");
+            }
 
-    //         if (!response.data || !response.data.success) {
-    //             throw new Error("Unexpected response from server.");
-    //         }
-
-    //         toast.success("Profile created successfully!");
-
-    //         router.push("/");
-
-    //     } catch (err: any) {
-    //         const status = err.response?.status;
-    //         const message = err.response?.data?.message || "Something went wrong. Please try again.";
-
-    //         if (status === 400) {
-    //             setError(message);
-    //         } else if (status === 409) {
-    //             setError("A profile with this data already exists.");
-    //         } else if (status === 500) {
-    //             setError("Server error. Please try again later.");
-    //         } else {
-    //             setError(message);
-    //         }
-
-    //         if (process.env.NODE_ENV !== "production") {
-    //             console.warn("Handled profile submit error:", status, message);
-    //         }
-    //     }
-    // };
-
-    const onSubmit = async (data: CreateProfileSchema) => {
-        console.log("Form submitted successfully", data);
+            console.warn("Submit error:", err);
+        }
     };
+
 
     const onError = (errors: any) => {
         console.log("Form Validation Errors", errors);
@@ -132,7 +125,15 @@ const CreateProfileForm: React.FC = () => {
                         <div className="space-y-4">
                             <InputComponent label="Username" id="username" registration={register("username")} error={errors.username?.message} />
                             <InputComponent label="Headline" id="headline" registration={register("headline")} error={errors.headline?.message} />
-                            <TextareaComponent label="Bio" id="bio" registration={register("bio")} error={errors.bio?.message} placeholder="Tell us about yourself" rows={5} />
+                            <TextareaComponent
+                                label="Bio"
+                                id="bio"
+                                registration={register("bio")}
+                                error={errors.bio?.message}
+                                placeholder="Tell us about yourself"
+                                rows={5}
+                            />
+
                             <DropdownComponent name="category" label="Select Category" register={register} options={["Graphic Designer", "UI/UX Designer", "Software Developer", "Content Creator", "Video Editor", "Other"]} setValue={setValue} error={errors.category?.message} />
                         </div>
                     </div>
@@ -161,11 +162,11 @@ const CreateProfileForm: React.FC = () => {
                         </div>
                         <div className="flex gap-6 items-center">
                             <label className="flex items-center space-x-2">
-                                <input type="checkbox" checked={watch("availableforwork") || false} onChange={() => setValue("availableforwork", !watch("availableforwork"))} className="form-checkbox h-5 w-5 bg-primary text-primary" />
+                                <input type="checkbox" checked={watch("availableforwork") || false} onChange={(e) => setValue("availableforwork", e.target.checked)} className="form-checkbox h-5 w-5 bg-primary text-primary" />
                                 <span className="text-sm text-gray-700">Available for Work</span>
                             </label>
                             <label className="flex items-center space-x-2">
-                                <input type="checkbox" checked={watch("isVisible") || false} onChange={() => setValue("isVisible", !watch("isVisible"))} className="form-checkbox h-5 w-5 bg-primary text-primary" />
+                                <input type="checkbox" checked={watch("isVisible") || false} onChange={(e) => setValue("isVisible", e.target.checked)} className="form-checkbox h-5 w-5 bg-primary text-primary" />
                                 <span className="text-sm text-gray-700">Public Profile</span>
                             </label>
                         </div>
@@ -180,7 +181,14 @@ const CreateProfileForm: React.FC = () => {
                             <p className="text-sm text-gray-500 mt-1">Upload a clear and professional profile picture.</p>
                         </div>
                         <div>
-                            <ProfilePhotoUpload name="profilePicture" control={control} preview={profilePicFile} setPreview={setProfilePicFile} setFile={setProfilePicFile} />
+                            {/* <ProfilePhotoUpload name="profilePicture" control={control} preview={profilePicFile} setPreview={setProfilePicFile} setFile={setProfilePicFile} /> */}
+
+                            <ProfilePhotoUpload
+                                value={profilePicFile}
+                                onChange={(file) => setProfilePicFile(file)}
+                                error={error}
+                            />
+
                         </div>
                     </div>
                 </fieldset>
@@ -193,7 +201,13 @@ const CreateProfileForm: React.FC = () => {
                             <p className="text-sm text-gray-500 mt-1">Showcase your best work.</p>
                         </div>
                         <div>
-                            <ImageUploadComponent name="projectImages" control={control} label="Project Images" multiple preview={projectImagesFiles} setPreview={setProjectImagesFiles} setFiles={setProjectImagesFiles} error={errors.projectImages?.message as string} />
+                            {/* <ImageUploadComponent name="projectImages" control={control} label="Project Images" multiple preview={projectImagesFiles} setPreview={setProjectImagesFiles} setFiles={setProjectImagesFiles} error={errors.projectImages?.message as string} /> */}
+
+                            <ImageUploadComponent
+                                value={projectImagesFiles}
+                                onChange={(files) => setProjectImagesFiles(files)}
+                                error={error}
+                            />
                         </div>
                     </div>
                 </fieldset>

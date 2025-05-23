@@ -15,25 +15,54 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
             [fieldName: string]: Express.Multer.File[];
         };
 
-        // Step 1: Build full input including files
         const profilePicture = files?.profilePicture?.[0];
         const projectImages = files?.projectImages || [];
 
+        // ✅ Manual file presence validation
+        if (!profilePicture) {
+            res.status(400).json({
+                error: {
+                    fieldErrors: {
+                        profilePicture: ["Profile picture is required."]
+                    }
+                }
+            });
+            return;
+        }
+
+        if (!Array.isArray(projectImages) || projectImages.some((f) => !f || !f.originalname)) {
+            res.status(400).json({
+                error: {
+                    fieldErrors: {
+                        projectImages: ["Each project image must be a valid file."]
+                    }
+                }
+            });
+            return;
+        }
+
+        // ✅ Build full input AFTER file validation
         const fullInput = {
             ...req.body,
-            profilePicture: profilePicture,
-            projectImages: projectImages,
+            location: JSON.parse(req.body.location),
+            skills: JSON.parse(req.body.skills),
+            portfolioLinks: JSON.parse(req.body.portfolioLinks),
+            socialLinks: JSON.parse(req.body.socialLinks),
+            availableforwork: req.body.availableforwork === "true",
+            isVisible: req.body.isVisible === "true",
+            profilePicture: profilePicture.path,
+            projectImages: projectImages.map((file) => file.path),
         };
 
-        // Step 2: Run schema validation
+        // ✅ Schema validation
         const parsedData = createProfileSchema.safeParse(fullInput);
 
         if (!parsedData.success) {
             res.status(400).json({ error: parsedData.error.flatten() });
+            console.log("Zod Validation Error", parsedData.error.flatten());
             return;
         }
 
-        // Step 3: Clean up inputs
         const sanitizeBio = sanitizeHtml(parsedData.data?.bio || '');
         const sanitizeHeadline = sanitizeHtml(parsedData.data?.headline || '');
 
@@ -45,12 +74,12 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
             return;
         }
 
-        const newProfileData: any = {
+        const newProfileData = {
             userId,
             ...parsedData.data,
             bio: sanitizeBio,
             headline: sanitizeHeadline,
-            profilePicture: profilePicture?.path || "",
+            profilePicture: profilePicture.path,
             projectImages: projectImages.map((file) => file.path),
         };
 

@@ -27,9 +27,31 @@ export const createProfileSchema = z.object({
 
     isVisible: z.boolean().optional(),
 
-    profilePicture: urlSchema.optional(),
+    // profilePicture: z
+    //     .any()
+    //     .refine(
+    //         (file) =>
+    //             file instanceof File ||
+    //             typeof file === "string" ||
+    //             file === undefined ||
+    //             file === null,
+    //         { message: "Profile picture must be a valid file" }
+    //     ),
 
-    projectImages: z.array(urlSchema).optional(),
+
+    // projectImages: z
+    //     .any()
+    //     .refine(
+    //         (files) =>
+    //             Array.isArray(files) &&
+    //             files.every(
+    //                 (f) => f instanceof File || typeof f === "string"
+    //             ),
+    //         {
+    //             message: "Each project image must be a valid file",
+    //         }
+    //     ),
+
 
     portfolioLinks: z.array(
         z.object({

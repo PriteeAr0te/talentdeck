@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const urlSchema = z.string().url();
-
+  
 export const createProfileSchema = z.object({
     username: z.string().min(2, "Username must be at least 2 characters long").max(20, "Username must be less than 20 characters long"),
 
@@ -27,17 +27,17 @@ export const createProfileSchema = z.object({
 
     isVisible: z.boolean().optional(),
 
-    profilePicture: z
-        .any()
-        .refine((file) => file instanceof File || file === undefined || file === null, {
-            message: "Profile picture must be a valid file",
-        }),
+    // profilePicture: z
+    //     .any()
+    //     .refine((file) => file instanceof File || file === undefined || file === null, {
+    //         message: "Profile picture must be a valid file",
+    //     }),
 
-    projectImages: z
-        .any()
-        .refine((files) => Array.isArray(files) && files.every((f) => f instanceof File), {
-            message: "Each project image must be a valid file",
-        }),
+    // projectImages: z
+    //     .any()
+    //     .refine((files) => Array.isArray(files) && files.every((f) => f instanceof File), {
+    //         message: "Each project image must be a valid file",
+    //     }),
 
     portfolioLinks: z.array(
         z.object({
