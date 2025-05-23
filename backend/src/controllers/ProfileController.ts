@@ -86,14 +86,13 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
         const newProfile = new Profile(newProfileData);
         await newProfile.save();
 
-        res.status(201).json({ message: "Profile created successfully." });
+        res.status(201).json({ message: "Profile created successfully.", isProfileCreated: true });
 
     } catch (error) {
         console.error("Error creating profile:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
-
 
 export const getMyProfile = async (req: Request, res: Response): Promise<void> => {
     try {

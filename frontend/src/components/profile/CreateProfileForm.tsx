@@ -13,11 +13,13 @@ import { ProfilePhotoUpload } from "../ui/ProfilePhotoUpload";
 import { useRouter } from "next/router";
 import { Slide, toast, ToastContainer } from "react-toastify";
 import API from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
 
 const CreateProfileForm: React.FC = () => {
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
     const [projectImagesFiles, setProjectImagesFiles] = useState<File[]>([]);
     const [error, setError] = useState<string>("");
+    const {setIsProfileCreated} = useAuth();
 
     const {
         register,
@@ -83,6 +85,10 @@ const CreateProfileForm: React.FC = () => {
             const response = await API.post("/profile", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
+
+            if (response.data.isProfileCreated || response.status === 201) {
+                setIsProfileCreated(true);
+            }
 
             toast.success("Profile created successfully!");
             reset();

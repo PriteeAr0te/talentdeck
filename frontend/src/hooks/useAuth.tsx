@@ -6,11 +6,10 @@ export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) throw new Error("useAuth must be used within an AuthProvider");
     
-    const {user, token, login, logout} = context;
+    const {user, token, login, logout, loading, isProfileCreated, setIsProfileCreated} = context;
     const isLoggedIn = !!token;
     const isCreator = user?.role === "creator";
-    const isProfileCreated = user?.profileCreated ?? false;
 
-    return {user, token, login, logout, isLoggedIn, isCreator, isProfileCreated};
+    return {user, token, login, logout, isLoggedIn, isCreator, isProfileCreated, loading, setIsProfileCreated};
 
   };

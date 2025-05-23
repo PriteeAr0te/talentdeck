@@ -6,6 +6,8 @@ const Header: React.FC = () => {
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const { logout, isLoggedIn, isProfileCreated, user } = useAuth();
 
+  console.log(isProfileCreated);
+
   const toggleDarkMode = () => {
     setDarkMode((prev) => !prev);
     if (typeof window !== 'undefined') {

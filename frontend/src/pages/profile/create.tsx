@@ -4,16 +4,18 @@ import { useRouter } from 'next/router';
 import CreateProfileForm from '@/components/profile/CreateProfileForm';
 
 const CreateProfile: React.FC = () => {
-    const { isLoggedIn, user } = useAuth();
+    const { isLoggedIn, user, loading, isProfileCreated } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
+        if (loading) return;
+
         if (!isLoggedIn) {
             router.push('/login');
         } else if(user?.profileCreated) {
             router.push(`/${user.username}`);
         }
-    }, [isLoggedIn, user]);
+    }, [isLoggedIn, user, loading, isProfileCreated ]);
 
     return (
         <main className="dark:bg-[#0A0011] bg-white">
