@@ -40,7 +40,6 @@ const CreateProfileForm: React.FC = () => {
         },
     });
 
-
     const { fields: socialFields, append: appendSocial, remove: removeSocial } = useFieldArray({
         control,
         name: "socialLinks",
@@ -58,7 +57,6 @@ const CreateProfileForm: React.FC = () => {
             setError("");
             const formData = new FormData();
 
-            // Structured data
             formData.append("username", data.username);
             formData.append("headline", data.headline || "");
             formData.append("bio", data.bio || "");
@@ -70,12 +68,10 @@ const CreateProfileForm: React.FC = () => {
             formData.append("portfolioLinks", JSON.stringify(data.portfolioLinks));
             formData.append("socialLinks", JSON.stringify(data.socialLinks));
 
-            // ✅ Profile Picture (must match multer field name)
             if (profilePicFile) {
                 formData.append("profilePicture", profilePicFile);
             }
 
-            // ✅ Project Images (must match multer field name)
             if (projectImagesFiles && projectImagesFiles.length > 0) {
                 projectImagesFiles.forEach((file) => {
                     formData.append("projectImages", file);
@@ -111,7 +107,6 @@ const CreateProfileForm: React.FC = () => {
         }
     };
 
-
     const onError = (errors: any) => {
         console.log("Form Validation Errors", errors);
     };
@@ -121,7 +116,6 @@ const CreateProfileForm: React.FC = () => {
             <ToastContainer position="top-right" transition={Slide} className="z-50" autoClose={6000} />
             <form onSubmit={handleSubmit(onSubmit, onError)} className="max-w-6xl mx-auto p-6 bg-white dark:bg-[#0A0011] rounded-xl space-y-10">
 
-                {/* Basic Information */}
                 <fieldset>
                     <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
                         <div>
@@ -145,7 +139,6 @@ const CreateProfileForm: React.FC = () => {
                     </div>
                 </fieldset>
 
-                {/* Skills & Location */}
                 <fieldset>
                     <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
                         <div>
@@ -159,7 +152,6 @@ const CreateProfileForm: React.FC = () => {
                     </div>
                 </fieldset>
 
-                {/* Profile Preferences */}
                 <fieldset>
                     <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
                         <div>
@@ -179,7 +171,6 @@ const CreateProfileForm: React.FC = () => {
                     </div>
                 </fieldset>
 
-                {/* Profile Image */}
                 <fieldset>
                     <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
                         <div>
@@ -187,7 +178,6 @@ const CreateProfileForm: React.FC = () => {
                             <p className="text-sm text-gray-500 mt-1">Upload a clear and professional profile picture.</p>
                         </div>
                         <div>
-                            {/* <ProfilePhotoUpload name="profilePicture" control={control} preview={profilePicFile} setPreview={setProfilePicFile} setFile={setProfilePicFile} /> */}
 
                             <ProfilePhotoUpload
                                 value={profilePicFile}
@@ -199,7 +189,6 @@ const CreateProfileForm: React.FC = () => {
                     </div>
                 </fieldset>
 
-                {/* Project Images */}
                 <fieldset>
                     <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
                         <div>
@@ -207,7 +196,6 @@ const CreateProfileForm: React.FC = () => {
                             <p className="text-sm text-gray-500 mt-1">Showcase your best work.</p>
                         </div>
                         <div>
-                            {/* <ImageUploadComponent name="projectImages" control={control} label="Project Images" multiple preview={projectImagesFiles} setPreview={setProjectImagesFiles} setFiles={setProjectImagesFiles} error={errors.projectImages?.message as string} /> */}
 
                             <ImageUploadComponent
                                 value={projectImagesFiles}
@@ -218,7 +206,6 @@ const CreateProfileForm: React.FC = () => {
                     </div>
                 </fieldset>
 
-                {/* Social Links */}
                 <fieldset>
                     <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
                         <div>
@@ -231,7 +218,6 @@ const CreateProfileForm: React.FC = () => {
                     </div>
                 </fieldset>
 
-                {/* Portfolio Links */}
                 <fieldset>
                     <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6">
                         <div>

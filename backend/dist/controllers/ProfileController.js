@@ -1,26 +1,24 @@
-import { Request, Response } from "express";
-import { Profile } from '../models/Profile';
-import { createProfileSchema, updateProfileSchema } from '../validators/profileValidators';
-import { profileSearchSchema } from "../validators/ProfileSearch";
-import sanitizeHtml from 'sanitize-html';
-import { slugifyUserName } from "../utils/slagifyUserName";
-import { ZodError } from "zod";
-
-export const createProfile = async (req: Request, res: Response): Promise<void> => {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getProfileByUsername = exports.searchProfiles = exports.deleteProfile = exports.updateProfile = exports.getMyProfile = exports.createProfile = void 0;
+const Profile_1 = require("../models/Profile");
+const profileValidators_1 = require("../validators/profileValidators");
+const ProfileSearch_1 = require("../validators/ProfileSearch");
+const sanitize_html_1 = __importDefault(require("sanitize-html"));
+const slagifyUserName_1 = require("../utils/slagifyUserName");
+const zod_1 = require("zod");
+const createProfile = async (req, res) => {
     try {
         if (!req.user) {
             res.status(401).json({ error: "Unauthorized" });
             return;
         }
-
-        const files = req.files as {
-            [fieldName: string]: Express.Multer.File[];
-        };
-
+        const files = req.files;
         const profilePicture = files?.profilePicture?.[0];
         const projectImages = files?.projectImages || [];
-
-        // ✅ Manual file presence validation
         if (!profilePicture) {
             res.status(400).json({
                 error: {
@@ -31,7 +29,6 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
             });
             return;
         }
-
         if (!Array.isArray(projectImages) || projectImages.some((f) => !f || !f.originalname)) {
             res.status(400).json({
                 error: {
@@ -42,8 +39,6 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
             });
             return;
         }
-
-        // ✅ Build full input AFTER file validation
         const fullInput = {
             ...req.body,
             location: JSON.parse(req.body.location),
@@ -55,28 +50,21 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
             profilePicture: profilePicture.path,
             projectImages: projectImages.map((file) => file.path),
         };
-
-        // ✅ Schema validation
-        const parsedData = createProfileSchema.safeParse(fullInput);
-
+        const parsedData = profileValidators_1.createProfileSchema.safeParse(fullInput);
         if (!parsedData.success) {
             res.status(400).json({ error: parsedData.error.flatten() });
             console.log("Zod Validation Error", parsedData.error.flatten());
             return;
         }
-
-        const sanitizeBio = sanitizeHtml(parsedData.data?.bio || '');
-        const sanitizeHeadline = sanitizeHtml(parsedData.data?.headline || '');
-
+        const sanitizeBio = (0, sanitize_html_1.default)(parsedData.data?.bio || '');
+        const sanitizeHeadline = (0, sanitize_html_1.default)(parsedData.data?.headline || '');
         const userId = req.user.id;
-        const existingProfile = await Profile.findOne({ userId });
-
+        const existingProfile = await Profile_1.Profile.findOne({ userId });
         if (existingProfile) {
             res.status(400).json({ error: "You have already created a profile." });
             return;
         }
-        const slugifiedUsername = slugifyUserName(parsedData.data.username);
-
+        const slugifiedUsername = (0, slagifyUserName_1.slugifyUserName)(parsedData.data.username);
         const newProfileData = {
             userId,
             ...parsedData.data,
@@ -86,123 +74,100 @@ export const createProfile = async (req: Request, res: Response): Promise<void> 
             profilePicture: profilePicture.path,
             projectImages: projectImages.map((file) => file.path),
         };
-
-        const newProfile = new Profile(newProfileData);
+        const newProfile = new Profile_1.Profile(newProfileData);
         await newProfile.save();
-
         res.status(201).json({ message: "Profile created successfully.", isProfileCreated: true });
-
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error creating profile:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
-
-export const getMyProfile = async (req: Request, res: Response): Promise<void> => {
+exports.createProfile = createProfile;
+const getMyProfile = async (req, res) => {
     try {
         const userId = req.user?.id;
-        const profile = await Profile.findOne({ userId });
-
+        const profile = await Profile_1.Profile.findOne({ userId });
         if (!profile) {
             res.status(404).json({ error: "Profile not found" });
             return;
         }
-
         res.status(200).json(profile);
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error getting profile:", error);
         res.status(500).json({ error: "Internal server error" });
         return;
     }
-}
-
-export const updateProfile = async (req: Request, res: Response): Promise<void> => {
+};
+exports.getMyProfile = getMyProfile;
+const updateProfile = async (req, res) => {
     try {
         const userId = req.user?.id;
         if (!userId) {
             res.status(401).json({ error: "Unauthorized" });
             return;
         }
-
-        const rawData: any = { ...req.body };
-
-        // Validate input using Zod
+        const rawData = { ...req.body };
         try {
-            updateProfileSchema.parse(rawData);
-        } catch (err) {
-            if (err instanceof ZodError) {
+            profileValidators_1.updateProfileSchema.parse(rawData);
+        }
+        catch (err) {
+            if (err instanceof zod_1.ZodError) {
                 res.status(400).json({ error: err.errors });
                 return;
             }
             throw err;
         }
-
-        // Sanitize input
-        if (rawData.bio) rawData.bio = sanitizeHtml(rawData.bio);
-        if (rawData.headline) rawData.headline = sanitizeHtml(rawData.headline);
-
-        // Handle image uploads
-        const files = req.files as { [fieldName: string]: Express.Multer.File[] } | undefined;
-
+        if (rawData.bio)
+            rawData.bio = (0, sanitize_html_1.default)(rawData.bio);
+        if (rawData.headline)
+            rawData.headline = (0, sanitize_html_1.default)(rawData.headline);
+        const files = req.files;
         if (files?.profilePicture?.[0]) {
             rawData.profilePicture = files.profilePicture[0].path;
         }
-
         if (files?.projectImages?.length) {
             rawData.projectImages = files.projectImages.map(file => file.path);
         }
-
-        // Update profile
-        const updatedProfile = await Profile.findOneAndUpdate(
-            { userId },
-            { $set: rawData },
-            { new: true, runValidators: true }
-        );
-
+        const updatedProfile = await Profile_1.Profile.findOneAndUpdate({ userId }, { $set: rawData }, { new: true, runValidators: true });
         if (!updatedProfile) {
             res.status(404).json({ error: "Profile not found" });
             return;
         }
-
         res.status(200).json(updatedProfile);
-
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error updating profile:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
-
-export const deleteProfile = async (req: Request, res: Response): Promise<void> => {
+exports.updateProfile = updateProfile;
+const deleteProfile = async (req, res) => {
     try {
         const userId = req.user?.id;
-        const deletedProfile = await Profile.findByIdAndDelete({ userId });
-
+        const deletedProfile = await Profile_1.Profile.findByIdAndDelete({ userId });
         if (!deletedProfile) {
             res.status(404).json({ error: "Profile not found" });
             return;
         }
-
         res.status(200).json({ message: "Profile deleted successfully" });
-
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error deleting profile:", error);
         res.status(500).json({ error: "Internal server error" });
         return;
     }
-}
-
-
-export const searchProfiles = async (req: Request, res: Response): Promise<void> => {
-    const parsed = profileSearchSchema.safeParse(req.query);
-
+};
+exports.deleteProfile = deleteProfile;
+const searchProfiles = async (req, res) => {
+    const parsed = ProfileSearch_1.profileSearchSchema.safeParse(req.query);
     if (!parsed.success) {
         res.status(400).json({ error: parsed.error.flatten() });
         return;
     }
-
     const { q, skills, tags, category, availableforwork, "location.city": city, "location.country": country, "location.state": state, sortBy, sortOrder, page, limit } = parsed.data;
-
-    const filter: any = { isVisible: true };
+    const filter = { isVisible: true };
     if (q) {
         filter.$text = { $search: q };
     }
@@ -224,25 +189,20 @@ export const searchProfiles = async (req: Request, res: Response): Promise<void>
     if (country) {
         filter["location.country"] = country;
     }
-
     if (state) {
         filter["location.state"] = state;
     }
-
     const skip = (page - 1) * limit;
-    const sortOptions: Record<string, 1 | -1> = {
+    const sortOptions = {
         [String(sortBy)]: sortOrder === "asc" ? 1 : -1,
     };
-
-
     const [total, profiles] = await Promise.all([
-        Profile.countDocuments(filter),
-        Profile.find(filter)
+        Profile_1.Profile.countDocuments(filter),
+        Profile_1.Profile.find(filter)
             .sort(sortOptions)
             .skip(skip)
             .limit(limit)
     ]);
-
     res.json({
         meta: {
             total,
@@ -251,34 +211,28 @@ export const searchProfiles = async (req: Request, res: Response): Promise<void>
         },
         data: profiles,
     });
-
-
-}
-
-export const getProfileByUsername = async (req: Request, res: Response): Promise<void> => {
+};
+exports.searchProfiles = searchProfiles;
+const getProfileByUsername = async (req, res) => {
     try {
         const { username } = req.params;
-
         if (!username) {
             res.status(400).json({ error: "Username parameter is required." });
             return;
         }
-
-        const profile = await Profile.findOne({ username, isVisible: true }).lean();
-
+        const profile = await Profile_1.Profile.findOne({ username, isVisible: true }).lean();
         if (!profile) {
             res.status(404).json({ error: "Profile not found." });
             return;
         }
-
-        profile.bio = sanitizeHtml(profile.bio || "");
-        profile.headline = sanitizeHtml(profile.headline || "");
-
-
+        profile.bio = (0, sanitize_html_1.default)(profile.bio || "");
+        profile.headline = (0, sanitize_html_1.default)(profile.headline || "");
         res.status(200).json({ data: profile });
-
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Error fetching profile by username:", error);
         res.status(500).json({ error: "Internal server error" });
     }
-}
+};
+exports.getProfileByUsername = getProfileByUsername;
+//# sourceMappingURL=ProfileController.js.map

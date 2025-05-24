@@ -28,7 +28,7 @@ const Login = () => {
 
     const onSubmit = async (data: LoginFormValues) => {
         try {
-            setError(""); // Clear old errors
+            setError(""); 
 
             const response = await API.post("/auth/login", {
                 email: data.email,

@@ -1,0 +1,14 @@
+{
+    "builds": [
+        {
+            "src": "index.ts",
+            "use": "@vercel/node-serverless"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/index.ts"
+        }
+    ]
+}
