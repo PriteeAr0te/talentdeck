@@ -18,6 +18,15 @@ interface UpdateProfileFormProps {
   defaultValues: CreateProfileSchema;
   profileId: string;
 }
+export const CATEGORY_OPTIONS: CreateProfileSchema["category"][] = [
+  "Graphic Designer",
+  "UI/UX Designer",
+  "Software Developer",
+  "Content Creator",
+  "Video Editor",
+  "Other",
+];
+
 
 const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, profileId }) => {
   const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
@@ -48,15 +57,15 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, pr
     name: "portfolioLinks",
   });
 
-  const onSubmit: SubmitHandler<CreateProfileSchema> = async (data) => {
+  const onSubmit: SubmitHandler<UpdateProfileSchema> = async (data) => {
     try {
       setError("");
       const formData = new FormData();
 
-      formData.append("username", data.username);
+      formData.append("username", data.username ?? "");
       formData.append("headline", data.headline || "");
       formData.append("bio", data.bio || "");
-      formData.append("category", data.category);
+      formData.append("category", data.category ?? "");
       formData.append("location", JSON.stringify(data.location));
       formData.append("skills", JSON.stringify(data.skills));
       formData.append("availableforwork", String(data.availableforwork));
@@ -68,7 +77,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, pr
         formData.append("profilePicture", profilePicFile);
       }
 
-      if (projectImagesFiles && projectImagesFiles.length > 0) {
+      if (projectImagesFiles.length > 0) {
         projectImagesFiles.forEach((file) => {
           formData.append("projectImages", file);
         });
@@ -78,9 +87,11 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, pr
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (response.status === 200 || response.data.success) {
+      if (response?.data?.success) {
         toast.success("Profile updated successfully!");
         router.push("/");
+      } else {
+        throw new Error("Unexpected response from server");
       }
     } catch (err: any) {
       const status = err.response?.status;
@@ -96,6 +107,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, pr
     }
   };
 
+
   return (
     <>
       <ToastContainer position="top-right" transition={Slide} className="z-50" autoClose={6000} />
@@ -110,7 +122,16 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, pr
               <InputComponent label="Username" id="username" registration={register("username")} error={errors.username?.message} />
               <InputComponent label="Headline" id="headline" registration={register("headline")} error={errors.headline?.message} />
               <TextareaComponent label="Bio" id="bio" registration={register("bio")} error={errors.bio?.message} rows={5} placeholder="Tell us about yourself" />
-              <DropdownComponent name="category" label="Select Category" register={register} options={["Graphic Designer", "UI/UX Designer", "Software Developer", "Content Creator", "Video Editor", "Other"]} setValue={setValue} error={errors.category?.message} />
+              <DropdownComponent
+                name="category"
+                label="Category"
+                registration={register("category")}
+                options={CATEGORY_OPTIONS}
+                setValue={setValue}
+                watch={watch}
+                error={errors.category?.message}
+              />
+
             </div>
           </div>
         </fieldset>
@@ -122,7 +143,14 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, pr
               <p className="text-sm text-gray-500 mt-1">Highlight your strongest areas and where you're based.</p>
             </div>
             <div className="space-y-4">
-              <SkillsSelector control={control} name="skills" error={errors.skills?.message} setValue={setValue} watch={watch} />
+              <SkillsSelector
+                control={control}
+                name="skills"
+                error={errors.skills?.message}
+                setValue={setValue}
+                watch={watch}
+              />
+
               <AddressSelector register={register} errors={errors} />
             </div>
           </div>
@@ -154,7 +182,14 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, pr
               <p className="text-sm text-gray-500 mt-1">Upload a clear and professional profile picture.</p>
             </div>
             <div>
-              <ProfilePhotoUpload value={profilePicFile} onChange={(file) => setProfilePicFile(file)} error={error} />
+
+              <ProfilePhotoUpload
+                value={profilePicFile}
+                onChange={(file) => setProfilePicFile(file)}
+                existingImageUrl={typeof defaultValues.profilePicture === "string" ? defaultValues.profilePicture : undefined}
+                error={errors.profilePicture?.message}
+              />
+
             </div>
           </div>
         </fieldset>

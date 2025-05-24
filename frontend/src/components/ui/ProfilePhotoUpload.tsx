@@ -1,12 +1,13 @@
 'use client';
 
-import { useRef, ChangeEvent } from 'react';
+import { useRef, ChangeEvent, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 
 type ProfilePhotoUploadProps = {
   value: File | null;
   onChange: (file: File) => void;
+  existingImageUrl?: string; // ✅ for edit form
   label?: string;
   error?: string;
 };
@@ -14,11 +15,25 @@ type ProfilePhotoUploadProps = {
 export const ProfilePhotoUpload = ({
   value,
   onChange,
+  existingImageUrl,
   label = 'Profile Photo',
   error,
 }: ProfilePhotoUploadProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { user } = useAuth();
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  // Update preview whenever new file is selected
+  useEffect(() => {
+    if (value) {
+      const url = URL.createObjectURL(value);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url); // Clean up
+    }
+    // If no file, fallback to existing image
+    setPreviewUrl(existingImageUrl || null);
+  }, [value, existingImageUrl]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -32,16 +47,19 @@ export const ProfilePhotoUpload = ({
     return user.email.charAt(0).toUpperCase();
   };
 
-  const fileUrl = value ? URL.createObjectURL(value) : null;
-
   return (
     <div className="flex flex-col items-start gap-2 w-full">
       <label className="text-sm font-medium text-gray-700">{label}</label>
       <div className="flex items-center gap-6">
         <div className="relative w-24 h-24 rounded-full overflow-hidden border border-gray-300 group">
-          {fileUrl ? (
+          {previewUrl ? (
             <>
-              <Image src={fileUrl} alt="Profile" fill className="object-cover" />
+              <Image
+                src={previewUrl}
+                alt="Profile"
+                fill
+                className="object-cover"
+              />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
@@ -59,6 +77,7 @@ export const ProfilePhotoUpload = ({
             </span>
           )}
         </div>
+
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
@@ -66,6 +85,7 @@ export const ProfilePhotoUpload = ({
         >
           Upload
         </button>
+
         <input
           ref={inputRef}
           type="file"
@@ -74,6 +94,7 @@ export const ProfilePhotoUpload = ({
           onChange={handleFileChange}
         />
       </div>
+
       {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
     </div>
   );

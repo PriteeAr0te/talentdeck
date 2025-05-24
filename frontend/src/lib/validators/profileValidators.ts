@@ -13,16 +13,19 @@ export const baseProfileSchema = z.object({
     .max(100, "Headline must be less than 100 characters long")
     .optional(),
 
-  category: z.enum([
-    "Graphic Designer",
-    "UI/UX Designer",
-    "Software Developer",
-    "Content Creator",
-    "Video Editor",
-    "Other",
-  ], {
-    message: "Please select a valid category",
-  }),
+  category: z.enum(
+    [
+      "Graphic Designer",
+      "UI/UX Designer",
+      "Software Developer",
+      "Content Creator",
+      "Video Editor",
+      "Other",
+    ],
+    {
+      message: "Please select a valid category",
+    }
+  ),
 
   location: z.object({
     city: z.string().min(2, "City is required."),
@@ -62,30 +65,16 @@ export const baseProfileSchema = z.object({
     .optional(),
 
   profilePicture: z
-    .unknown()
+    .instanceof(File)
     .optional()
-    .refine(
-      (file) =>
-        file === undefined || file === null || typeof File === "undefined" || file instanceof File,
-      {
-        message: "Profile picture must be a valid file",
-      }
-    ),
+    .or(z.literal(undefined))
+    .or(z.null()),
 
   projectImages: z
-    .unknown()
+    .array(z.instanceof(File))
     .optional()
-    .refine(
-      (files) =>
-        files === undefined ||
-        (Array.isArray(files) &&
-          files.every((f) =>
-            typeof File === "undefined" ? true : f instanceof File
-          )),
-      {
-        message: "Each project image must be a valid file",
-      }
-    ),
+    .or(z.literal(undefined))
+    .or(z.null()),
 });
 
 export const createProfileSchema = baseProfileSchema;

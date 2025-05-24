@@ -19,7 +19,7 @@ const CreateProfileForm: React.FC = () => {
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
     const [projectImagesFiles, setProjectImagesFiles] = useState<File[]>([]);
     const [error, setError] = useState<string>("");
-    const {setIsProfileCreated} = useAuth();
+    const { setIsProfileCreated } = useAuth();
 
     const {
         register,
@@ -134,7 +134,7 @@ const CreateProfileForm: React.FC = () => {
                                 rows={5}
                             />
 
-                            <DropdownComponent name="category" label="Select Category" register={register} options={["Graphic Designer", "UI/UX Designer", "Software Developer", "Content Creator", "Video Editor", "Other"]} setValue={setValue} error={errors.category?.message} />
+                            <DropdownComponent name="category" label="Select Category" registration={register("category")} options={["Graphic Designer", "UI/UX Designer", "Software Developer", "Content Creator", "Video Editor", "Other"]} setValue={setValue} error={errors.category?.message} />
                         </div>
                     </div>
                 </fieldset>
@@ -146,7 +146,14 @@ const CreateProfileForm: React.FC = () => {
                             <p className="text-sm text-gray-500 mt-1">Highlight your strongest areas and where you're based.</p>
                         </div>
                         <div className="space-y-4">
-                            <SkillsSelector control={control} name="skills" error={errors.skills?.message} setValue={setValue} watch={watch} />
+                            <SkillsSelector
+                                control={control}
+                                name="skills"
+                                error={errors.skills?.message}
+                                setValue={setValue}
+                                watch={watch}
+                            />
+
                             <AddressSelector register={register} errors={errors} />
                         </div>
                     </div>
@@ -182,7 +189,7 @@ const CreateProfileForm: React.FC = () => {
                             <ProfilePhotoUpload
                                 value={profilePicFile}
                                 onChange={(file) => setProfilePicFile(file)}
-                                error={error}
+                                error={errors.profilePicture?.message}
                             />
 
                         </div>

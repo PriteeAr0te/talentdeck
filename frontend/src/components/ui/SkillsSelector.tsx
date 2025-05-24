@@ -1,31 +1,42 @@
 import React, { useState } from "react";
-import { UseFormSetValue, UseFormWatch, Control } from "react-hook-form";
+import { UseFormSetValue, UseFormWatch, Control, Path, PathValue } from "react-hook-form";
 import { CreateProfileSchema } from "@/lib/validators/profileValidators";
 
-interface SkillsSelectorProps {
-  name: string;
-  setValue: UseFormSetValue<any>;
-  watch: UseFormWatch<any>;
+interface SkillsSelectorProps<T extends Record<string, any>> {
+  name: Path<T>;
+  setValue: UseFormSetValue<T>;
+  watch: UseFormWatch<T>;
   error?: string;
-  control: Control<CreateProfileSchema>;
+  control: Control<T>;
 }
 
-const SkillsSelector: React.FC<SkillsSelectorProps> = ({ name, setValue, watch, error }) => {
+function SkillsSelector<T extends Record<string, any>>({
+  name,
+  setValue,
+  watch,
+  error,
+}: SkillsSelectorProps<T>) {
   const [inputValue, setInputValue] = useState("");
-  const skills: string[] = watch(name) || [];
+
+  const skills = (watch(name) || []) as string[];
 
   const handleAddSkill = () => {
     const trimmed = inputValue.trim();
-    if (trimmed && !skills.includes(trimmed) && skills.length < 10) {
+    if (
+      trimmed &&
+      Array.isArray(skills) &&
+      !skills.includes(trimmed) &&
+      skills.length < 10
+    ) {
       const updated = [...skills, trimmed];
-      setValue(name, updated, { shouldValidate: true });
+      setValue(name, updated as PathValue<T, Path<T>>, { shouldValidate: true });
     }
     setInputValue("");
   };
 
   const handleRemoveSkill = (skill: string) => {
     const updated = skills.filter((s) => s !== skill);
-    setValue(name, updated, { shouldValidate: true });
+    setValue(name, updated as PathValue<T, Path<T>>, { shouldValidate: true });
   };
 
   return (
@@ -58,8 +69,20 @@ const SkillsSelector: React.FC<SkillsSelectorProps> = ({ name, setValue, watch, 
               className="flex items-center bg-gray-200 text-sm text-black px-3 py-1 rounded-full"
             >
               {skill}
-              <button type="button" onClick={() => handleRemoveSkill(skill)} className="ml-2 text-gray-600 hover:text-red-500">
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+              <button
+                type="button"
+                onClick={() => handleRemoveSkill(skill)}
+                className="ml-2 text-gray-600 hover:text-red-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="18"
+                  viewBox="0 -960 960 960"
+                  width="18"
+                  fill="currentColor"
+                >
+                  <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                </svg>
               </button>
             </span>
           ))}
@@ -70,6 +93,6 @@ const SkillsSelector: React.FC<SkillsSelectorProps> = ({ name, setValue, watch, 
       <p className="text-sm text-gray-500 mt-2">{`Max 10 skills. (${skills.length}/10)`}</p>
     </div>
   );
-};
+}
 
 export default SkillsSelector;
