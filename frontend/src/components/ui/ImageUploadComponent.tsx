@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, ChangeEvent } from 'react';
+import { useRef, ChangeEvent, useEffect, useState } from 'react';
 import Image from 'next/image';
 
 interface ImageUploadComponentProps {
@@ -8,6 +8,7 @@ interface ImageUploadComponentProps {
   onChange: (files: File[]) => void;
   label?: string;
   error?: string;
+  existingImageUrls?: string[];
 }
 
 const ImageUploadComponent = ({
@@ -15,21 +16,52 @@ const ImageUploadComponent = ({
   onChange,
   label = 'Upload Images',
   error,
+  existingImageUrls = [],
 }: ImageUploadComponentProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+  useEffect(() => {
+    const newPreviews: string[] = [];
+
+    // Normalize existing image URLs
+    existingImageUrls.forEach((img) => {
+      const normalized =
+        img.startsWith('http') ? img : `http://localhost:5000/uploads/${img.split('\\').pop()}`;
+      newPreviews.push(normalized);
+    });
+
+    value.forEach((file) => {
+      const url = URL.createObjectURL(file);
+      newPreviews.push(url);
+    });
+
+    setPreviewUrls(newPreviews);
+
+    return () => {
+      value.forEach((file) => {
+        if (file instanceof File) URL.revokeObjectURL(URL.createObjectURL(file));
+      });
+    };
+  }, [value, existingImageUrls]);
 
   const handleFiles = (e: ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
     if (!fileList) return;
-
     const selectedFiles = Array.from(fileList);
     onChange([...value, ...selectedFiles]);
   };
 
   const removeImage = (index: number) => {
-    const updatedFiles = [...value];
-    updatedFiles.splice(index, 1);
-    onChange(updatedFiles);
+    const newFiles = [...value];
+    const existingCount = existingImageUrls.length;
+
+    if (index < existingCount) {
+      return; // Can't remove server images here
+    } else {
+      newFiles.splice(index - existingCount, 1);
+      onChange(newFiles);
+    }
   };
 
   return (
@@ -60,12 +92,12 @@ const ImageUploadComponent = ({
         onChange={handleFiles}
       />
 
-      {value.length > 0 && (
+      {previewUrls.length > 0 && (
         <div className="mt-4 flex gap-4 flex-wrap">
-          {value.map((file, idx) => (
+          {previewUrls.map((url, idx) => (
             <div key={idx} className="relative w-24 h-24 rounded overflow-hidden border">
               <Image
-                src={URL.createObjectURL(file)}
+                src={url}
                 alt={`Preview ${idx}`}
                 fill
                 className="object-cover rounded"

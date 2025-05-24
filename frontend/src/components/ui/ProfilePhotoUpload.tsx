@@ -4,42 +4,44 @@ import { useRef, ChangeEvent, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 
-type ProfilePhotoUploadProps = {
+interface ProfilePhotoUploadProps {
   value: File | null;
-  onChange: (file: File) => void;
-  existingImageUrl?: string; // ✅ for edit form
+  onChange: (file: File | null) => void;
   label?: string;
   error?: string;
-};
+  existingImageUrl?: string;
+}
 
 export const ProfilePhotoUpload = ({
   value,
   onChange,
-  existingImageUrl,
   label = 'Profile Photo',
   error,
+  existingImageUrl,
 }: ProfilePhotoUploadProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { user } = useAuth();
-
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // Update preview whenever new file is selected
   useEffect(() => {
-    if (value) {
+    if (value instanceof File) {
       const url = URL.createObjectURL(value);
       setPreviewUrl(url);
-      return () => URL.revokeObjectURL(url); // Clean up
+      return () => URL.revokeObjectURL(url);
+    } else if (existingImageUrl) {
+      // Normalize path to valid URL
+      const normalizedPath = existingImageUrl.startsWith('http')
+        ? existingImageUrl
+        : `http://localhost:5000/uploads/${existingImageUrl.split('\\').pop()}`;
+      setPreviewUrl(normalizedPath);
+    } else {
+      setPreviewUrl(null);
     }
-    // If no file, fallback to existing image
-    setPreviewUrl(existingImageUrl || null);
   }, [value, existingImageUrl]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      onChange(file);
-    }
+    const file = e.target.files?.[0] || null;
+    onChange(file);
   };
 
   const getInitial = () => {

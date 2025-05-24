@@ -15,8 +15,10 @@ import { useRouter } from "next/router";
 import API from "@/lib/api";
 
 interface UpdateProfileFormProps {
-  defaultValues: CreateProfileSchema;
-  profileId: string;
+  defaultValues: UpdateProfileSchema;
+  existingProfilePictureUrl?: string;
+  existingProjectImageUrls?: string[];
+  // profileId: string;
 }
 export const CATEGORY_OPTIONS: CreateProfileSchema["category"][] = [
   "Graphic Designer",
@@ -28,7 +30,7 @@ export const CATEGORY_OPTIONS: CreateProfileSchema["category"][] = [
 ];
 
 
-const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, profileId }) => {
+const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, existingProfilePictureUrl, existingProjectImageUrls }) => {
   const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
   const [projectImagesFiles, setProjectImagesFiles] = useState<File[]>([]);
   const [error, setError] = useState<string>("");
@@ -83,7 +85,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, pr
         });
       }
 
-      const response = await API.put(`/profile/${profileId}`, formData, {
+      const response = await API.put(`/profile`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -184,9 +186,9 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, pr
             <div>
 
               <ProfilePhotoUpload
-                value={profilePicFile}
+                value={profilePicFile} // File | null
                 onChange={(file) => setProfilePicFile(file)}
-                existingImageUrl={typeof defaultValues.profilePicture === "string" ? defaultValues.profilePicture : undefined}
+                existingImageUrl={existingProfilePictureUrl}
                 error={errors.profilePicture?.message}
               />
 
@@ -201,7 +203,12 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, pr
               <p className="text-sm text-gray-500 mt-1">Showcase your best work.</p>
             </div>
             <div>
-              <ImageUploadComponent value={projectImagesFiles} onChange={setProjectImagesFiles} error={error} />
+              <ImageUploadComponent
+                value={projectImagesFiles} // File[]
+                onChange={setProjectImagesFiles} // (files: File[]) => void
+                existingImageUrls={existingProjectImageUrls} // optional
+                error={error}
+              />
             </div>
           </div>
         </fieldset>

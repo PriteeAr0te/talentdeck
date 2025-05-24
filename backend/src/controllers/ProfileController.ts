@@ -119,6 +119,7 @@ export const getMyProfile = async (req: Request, res: Response): Promise<void> =
 export const updateProfile = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = req.user?.id;
+        console.log(userId)
         if (!userId) {
             res.status(401).json({ error: "Unauthorized" });
             return;
@@ -126,11 +127,30 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
 
         const rawData: any = { ...req.body };
 
+        if (typeof rawData.location === "string") {
+            rawData.location = JSON.parse(rawData.location);
+          }
+          if (typeof rawData.skills === "string") {
+            rawData.skills = JSON.parse(rawData.skills);
+          }
+          if (typeof rawData.portfolioLinks === "string") {
+            rawData.portfolioLinks = JSON.parse(rawData.portfolioLinks);
+          }
+          if (typeof rawData.socialLinks === "string") {
+            rawData.socialLinks = JSON.parse(rawData.socialLinks);
+          }
+          // Convert boolean-like strings to boolean
+          rawData.availableforwork = rawData.availableforwork === "true";
+          rawData.isVisible = rawData.isVisible === "true";
+
+          console.log("rawData", rawData)
+
         // Validate input using Zod
         try {
             updateProfileSchema.parse(rawData);
         } catch (err) {
             if (err instanceof ZodError) {
+                console.log("Zod Error", err.errors)
                 res.status(400).json({ error: err.errors });
                 return;
             }
@@ -143,6 +163,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
 
         // Handle image uploads
         const files = req.files as { [fieldName: string]: Express.Multer.File[] } | undefined;
+        console.log(files)
 
         if (files?.profilePicture?.[0]) {
             rawData.profilePicture = files.profilePicture[0].path;
@@ -164,7 +185,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
             return;
         }
 
-        res.status(200).json(updatedProfile);
+        res.status(200).json({success: true, data:updatedProfile});
 
     } catch (error) {
         console.error("Error updating profile:", error);
