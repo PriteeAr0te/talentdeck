@@ -9,7 +9,6 @@ import path from 'path';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 
 dotenv.config();
-
 const app = express();
 
 app.use(cors({
@@ -40,4 +39,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   app(req as any, res as any);
+  return
 }
