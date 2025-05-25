@@ -27,7 +27,7 @@ const ImageUploadComponent = ({
     // Normalize existing image URLs
     existingImageUrls.forEach((img) => {
       const normalized =
-        img.startsWith('http') ? img : `http://localhost:5000/uploads/${img.split('\\').pop()}`;
+        img.startsWith('http') ? img : `https://talentdeck-kappa.vercel.app/uploads/${img.split('\\').pop()}`;
       newPreviews.push(normalized);
     });
 

@@ -32,7 +32,7 @@ export const ProfilePhotoUpload = ({
       // Normalize path to valid URL
       const normalizedPath = existingImageUrl.startsWith('http')
         ? existingImageUrl
-        : `http://localhost:5000/uploads/${existingImageUrl.split('\\').pop()}`;
+        : `https://talentdeck-kappa.vercel.app/uploads/${existingImageUrl.split('\\').pop()}`;
       setPreviewUrl(normalizedPath);
     } else {
       setPreviewUrl(null);
