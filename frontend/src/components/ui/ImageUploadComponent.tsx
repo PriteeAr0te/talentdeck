@@ -21,29 +21,25 @@ const ImageUploadComponent = ({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:5000';
+
   useEffect(() => {
     const newPreviews: string[] = [];
 
-    // Normalize existing image URLs
     existingImageUrls.forEach((img) => {
-      const normalized =
-        img.startsWith('http') ? img : `https://talentdeck-kappa.vercel.app/uploads/${img.split('\\').pop()}`;
+      const normalized = img.startsWith('http') ? img : `${baseUrl}/uploads/${img.split('\\').pop()}`;
       newPreviews.push(normalized);
     });
 
-    value.forEach((file) => {
-      const url = URL.createObjectURL(file);
-      newPreviews.push(url);
-    });
+    const fileUrls = value.map((file) => URL.createObjectURL(file));
+    newPreviews.push(...fileUrls);
 
     setPreviewUrls(newPreviews);
 
     return () => {
-      value.forEach((file) => {
-        if (file instanceof File) URL.revokeObjectURL(URL.createObjectURL(file));
-      });
+      fileUrls.forEach((url) => URL.revokeObjectURL(url));
     };
-  }, [value, existingImageUrls]);
+  }, [value, existingImageUrls, baseUrl]);
 
   const handleFiles = (e: ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
@@ -57,7 +53,7 @@ const ImageUploadComponent = ({
     const existingCount = existingImageUrls.length;
 
     if (index < existingCount) {
-      return; // Can't remove server images here
+      return;
     } else {
       newFiles.splice(index - existingCount, 1);
       onChange(newFiles);
@@ -101,6 +97,7 @@ const ImageUploadComponent = ({
                 alt={`Preview ${idx}`}
                 fill
                 className="object-cover rounded"
+                unoptimized
               />
               <button
                 type="button"

@@ -1,4 +1,4 @@
-import React, { TextareaHTMLAttributes, useState, ForwardedRef } from "react";
+import React, { TextareaHTMLAttributes, useState } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 interface TextareaComponentProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {

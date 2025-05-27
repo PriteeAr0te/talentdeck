@@ -50,6 +50,7 @@ export const baseProfileSchema = z.object({
       z.object({
         label: z.string().min(2, "Label is required."),
         url: urlSchema,
+        isVisible: z.boolean().optional(),
       })
     )
     .optional(),

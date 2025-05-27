@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+
   images: {
     remotePatterns: [
       {
@@ -11,7 +12,12 @@ const nextConfig: NextConfig = {
         pathname: "/uploads/**",
       },
     ],
+    domains: [
+      "images.unsplash.com",
+      "talentdeck-kappa.vercel.app",
+    ],
   },
+
   async rewrites() {
     return [
       {

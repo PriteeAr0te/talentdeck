@@ -12,6 +12,16 @@ import { Slide, ToastContainer, toast } from "react-toastify";
 
 type LoginFormValues = z.infer<typeof loginUserSchema>;
 
+type ErrorWithResponse = {
+    response?: {
+      status?: number;
+      data?: {
+        message?: string;
+      };
+    };
+  };
+  
+
 const Login = () => {
 
     const {
@@ -48,12 +58,13 @@ const Login = () => {
                 toast.success("Login Successful!");
             }, 5000);
 
-        } catch (err: any) {
-            const status = err.response?.status;
-            const message = err.response?.data?.message || "Login failed. Please try again.";
+        } catch (err: unknown) {
+            const error = err as ErrorWithResponse;
+            const status = error.response?.status;
+            const message = error.response?.data?.message || "Login failed. Please try again.";
 
             if (status === 400) {
-                setError(message); // Zod errors
+                setError(message);
             } else if (status === 404) {
                 setError("No account found with this email.");
             } else if (status === 401) {

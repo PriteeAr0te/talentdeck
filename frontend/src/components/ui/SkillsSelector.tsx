@@ -1,8 +1,13 @@
-import React, { useState } from "react";
-import { UseFormSetValue, UseFormWatch, Control, Path, PathValue } from "react-hook-form";
-import { CreateProfileSchema } from "@/lib/validators/profileValidators";
+import { useState } from "react";
+import {
+  UseFormSetValue,
+  UseFormWatch,
+  Control,
+  Path,
+  PathValue,
+} from "react-hook-form";
 
-interface SkillsSelectorProps<T extends Record<string, any>> {
+interface SkillsSelectorProps<T extends Record<string, unknown>> {
   name: Path<T>;
   setValue: UseFormSetValue<T>;
   watch: UseFormWatch<T>;
@@ -10,7 +15,7 @@ interface SkillsSelectorProps<T extends Record<string, any>> {
   control: Control<T>;
 }
 
-function SkillsSelector<T extends Record<string, any>>({
+function SkillsSelector<T extends Record<string, unknown>>({
   name,
   setValue,
   watch,
@@ -29,14 +34,18 @@ function SkillsSelector<T extends Record<string, any>>({
       skills.length < 10
     ) {
       const updated = [...skills, trimmed];
-      setValue(name, updated as PathValue<T, Path<T>>, { shouldValidate: true });
+      setValue(name, updated as PathValue<T, typeof name>, {
+        shouldValidate: true,
+      });
     }
     setInputValue("");
   };
 
   const handleRemoveSkill = (skill: string) => {
     const updated = skills.filter((s) => s !== skill);
-    setValue(name, updated as PathValue<T, Path<T>>, { shouldValidate: true });
+    setValue(name, updated as PathValue<T, typeof name>, {
+      shouldValidate: true,
+    });
   };
 
   return (

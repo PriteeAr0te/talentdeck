@@ -13,6 +13,13 @@ import { useRouter } from "next/router";
 
 type RegisterFormValues = z.infer<typeof registerUserSchema>;
 
+type ErrorWithResponse = {
+    response?: {
+      data?: {
+        message?: string;
+      };
+    };
+  };  
 
 const Register = () => {
     const router = useRouter();
@@ -31,7 +38,8 @@ const Register = () => {
             toast.success("Registration successful");
             router.push("/login");
 
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const error = err as ErrorWithResponse
             setServerError(error.response?.data?.message || "Something went wrong.");
         }
     }

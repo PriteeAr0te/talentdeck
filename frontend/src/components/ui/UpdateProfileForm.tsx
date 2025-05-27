@@ -1,25 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
+import React, { useState } from "react";
+import { useForm, useFieldArray, SubmitHandler, FieldErrors, UseFormRegister } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateProfileSchema, UpdateProfileSchema, updateProfileSchema } from "@/lib/validators/profileValidators";
+import {
+  CreateProfileSchema,
+  UpdateProfileSchema,
+  updateProfileSchema,
+} from "@/lib/validators/profileValidators";
 import InputComponent from "@/components/ui/InputComponent";
 import TextareaComponent from "@/components/ui/TextareaComponent";
 import AddressSelector from "@/components/ui/AddressSelector";
 import ImageUploadComponent from "@/components/ui/ImageUploadComponent";
-import DynamicLinksComponent from "@/components/ui/DynamicLinksComponent";
+import { DynamicLinksComponent } from "@/components/ui/DynamicLinksComponent";
 import SkillsSelector from "@/components/ui/SkillsSelector";
 import DropdownComponent from "@/components/ui/DropdownComponent";
 import { ProfilePhotoUpload } from "@/components/ui/ProfilePhotoUpload";
 import { Slide, toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/router";
 import API from "@/lib/api";
+import { AxiosError } from "axios";
 
 interface UpdateProfileFormProps {
   defaultValues: UpdateProfileSchema;
   existingProfilePictureUrl?: string;
   existingProjectImageUrls?: string[];
-  // profileId: string;
 }
+
+
 export const CATEGORY_OPTIONS: CreateProfileSchema["category"][] = [
   "Graphic Designer",
   "UI/UX Designer",
@@ -29,8 +35,29 @@ export const CATEGORY_OPTIONS: CreateProfileSchema["category"][] = [
   "Other",
 ];
 
+// type LinkFieldError = {
+//   label?: FieldError;
+//   url?: FieldError;
+// };
 
-const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, existingProfilePictureUrl, existingProjectImageUrls }) => {
+// function mapLinkErrors(
+//   errors: FieldErrors<UpdateProfileSchema>,
+//   key: "socialLinks" | "portfolioLinks"
+// ): LinkFieldError[] {
+//   const linkErrors = errors[key];
+//   if (!Array.isArray(linkErrors)) return [];
+//   return linkErrors.map((fieldError) => ({
+//     label: fieldError?.label as FieldError | undefined,
+//     url: fieldError?.url as FieldError | undefined,
+//   }));
+// }
+
+
+const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
+  defaultValues,
+  existingProfilePictureUrl,
+  existingProjectImageUrls,
+}) => {
   const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
   const [projectImagesFiles, setProjectImagesFiles] = useState<File[]>([]);
   const [error, setError] = useState<string>("");
@@ -42,7 +69,6 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, ex
     control,
     setValue,
     watch,
-    reset,
     formState: { errors },
   } = useForm<UpdateProfileSchema>({
     resolver: zodResolver(updateProfileSchema),
@@ -58,6 +84,14 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, ex
     control,
     name: "portfolioLinks",
   });
+
+  const isAxiosError = (error: unknown): error is AxiosError<{
+    error?: {
+      fieldErrors?: Partial<Record<keyof UpdateProfileSchema, string[]>>;
+    };
+  }> => {
+    return typeof error === "object" && error !== null && "isAxiosError" in error;
+  };
 
   const onSubmit: SubmitHandler<UpdateProfileSchema> = async (data) => {
     try {
@@ -95,13 +129,20 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, ex
       } else {
         throw new Error("Unexpected response from server");
       }
-    } catch (err: any) {
-      const status = err.response?.status;
-      const fieldErrors = err.response?.data?.error?.fieldErrors;
-      if (status === 400 && fieldErrors) {
-        if (fieldErrors.profilePicture) setError(fieldErrors.profilePicture[0]);
-        else if (fieldErrors.projectImages) setError(fieldErrors.projectImages[0]);
-        else setError("Invalid form data.");
+    } catch (err: unknown) {
+      if (isAxiosError(err)) {
+        const status = err.response?.status;
+        const fieldErrors = err.response?.data?.error?.fieldErrors as Partial<
+          Record<keyof UpdateProfileSchema, string[]>
+        > | undefined;
+
+        if (status === 400 && fieldErrors) {
+          if (fieldErrors.profilePicture) setError(fieldErrors.profilePicture[0]);
+          else if (fieldErrors.projectImages) setError(fieldErrors.projectImages[0]);
+          else setError("Invalid form data.");
+        } else {
+          setError("Something went wrong. Please try again.");
+        }
       } else {
         setError("Something went wrong. Please try again.");
       }
@@ -109,11 +150,13 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, ex
     }
   };
 
-
   return (
     <>
       <ToastContainer position="top-right" transition={Slide} className="z-50" autoClose={6000} />
-      <form onSubmit={handleSubmit(onSubmit)} className="max-w-6xl mx-auto p-6 bg-white dark:bg-[#0A0011] rounded-xl space-y-10">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="max-w-6xl mx-auto p-6 bg-white dark:bg-[#0A0011] rounded-xl space-y-10"
+      >
         <fieldset>
           <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
             <div>
@@ -121,19 +164,34 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, ex
               <p className="text-sm text-gray-500 mt-1">Let us know who you are and what you do.</p>
             </div>
             <div className="space-y-4">
-              <InputComponent label="Username" id="username" registration={register("username")} error={errors.username?.message} />
-              <InputComponent label="Headline" id="headline" registration={register("headline")} error={errors.headline?.message} />
-              <TextareaComponent label="Bio" id="bio" registration={register("bio")} error={errors.bio?.message} rows={5} placeholder="Tell us about yourself" />
-              <DropdownComponent
+              <InputComponent
+                label="Username"
+                id="username"
+                registration={register("username")}
+                error={errors.username?.message}
+              />
+              <InputComponent
+                label="Headline"
+                id="headline"
+                registration={register("headline")}
+                error={errors.headline?.message}
+              />
+              <TextareaComponent
+                label="Bio"
+                id="bio"
+                registration={register("bio")}
+                error={errors.bio?.message}
+                rows={5}
+                placeholder="Tell us about yourself"
+              />
+              <DropdownComponent<Partial<CreateProfileSchema>>
                 name="category"
                 label="Category"
-                registration={register("category")}
-                options={CATEGORY_OPTIONS}
                 setValue={setValue}
                 watch={watch}
+                options={CATEGORY_OPTIONS}
                 error={errors.category?.message}
               />
-
             </div>
           </div>
         </fieldset>
@@ -142,17 +200,16 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, ex
           <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
             <div>
               <h2 className="text-lg font-semibold text-gray-900">Skills & Location</h2>
-              <p className="text-sm text-gray-500 mt-1">Highlight your strongest areas and where you're based.</p>
+              <p className="text-sm text-gray-500 mt-1">Highlight your strongest areas and where you&apos;re based.</p>
             </div>
             <div className="space-y-4">
-              <SkillsSelector
+              <SkillsSelector<Partial<CreateProfileSchema>>
                 control={control}
                 name="skills"
                 error={errors.skills?.message}
                 setValue={setValue}
                 watch={watch}
               />
-
               <AddressSelector register={register} errors={errors} />
             </div>
           </div>
@@ -166,11 +223,21 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, ex
             </div>
             <div className="flex gap-6 items-center">
               <label className="flex items-center space-x-2">
-                <input type="checkbox" checked={watch("availableforwork")} onChange={(e) => setValue("availableforwork", e.target.checked)} className="form-checkbox h-5 w-5 bg-primary text-primary" />
+                <input
+                  type="checkbox"
+                  checked={watch("availableforwork")}
+                  onChange={(e) => setValue("availableforwork", e.target.checked)}
+                  className="form-checkbox h-5 w-5 bg-primary text-primary"
+                />
                 <span className="text-sm text-gray-700">Available for Work</span>
               </label>
               <label className="flex items-center space-x-2">
-                <input type="checkbox" checked={watch("isVisible")} onChange={(e) => setValue("isVisible", e.target.checked)} className="form-checkbox h-5 w-5 bg-primary text-primary" />
+                <input
+                  type="checkbox"
+                  checked={watch("isVisible")}
+                  onChange={(e) => setValue("isVisible", e.target.checked)}
+                  className="form-checkbox h-5 w-5 bg-primary text-primary"
+                />
                 <span className="text-sm text-gray-700">Public Profile</span>
               </label>
             </div>
@@ -184,14 +251,12 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, ex
               <p className="text-sm text-gray-500 mt-1">Upload a clear and professional profile picture.</p>
             </div>
             <div>
-
               <ProfilePhotoUpload
-                value={profilePicFile} // File | null
+                value={profilePicFile}
                 onChange={(file) => setProfilePicFile(file)}
                 existingImageUrl={existingProfilePictureUrl}
                 error={errors.profilePicture?.message}
               />
-
             </div>
           </div>
         </fieldset>
@@ -204,9 +269,9 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, ex
             </div>
             <div>
               <ImageUploadComponent
-                value={projectImagesFiles} // File[]
-                onChange={setProjectImagesFiles} // (files: File[]) => void
-                existingImageUrls={existingProjectImageUrls} // optional
+                value={projectImagesFiles}
+                onChange={setProjectImagesFiles}
+                existingImageUrls={existingProjectImageUrls}
                 error={error}
               />
             </div>
@@ -220,7 +285,17 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, ex
               <p className="text-sm text-gray-500 mt-1">Help people connect with you across platforms.</p>
             </div>
             <div>
-              <DynamicLinksComponent fields={socialFields} append={appendSocial} remove={removeSocial} name="socialLinks" control={control} errors={errors.socialLinks as any} label="Social Links" register={register} />
+              <DynamicLinksComponent
+                fields={socialFields}
+                append={() => appendSocial({ label: "", url: "" })}
+                remove={removeSocial}
+                name="socialLinks"
+                register={register as unknown as UseFormRegister<CreateProfileSchema>}
+                errors={errors as FieldErrors<CreateProfileSchema>}
+                label="Social Links"
+              />
+
+
             </div>
           </div>
         </fieldset>
@@ -232,13 +307,25 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({ defaultValues, ex
               <p className="text-sm text-gray-500 mt-1">Share your portfolio or relevant links.</p>
             </div>
             <div>
-              <DynamicLinksComponent fields={portfolioFields} append={appendPortfolio} remove={removePortfolio} name="portfolioLinks" control={control} errors={errors.portfolioLinks as any} label="Portfolio Links" register={register} />
+              <DynamicLinksComponent
+                fields={portfolioFields}
+                append={() => appendPortfolio({ label: "", url: "" })}
+                remove={removePortfolio}
+                name="portfolioLinks"
+                register={register as unknown as UseFormRegister<CreateProfileSchema>}
+                errors={errors as FieldErrors<CreateProfileSchema>}
+                label="Portfolio Links"
+              />
+
             </div>
           </div>
         </fieldset>
 
         <div className="flex justify-end">
-          <button type="submit" className="mt-6 px-6 bg-primary text-white py-2 w-fit rounded-lg hover:bg-primary-dark cursor-pointer hover:bg-secondary focus:outline-none focus:border-0">
+          <button
+            type="submit"
+            className="mt-6 px-6 bg-primary text-white py-2 w-fit rounded-lg hover:bg-primary-dark cursor-pointer hover:bg-secondary focus:outline-none focus:border-0"
+          >
             Update Profile
           </button>
         </div>

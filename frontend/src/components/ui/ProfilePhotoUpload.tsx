@@ -22,6 +22,7 @@ export const ProfilePhotoUpload = ({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { user } = useAuth();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  
 
   useEffect(() => {
     if (value instanceof File) {
@@ -61,6 +62,7 @@ export const ProfilePhotoUpload = ({
                 alt="Profile"
                 fill
                 className="object-cover"
+                unoptimized
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">

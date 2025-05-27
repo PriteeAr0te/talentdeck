@@ -8,7 +8,7 @@ interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const InputComponent = React.forwardRef<HTMLInputElement, InputComponentProps>(
-  ({ label, error, registration, ...props }, ref) => {
+  ({ label, error, registration, ...props }) => {
     return (
       <div className="mb-4 w-full">
         {label && (

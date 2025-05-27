@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
+import Image from 'next/image';
+import ProfileImg from '../../../public/img/profile.png'
 
 const Header: React.FC = () => {
   const [darkMode, setDarkMode] = useState<boolean>(false);
@@ -25,8 +27,10 @@ const Header: React.FC = () => {
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 flex items-center">
-            <img
+            <Image
               className="h-8 w-auto"
+              width={200}
+              height={60}
               src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
               alt="TalentDeck Logo"
             />
@@ -62,34 +66,35 @@ const Header: React.FC = () => {
                 className="relative group"
               >
                 <summary className="cursor-pointer flex items-center list-none focus:outline-none">
-                  <img
+                  <Image
                     className="h-8 w-8 rounded-full"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"
+                    width={60}
+                    height={60}
+                    src={ProfileImg}
                     alt="Profile"
                   />
                 </summary>
 
                 <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-100 dark:border-gray-700">
-                  {isProfileCreated ?
-                    (
-                      <Link href={`/${user.username}`}>
-                        <span
-                          onClick={handleClose}
-                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
-                        >
-                          My Profile
-                        </span>
-                      </Link>
-                    ) : (
-                      <Link href="/profile/create">
-                        <span
-                          onClick={handleClose}
-                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
-                        >
-                          Create Profile
-                        </span>
-                      </Link>
-                    )}
+                  {isProfileCreated && user?.username ? (
+                    <Link href={`/${user.username}`}>
+                      <span
+                        onClick={handleClose}
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
+                      >
+                        My Profile
+                      </span>
+                    </Link>
+                  ) : (
+                    <Link href="/profile/create">
+                      <span
+                        onClick={handleClose}
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
+                      >
+                        Create Profile
+                      </span>
+                    </Link>
+                  )}
                   <Link href="/profile/edit">
                     <span
                       onClick={handleClose}

@@ -1,25 +1,55 @@
-import React, { useReducer, useState } from "react";
-import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
+import React, { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProfileSchema, CreateProfileSchema } from "@/lib/validators/profileValidators";
 import InputComponent from "@/components/ui/InputComponent";
 import TextareaComponent from "@/components/ui/TextareaComponent";
 import AddressSelector from "@/components/ui/AddressSelector";
 import ImageUploadComponent from "@/components/ui/ImageUploadComponent";
-import DynamicLinksComponent from "@/components/ui/DynamicLinksComponent";
+import { DynamicLinksComponent } from "@/components/ui/DynamicLinksComponent";
 import SkillsSelector from "@/components/ui/SkillsSelector";
-import DropdownComponent from "../ui/DropdownComponent";
-import { ProfilePhotoUpload } from "../ui/ProfilePhotoUpload";
+import DropdownComponent from "@/components/ui/DropdownComponent";
+import { ProfilePhotoUpload } from "@/components/ui/ProfilePhotoUpload";
+import TagsSelector from "@/components/ui/TagsSelector";
+
 import { useRouter } from "next/router";
 import { Slide, toast, ToastContainer } from "react-toastify";
 import API from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 
+const CATEGORY_OPTIONS = [
+    "Graphic Designer",
+    "UI/UX Designer",
+    "Software Developer",
+    "Content Creator",
+    "Video Editor",
+    "Other",
+];
+
+// type LinkFieldError = {
+//     label?: FieldError;
+//     url?: FieldError;
+// };
+
+// function mapLinkErrors(
+//     errors: FieldErrors<CreateProfileSchema>,
+//     key: "socialLinks" | "portfolioLinks"
+// ): LinkFieldError[] {
+//     const linkErrors = errors[key];
+//     if (!Array.isArray(linkErrors)) return [];
+//     return linkErrors.map((fieldError) => ({
+//         label: fieldError?.label,
+//         url: fieldError?.url,
+//     }));
+// }
+
 const CreateProfileForm: React.FC = () => {
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
     const [projectImagesFiles, setProjectImagesFiles] = useState<File[]>([]);
-    const [error, setError] = useState<string>("");
+    const [uploadError, setUploadError] = useState("");
+
     const { setIsProfileCreated } = useAuth();
+    const router = useRouter();
 
     const {
         register,
@@ -30,31 +60,29 @@ const CreateProfileForm: React.FC = () => {
         reset,
         formState: { errors },
     } = useForm<CreateProfileSchema>({
-        resolver: zodResolver(createProfileSchema) as any,
+        resolver: zodResolver(createProfileSchema),
         defaultValues: {
             skills: [],
-            socialLinks: [{ label: '', url: '' }],
-            portfolioLinks: [{ label: '', url: '' }],
+            socialLinks: [{ label: "", url: "" }],
+            portfolioLinks: [{ label: "", url: "" }],
             availableforwork: false,
             isVisible: true,
         },
     });
 
-    const { fields: socialFields, append: appendSocial, remove: removeSocial } = useFieldArray({
+    const { fields: socialFields, append: addSocial, remove: removeSocial } = useFieldArray({
         control,
         name: "socialLinks",
     });
 
-    const { fields: portfolioFields, append: appendPortfolio, remove: removePortfolio } = useFieldArray({
+    const { fields: portfolioFields, append: addPortfolio, remove: removePortfolio } = useFieldArray({
         control,
         name: "portfolioLinks",
     });
 
-    const router = useRouter();
-
-    const onSubmit: SubmitHandler<CreateProfileSchema> = async (data: CreateProfileSchema) => {
+    const onSubmit = async (data: CreateProfileSchema) => {
         try {
-            setError("");
+            setUploadError("");
             const formData = new FormData();
 
             formData.append("username", data.username);
@@ -65,180 +93,97 @@ const CreateProfileForm: React.FC = () => {
             formData.append("skills", JSON.stringify(data.skills));
             formData.append("availableforwork", String(data.availableforwork));
             formData.append("isVisible", String(data.isVisible));
-            formData.append("portfolioLinks", JSON.stringify(data.portfolioLinks));
             formData.append("socialLinks", JSON.stringify(data.socialLinks));
+            formData.append("portfolioLinks", JSON.stringify(data.portfolioLinks));
 
-            if (profilePicFile) {
-                formData.append("profilePicture", profilePicFile);
-            }
+            if (profilePicFile) formData.append("profilePicture", profilePicFile);
+            projectImagesFiles.forEach(file => formData.append("projectImages", file));
 
-            if (projectImagesFiles && projectImagesFiles.length > 0) {
-                projectImagesFiles.forEach((file) => {
-                    formData.append("projectImages", file);
-                });
-            }
-
-            const response = await API.post("/profile", formData, {
+            const res = await API.post("/profile", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            if (response.data.isProfileCreated || response.status === 201) {
+            if (res.status === 201 || res.data?.isProfileCreated) {
+                toast.success("Profile created successfully!");
                 setIsProfileCreated(true);
+                reset();
+                setProfilePicFile(null);
+                setProjectImagesFiles([]);
+                router.push("/");
             }
-
-            toast.success("Profile created successfully!");
-            reset();
-            setProfilePicFile(null);
-            setProjectImagesFiles([]);
-            router.push("/");
-
-        } catch (err: any) {
-            const status = err.response?.status;
-            const fieldErrors = err.response?.data?.error?.fieldErrors;
-            if (status === 400 && fieldErrors) {
-                if (fieldErrors.profilePicture) setError(fieldErrors.profilePicture[0]);
-                else if (fieldErrors.projectImages) setError(fieldErrors.projectImages[0]);
-                else setError("Invalid form data.");
-            } else {
-                setError("Something went wrong. Please try again.");
-            }
-
-            console.warn("Submit error:", err);
+        } catch (err) {
+            console.log("Error creating profile:", err);
+            toast.error("Something went wrong. Please try again.");
         }
-    };
-
-    const onError = (errors: any) => {
-        console.log("Form Validation Errors", errors);
     };
 
     return (
         <>
-            <ToastContainer position="top-right" transition={Slide} className="z-50" autoClose={6000} />
-            <form onSubmit={handleSubmit(onSubmit, onError)} className="max-w-6xl mx-auto p-6 bg-white dark:bg-[#0A0011] rounded-xl space-y-10">
+            <ToastContainer position="top-right" autoClose={5000} transition={Slide} />
+            <form onSubmit={handleSubmit(onSubmit)} className="max-w-6xl mx-auto p-6 space-y-10 bg-white dark:bg-[#0A0011] rounded-xl">
 
-                <fieldset>
-                    <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-900">Basic Information</h2>
-                            <p className="text-sm text-gray-500 mt-1">Let us know who you are and what you do.</p>
-                        </div>
-                        <div className="space-y-4">
-                            <InputComponent label="Username" id="username" registration={register("username")} error={errors.username?.message} />
-                            <InputComponent label="Headline" id="headline" registration={register("headline")} error={errors.headline?.message} />
-                            <TextareaComponent
-                                label="Bio"
-                                id="bio"
-                                registration={register("bio")}
-                                error={errors.bio?.message}
-                                placeholder="Tell us about yourself"
-                                rows={5}
-                            />
+                {/* Basic Info */}
+                <Section title="Basic Information" desc="Let us know who you are and what you do.">
+                    <InputComponent label="Username" id="username" registration={register("username")} error={errors.username?.message} />
+                    <InputComponent label="Headline" id="headline" registration={register("headline")} error={errors.headline?.message} />
+                    <TextareaComponent label="Bio" id="bio" registration={register("bio")} error={errors.bio?.message} placeholder="Tell us about yourself" />
+                    <DropdownComponent
+                        name="category"
+                        label="Category"
+                        options={CATEGORY_OPTIONS}
+                        setValue={setValue}
+                        watch={watch}
+                        error={errors.category?.message}
+                    />
+                </Section>
 
-                            <DropdownComponent name="category" label="Select Category" registration={register("category")} options={["Graphic Designer", "UI/UX Designer", "Software Developer", "Content Creator", "Video Editor", "Other"]} setValue={setValue} error={errors.category?.message} />
-                        </div>
-                    </div>
-                </fieldset>
+                {/* Skills & Location */}
+                <Section title="Skills & Location" desc="Highlight your strongest areas and where you’re based.">
+                    <SkillsSelector name="skills" control={control} setValue={setValue} watch={watch} error={errors.skills?.message} />
+                    <TagsSelector name="tags" setValue={setValue} watch={watch} error={errors.tags?.message} />
+                    <AddressSelector register={register} errors={errors} />
+                </Section>
 
-                <fieldset>
-                    <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-900">Skills & Location</h2>
-                            <p className="text-sm text-gray-500 mt-1">Highlight your strongest areas and where you're based.</p>
-                        </div>
-                        <div className="space-y-4">
-                            <SkillsSelector
-                                control={control}
-                                name="skills"
-                                error={errors.skills?.message}
-                                setValue={setValue}
-                                watch={watch}
-                            />
+                <Section title="Profile Preferences" desc="Control visibility and availability.">
+                    <CheckboxField label="Available for Work" checked={watch("availableforwork") ?? false} onChange={(val) => setValue("availableforwork", val)} />
+                    <CheckboxField label="Public Profile" checked={watch("isVisible") ?? true} onChange={(val) => setValue("isVisible", val)} />
+                </Section>
 
-                            <AddressSelector register={register} errors={errors} />
-                        </div>
-                    </div>
-                </fieldset>
+                <Section title="Profile Image" desc="Upload a clear and professional profile picture.">
+                    <ProfilePhotoUpload value={profilePicFile} onChange={setProfilePicFile} error={errors.profilePicture?.message} />
+                </Section>
 
-                <fieldset>
-                    <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-900">Profile Preferences</h2>
-                            <p className="text-sm text-gray-500 mt-1">Control visibility and availability.</p>
-                        </div>
-                        <div className="flex gap-6 items-center">
-                            <label className="flex items-center space-x-2">
-                                <input type="checkbox" checked={watch("availableforwork") || false} onChange={(e) => setValue("availableforwork", e.target.checked)} className="form-checkbox h-5 w-5 bg-primary text-primary" />
-                                <span className="text-sm text-gray-700">Available for Work</span>
-                            </label>
-                            <label className="flex items-center space-x-2">
-                                <input type="checkbox" checked={watch("isVisible") || false} onChange={(e) => setValue("isVisible", e.target.checked)} className="form-checkbox h-5 w-5 bg-primary text-primary" />
-                                <span className="text-sm text-gray-700">Public Profile</span>
-                            </label>
-                        </div>
-                    </div>
-                </fieldset>
+                <Section title="Project Images" desc="Showcase your best work.">
+                    <ImageUploadComponent value={projectImagesFiles} onChange={setProjectImagesFiles} error={uploadError} />
+                </Section>
 
-                <fieldset>
-                    <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-900">Profile Image</h2>
-                            <p className="text-sm text-gray-500 mt-1">Upload a clear and professional profile picture.</p>
-                        </div>
-                        <div>
+                <Section title="Social Links" desc="Help people connect with you across platforms.">
+                    <DynamicLinksComponent
+                        name="socialLinks"
+                        fields={socialFields}
+                        register={register}
+                        errors={errors}
+                        append={addSocial}
+                        remove={removeSocial}
+                        label="Social Links"
+                    />
+                </Section>
 
-                            <ProfilePhotoUpload
-                                value={profilePicFile}
-                                onChange={(file) => setProfilePicFile(file)}
-                                error={errors.profilePicture?.message}
-                            />
+                <Section title="Portfolio Links" desc="Share your portfolio or relevant links.">
+                    <DynamicLinksComponent
+                        name="portfolioLinks"
+                        fields={portfolioFields}
+                        register={register}
+                        errors={errors}
+                        append={addPortfolio}
+                        remove={removePortfolio}
+                        label="Portfolio Links"
+                    />
+                </Section>
 
-                        </div>
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-900">Project Images</h2>
-                            <p className="text-sm text-gray-500 mt-1">Showcase your best work.</p>
-                        </div>
-                        <div>
-
-                            <ImageUploadComponent
-                                value={projectImagesFiles}
-                                onChange={(files) => setProjectImagesFiles(files)}
-                                error={error}
-                            />
-                        </div>
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-900">Social Links</h2>
-                            <p className="text-sm text-gray-500 mt-1">Help people connect with you across platforms.</p>
-                        </div>
-                        <div>
-                            <DynamicLinksComponent fields={socialFields} append={appendSocial} remove={removeSocial} name="socialLinks" control={control} errors={errors.socialLinks as any} label="Social Links" register={register} />
-                        </div>
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6">
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-900">Portfolio Links</h2>
-                            <p className="text-sm text-gray-500 mt-1">Share your portfolio or relevant links.</p>
-                        </div>
-                        <div>
-                            <DynamicLinksComponent fields={portfolioFields} append={appendPortfolio} remove={removePortfolio} name="portfolioLinks" control={control} errors={errors.portfolioLinks as any} label="Portfolio Links" register={register} />
-                        </div>
-                    </div>
-                </fieldset>
-
+                {/* Submit */}
                 <div className="flex justify-end">
-                    <button type="submit" className="mt-6 px-6 bg-primary text-white py-2 w-fit rounded-lg hover:bg-primary-dark cursor-pointer hover:bg-secondary focus:outline-none focus:border-0">
+                    <button type="submit" className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-secondary">
                         Create Profile
                     </button>
                 </div>
@@ -248,3 +193,27 @@ const CreateProfileForm: React.FC = () => {
 };
 
 export default CreateProfileForm;
+
+const Section = ({ title, desc, children }: { title: string; desc: string; children: React.ReactNode }) => (
+    <fieldset>
+        <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
+            <div>
+                <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+                <p className="text-sm text-gray-500 mt-1">{desc}</p>
+            </div>
+            <div className="space-y-4">{children}</div>
+        </div>
+    </fieldset>
+);
+
+const CheckboxField = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: (val: boolean) => void }) => (
+    <label className="flex items-center space-x-2">
+        <input
+            type="checkbox"
+            checked={checked}
+            onChange={(e) => onChange(e.target.checked)}
+            className="form-checkbox h-5 w-5 text-primary"
+        />
+        <span className="text-sm text-gray-700">{label}</span>
+    </label>
+);

@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import UpdateProfileForm from '@/components/ui/UpdateProfileForm';
 import { ProfileType } from '@/types/profile';
 import { UpdateProfileSchema } from '@/lib/validators/profileValidators';
+import { AxiosError } from 'axios';
 
 export const mapProfileToFormValues = (profile: ProfileType): UpdateProfileSchema & {
   existingProfilePictureUrl?: string;
@@ -40,7 +41,7 @@ export const mapProfileToFormValues = (profile: ProfileType): UpdateProfileSchem
 };
 
 const EditProfile: React.FC = () => {
-  const { isLoggedIn, user, loading } = useAuth();
+  const { isLoggedIn, loading } = useAuth();
   const router = useRouter();
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [profile, setProfile] = useState<UpdateProfileSchema | null>(null);
@@ -72,8 +73,9 @@ const EditProfile: React.FC = () => {
         if (response.data.projectImages?.length) {
           setExistingProjectImageUrls(response.data.projectImages);
         }
-      } catch (err: any) {
-        if (err.response?.status === 404) {
+      } catch (err: unknown) {
+        const error = err as AxiosError<{ messege: string }>
+        if (error.response?.status === 404) {
           router.push('/profile/create');
         } else {
           toast.error('Failed to fetch profile.');
@@ -84,7 +86,7 @@ const EditProfile: React.FC = () => {
     };
 
     fetchProfile();
-  }, [isLoggedIn, loading, router]);
+  }, [isLoggedIn, loading]);
 
   return (
     <main className="dark:bg-[#0A0011] bg-white min-h-screen">
@@ -96,7 +98,6 @@ const EditProfile: React.FC = () => {
         ) : profile ? (
           <UpdateProfileForm
             defaultValues={profile}
-            // profileId={profileId}
             existingProfilePictureUrl={existingProfilePictureUrl || ''}
             existingProjectImageUrls={existingProjectImageUrls}
           />

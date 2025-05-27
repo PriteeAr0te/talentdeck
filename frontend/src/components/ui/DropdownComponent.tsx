@@ -2,48 +2,42 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  Control,
   Path,
   PathValue,
-  UseFormRegister,
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
-import { CreateProfileSchema } from "@/lib/validators/profileValidators";
 
-interface DropdownComponentProps<T extends Record<string, any>> {
+// ✅ 1. Add a generic type with constraint Record<string, any>
+interface DropdownComponentProps<T extends Record<string, unknown>> {
   name: Path<T>;
   label?: string;
-  registration: ReturnType<UseFormRegister<CreateProfileSchema>>;
   setValue: UseFormSetValue<T>;
   watch?: UseFormWatch<T>;
-  options: CreateProfileSchema["category"][];
+  options: string[];
   error?: string;
 }
 
-const DropdownComponent = <T extends Record<string, any>>({
+function DropdownComponent<T extends Record<string, unknown>>({
   name,
   label,
   setValue,
-  registration,
   watch,
   options,
   error,
-}: DropdownComponentProps<T>) => {
+}: DropdownComponentProps<T>) {
   const [selected, setSelected] = useState<string>("Select a category");
   const detailsRef = useRef<HTMLDetailsElement | null>(null);
 
-  // Watch for edit form value changes
   useEffect(() => {
     if (watch) {
-      const currentValue = watch(name);
-      if (currentValue && typeof currentValue === "string") {
-        setSelected(currentValue);
+      const value = watch(name);
+      if (typeof value === "string") {
+        setSelected(value);
       }
     }
   }, [watch, name]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (detailsRef.current && !detailsRef.current.contains(e.target as Node)) {
@@ -56,7 +50,7 @@ const DropdownComponent = <T extends Record<string, any>>({
 
   const handleSelect = (option: string) => {
     setSelected(option);
-    setValue(name, option as PathValue<T, Path<T>>);
+    setValue(name, option as PathValue<T, typeof name>);
     detailsRef.current?.removeAttribute("open");
   };
 
@@ -72,7 +66,7 @@ const DropdownComponent = <T extends Record<string, any>>({
         ref={detailsRef}
         className="w-full cursor-pointer border border-gray-300 rounded-lg bg-white dark:bg-[#0A0011] relative z-10"
       >
-        <summary {...registration} className="list-none px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0A0011] hover:bg-background-hover rounded-lg dark:hover:bg-[#0A0011]">
+        <summary className="list-none px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0A0011] hover:bg-background-hover rounded-lg dark:hover:bg-[#0A0011]">
           {selected}
         </summary>
 
@@ -80,10 +74,11 @@ const DropdownComponent = <T extends Record<string, any>>({
           {options.map((option) => (
             <li
               key={option}
-              className={`px-4 py-2 text-gray-800 cursor-pointer dark:text-gray-300 ${selected === option
+              className={`px-4 py-2 text-gray-800 cursor-pointer dark:text-gray-300 ${
+                selected === option
                   ? "bg-background-active font-semibold"
                   : "hover:bg-background-hover"
-                }`}
+              }`}
               onClick={() => handleSelect(option)}
             >
               {option}
@@ -95,6 +90,6 @@ const DropdownComponent = <T extends Record<string, any>>({
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   );
-};
+}
 
 export default DropdownComponent;

@@ -16,7 +16,7 @@ const CreateProfile: React.FC = () => {
         } else if(user?.profileCreated) {
             router.push(`/`);
         }
-    }, [isLoggedIn, user, loading, isProfileCreated ]);
+    }, [isLoggedIn, user, loading, isProfileCreated, router ]);
 
     return (
         <main className="dark:bg-[#0A0011] bg-white">
