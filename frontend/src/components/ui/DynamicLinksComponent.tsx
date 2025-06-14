@@ -78,7 +78,7 @@ function DynamicLinksComponent({
             key={field.id}
             className="border border-gray-200 rounded-lg p-4 mb-4 relative"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 me-2">
               <input
                 {...register(`${name}.${index}.label` as Path<CreateProfileSchema>)}
                 placeholder="Label (e.g. GitHub)"
@@ -104,7 +104,7 @@ function DynamicLinksComponent({
             <button
               type="button"
               onClick={() => remove(index)}
-              className="absolute top-2 right-2 text-gray-700 hover:text-red-500 transition"
+              className="absolute top-2 right-2 dark:text-gray-400 text-gray-700 hover:text-red-500 transition"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

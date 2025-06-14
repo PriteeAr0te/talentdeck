@@ -59,7 +59,7 @@ function SkillsSelector<T extends Record<string, unknown>>({
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddSkill())}
           placeholder="Type a skill and press Enter"
-          className="flex-1 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+          className="flex-1 border text-gray-800 dark:text-gray-200 placeholder:text-gray-700 dark:placeholder:text-gray-300 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
         />
         <button
           type="button"
@@ -75,7 +75,7 @@ function SkillsSelector<T extends Record<string, unknown>>({
           {skills.map((skill) => (
             <span
               key={skill}
-              className="flex items-center bg-gray-200 text-sm text-black px-3 py-1 rounded-full"
+              className="flex items-center bg-gray-200 dark:text-gray-800 text-sm text-black px-3 py-1 rounded-full"
             >
               {skill}
               <button

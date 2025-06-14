@@ -52,7 +52,7 @@ export const ProfilePhotoUpload = ({
 
   return (
     <div className="flex flex-col items-start gap-2 w-full">
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium dark:text-gray-200 text-gray-700">{label}</label>
       <div className="flex items-center gap-6">
         <div className="relative w-24 h-24 rounded-full overflow-hidden border border-gray-300 group">
           {previewUrl ? (

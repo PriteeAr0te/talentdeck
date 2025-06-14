@@ -19,7 +19,7 @@ const TextareaComponent = React.forwardRef<HTMLTextAreaElement, TextareaComponen
     return (
       <div className="mb-4 w-full">
         {label && (
-          <label htmlFor={props.id} className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor={props.id} className="block text-sm font-medium dark:text-white text-gray-700 mb-1">
             {label}
           </label>
         )}
@@ -37,7 +37,7 @@ const TextareaComponent = React.forwardRef<HTMLTextAreaElement, TextareaComponen
             handleInput(e as React.ChangeEvent<HTMLTextAreaElement>);
             props.onInput?.(e);
           }}
-          className={`resize-none w-full border rounded-md p-2 text-sm shadow-sm ${
+          className={`resize-none w-full border text-black dark:text-gray-200 rounded-md p-2 text-sm shadow-sm ${
             error ? "border-red-500" : "border-gray-300"
           } focus:outline-none focus:border-primary`}
         />

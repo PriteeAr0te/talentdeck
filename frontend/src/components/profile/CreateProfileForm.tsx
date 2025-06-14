@@ -26,22 +26,6 @@ const CATEGORY_OPTIONS = [
     "Other",
 ];
 
-// type LinkFieldError = {
-//     label?: FieldError;
-//     url?: FieldError;
-// };
-
-// function mapLinkErrors(
-//     errors: FieldErrors<CreateProfileSchema>,
-//     key: "socialLinks" | "portfolioLinks"
-// ): LinkFieldError[] {
-//     const linkErrors = errors[key];
-//     if (!Array.isArray(linkErrors)) return [];
-//     return linkErrors.map((fieldError) => ({
-//         label: fieldError?.label,
-//         url: fieldError?.url,
-//     }));
-// }
 
 const CreateProfileForm: React.FC = () => {
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
@@ -122,7 +106,6 @@ const CreateProfileForm: React.FC = () => {
             <ToastContainer position="top-right" autoClose={5000} transition={Slide} />
             <form onSubmit={handleSubmit(onSubmit)} className="max-w-6xl mx-auto p-6 space-y-10 bg-white dark:bg-[#0A0011] rounded-xl">
 
-                {/* Basic Info */}
                 <Section title="Basic Information" desc="Let us know who you are and what you do.">
                     <InputComponent label="Username" id="username" registration={register("username")} error={errors.username?.message} />
                     <InputComponent label="Headline" id="headline" registration={register("headline")} error={errors.headline?.message} />
@@ -198,8 +181,8 @@ const Section = ({ title, desc, children }: { title: string; desc: string; child
     <fieldset>
         <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
             <div>
-                <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-                <p className="text-sm text-gray-500 mt-1">{desc}</p>
+                <h2 className="text-lg font-semibold dark:text-white text-gray-900">{title}</h2>
+                <p className="text-sm dark:text-gray-400 text-gray-500 mt-1">{desc}</p>
             </div>
             <div className="space-y-4">{children}</div>
         </div>
@@ -214,6 +197,6 @@ const CheckboxField = ({ label, checked, onChange }: { label: string; checked: b
             onChange={(e) => onChange(e.target.checked)}
             className="form-checkbox h-5 w-5 text-primary"
         />
-        <span className="text-sm text-gray-700">{label}</span>
+        <span className="text-sm dark:text-gray-400 text-gray-700">{label}</span>
     </label>
 );

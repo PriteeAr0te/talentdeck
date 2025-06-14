@@ -41,7 +41,8 @@ export const mapProfileToFormValues = (profile: ProfileType): UpdateProfileSchem
 };
 
 const EditProfile: React.FC = () => {
-  const { isLoggedIn, loading } = useAuth();
+  const { isLoggedIn, 
+    loading } = useAuth();
   const router = useRouter();
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [profile, setProfile] = useState<UpdateProfileSchema | null>(null);

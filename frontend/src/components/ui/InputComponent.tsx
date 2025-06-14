@@ -14,7 +14,7 @@ const InputComponent = React.forwardRef<HTMLInputElement, InputComponentProps>(
         {label && (
           <label
             htmlFor={props.id}
-            className="block text-base text-black font-medium mb-1"
+            className="block text-base dark:text-gray-900 text-black font-medium mb-1"
           >
             {label}
           </label>
@@ -24,7 +24,7 @@ const InputComponent = React.forwardRef<HTMLInputElement, InputComponentProps>(
           {...props}
           {...registration}
           className={`w-full border px-3 py-2.5 text-black text-sm rounded-lg focus:outline-none ${
-            error ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:border-primary"
+            error ? "border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-400 focus:border-primary"
           }`}
         />
 

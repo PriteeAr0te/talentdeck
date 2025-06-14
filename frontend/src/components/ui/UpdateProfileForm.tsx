@@ -35,23 +35,6 @@ export const CATEGORY_OPTIONS: CreateProfileSchema["category"][] = [
   "Other",
 ];
 
-// type LinkFieldError = {
-//   label?: FieldError;
-//   url?: FieldError;
-// };
-
-// function mapLinkErrors(
-//   errors: FieldErrors<UpdateProfileSchema>,
-//   key: "socialLinks" | "portfolioLinks"
-// ): LinkFieldError[] {
-//   const linkErrors = errors[key];
-//   if (!Array.isArray(linkErrors)) return [];
-//   return linkErrors.map((fieldError) => ({
-//     label: fieldError?.label as FieldError | undefined,
-//     url: fieldError?.url as FieldError | undefined,
-//   }));
-// }
-
 
 const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
   defaultValues,
@@ -160,8 +143,8 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
         <fieldset>
           <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Basic Information</h2>
-              <p className="text-sm text-gray-500 mt-1">Let us know who you are and what you do.</p>
+              <h2 className="text-lg font-semibold dark:text-gray-200 text-gray-900">Basic Information</h2>
+              <p className="text-sm dark:text-gray-400 text-gray-500 mt-1">Let us know who you are and what you do.</p>
             </div>
             <div className="space-y-4">
               <InputComponent
@@ -199,8 +182,8 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
         <fieldset>
           <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Skills & Location</h2>
-              <p className="text-sm text-gray-500 mt-1">Highlight your strongest areas and where you&apos;re based.</p>
+              <h2 className="text-lg font-semibold dark:text-gray-200 text-gray-900">Skills & Location</h2>
+              <p className="text-sm dark:text-gray-400 text-gray-500 mt-1">Highlight your strongest areas and where you&apos;re based.</p>
             </div>
             <div className="space-y-4">
               <SkillsSelector<Partial<CreateProfileSchema>>
@@ -218,8 +201,8 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
         <fieldset>
           <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Profile Preferences</h2>
-              <p className="text-sm text-gray-500 mt-1">Control visibility and availability.</p>
+              <h2 className="text-lg font-semibold dark:text-gray-200 text-gray-900">Profile Preferences</h2>
+              <p className="text-sm dark:text-gray-400 text-gray-500 mt-1">Control visibility and availability.</p>
             </div>
             <div className="flex gap-6 items-center">
               <label className="flex items-center space-x-2">
@@ -229,7 +212,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
                   onChange={(e) => setValue("availableforwork", e.target.checked)}
                   className="form-checkbox h-5 w-5 bg-primary text-primary"
                 />
-                <span className="text-sm text-gray-700">Available for Work</span>
+                <span className="text-sm dark:text-gray-400 text-gray-700">Available for Work</span>
               </label>
               <label className="flex items-center space-x-2">
                 <input
@@ -238,7 +221,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
                   onChange={(e) => setValue("isVisible", e.target.checked)}
                   className="form-checkbox h-5 w-5 bg-primary text-primary"
                 />
-                <span className="text-sm text-gray-700">Public Profile</span>
+                <span className="text-sm dark:text-gray-400 text-gray-700">Public Profile</span>
               </label>
             </div>
           </div>
@@ -247,8 +230,8 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
         <fieldset>
           <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Profile Image</h2>
-              <p className="text-sm text-gray-500 mt-1">Upload a clear and professional profile picture.</p>
+              <h2 className="text-lg font-semibold dark:text-gray-200 text-gray-900">Profile Image</h2>
+              <p className="text-sm dark:text-gray-400 text-gray-500 mt-1">Upload a clear and professional profile picture.</p>
             </div>
             <div>
               <ProfilePhotoUpload
@@ -264,8 +247,8 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
         <fieldset>
           <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Project Images</h2>
-              <p className="text-sm text-gray-500 mt-1">Showcase your best work.</p>
+              <h2 className="text-lg font-semibold dark:text-gray-200 text-gray-900">Project Images</h2>
+              <p className="text-sm dark:text-gray-400 text-gray-500 mt-1">Showcase your best work.</p>
             </div>
             <div>
               <ImageUploadComponent
@@ -281,8 +264,8 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
         <fieldset>
           <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Social Links</h2>
-              <p className="text-sm text-gray-500 mt-1">Help people connect with you across platforms.</p>
+              <h2 className="text-lg font-semibold dark:text-gray-200 text-gray-900">Social Links</h2>
+              <p className="text-sm dark:text-gray-400 text-gray-500 mt-1">Help people connect with you across platforms.</p>
             </div>
             <div>
               <DynamicLinksComponent
@@ -303,8 +286,8 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
         <fieldset>
           <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Portfolio Links</h2>
-              <p className="text-sm text-gray-500 mt-1">Share your portfolio or relevant links.</p>
+              <h2 className="text-lg font-semibold dark:text-gray-200 text-gray-900">Portfolio Links</h2>
+              <p className="text-sm darl:text-gray-400 text-gray-500 mt-1">Share your portfolio or relevant links.</p>
             </div>
             <div>
               <DynamicLinksComponent
@@ -321,7 +304,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
           </div>
         </fieldset>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end border-t dark:border-t-gray-200 border-t-gray-800">
           <button
             type="submit"
             className="mt-6 px-6 bg-primary text-white py-2 w-fit rounded-lg hover:bg-primary-dark cursor-pointer hover:bg-secondary focus:outline-none focus:border-0"

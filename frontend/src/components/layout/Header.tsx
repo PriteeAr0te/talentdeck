@@ -16,6 +16,7 @@ const Header: React.FC = () => {
       document.documentElement.classList.toggle('dark', !darkMode);
     }
   };
+  
   const handleClose = () => {
     const dropdown = document.getElementById('profile-dropdown') as HTMLDetailsElement;
     if (dropdown?.open) dropdown.removeAttribute('open');
