@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  Control,
   Path,
   PathValue,
   UseFormSetValue,
@@ -12,6 +13,7 @@ interface TagsSelectorProps<T extends FieldValues> {
   setValue: UseFormSetValue<T>;
   watch: UseFormWatch<T>;
   error?: string;
+    control: Control<T>;
 }
 
 function TagsSelector<T extends FieldValues>({

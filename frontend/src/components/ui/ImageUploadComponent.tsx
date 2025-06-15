@@ -9,9 +9,8 @@ interface ImageUploadComponentProps {
   label?: string;
   error?: string;
   existingImageUrls?: string[];
+  onRetainUrlsChange?: (urlsToKeep: string[]) => void;
 }
-
-const CLOUDINARY_BASE = 'https://res.cloudinary.com/<your-cloud-name>/image/upload/';
 
 const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({
   value,
@@ -19,11 +18,13 @@ const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({
   label = 'Upload Images',
   error,
   existingImageUrls = [],
+  onRetainUrlsChange,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [retainedUrls, setRetainedUrls] = useState<string[]>(existingImageUrls);
+
   const [blobPreviews, setBlobPreviews] = useState<string[]>([]);
 
-  // ✅ Manage only File blob previews in effect
   useEffect(() => {
     const fileUrls = value.map(file => URL.createObjectURL(file));
     setBlobPreviews(fileUrls);
@@ -32,6 +33,10 @@ const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({
       fileUrls.forEach(url => URL.revokeObjectURL(url));
     };
   }, [value]);
+
+  useEffect(() => {
+    onRetainUrlsChange?.(retainedUrls);
+  }, [retainedUrls, onRetainUrlsChange]);
 
   const handleFiles = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -42,25 +47,28 @@ const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({
   };
 
   const removeImage = (index: number) => {
-    const isFromExisting = index < existingImageUrls.length;
-    if (isFromExisting) return;
-
-    const adjustedIndex = index - existingImageUrls.length;
-    const updated = [...value];
-    updated.splice(adjustedIndex, 1);
-    onChange(updated);
+    const totalExisting = retainedUrls.length;
+    if (index < totalExisting) {
+      const updated = [...retainedUrls];
+      updated.splice(index, 1);
+      setRetainedUrls(updated);
+    } else {
+      const adjustedIndex = index - totalExisting;
+      const updated = [...value];
+      updated.splice(adjustedIndex, 1);
+      onChange(updated);
+    }
   };
 
-  const allPreviews = [
-    ...existingImageUrls.map(img =>
-      img.startsWith('http') ? img : `${CLOUDINARY_BASE}${img}`
-    ),
-    ...blobPreviews,
-  ];
+  const previews = [...retainedUrls, ...blobPreviews];
 
   return (
     <div className="mb-4">
-      {label && <label className="block text-base font-medium text-black dark:text-white mb-2">{label}</label>}
+      {label && (
+        <label className="block text-base font-medium text-black dark:text-white mb-2">
+          {label}
+        </label>
+      )}
 
       <div
         className="border border-dashed border-gray-400 rounded-lg p-4 py-6 text-center cursor-pointer bg-white dark:bg-[#0A0011]"
@@ -86,9 +94,9 @@ const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({
         onChange={handleFiles}
       />
 
-      {allPreviews.length > 0 && (
+      {previews.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-4">
-          {allPreviews.map((url, idx) => (
+          {previews.map((url, idx) => (
             <div key={idx} className="relative w-24 h-24 rounded overflow-hidden border">
               <Image
                 src={url}
@@ -97,15 +105,13 @@ const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({
                 className="object-cover"
                 unoptimized
               />
-              {idx >= existingImageUrls.length && (
-                <button
-                  type="button"
-                  onClick={() => removeImage(idx)}
-                  className="absolute top-1 right-1 bg-white text-red-600 rounded-full w-6 h-6 text-sm flex items-center justify-center"
-                >
-                  ✕
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => removeImage(idx)}
+                className="absolute top-1 right-1 bg-white cursor-pointer text-red-600 rounded-full w-6 h-6 text-sm flex items-center justify-center"
+              >
+                ✕
+              </button>
             </div>
           ))}
         </div>

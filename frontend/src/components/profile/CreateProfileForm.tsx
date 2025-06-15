@@ -148,6 +148,7 @@ const CreateProfileForm: React.FC = () => {
                         error={errors.skills?.message}
                     />
                     <TagsSelector
+                        control={control}
                         name="tags"
                         setValue={setValue}
                         watch={watch}
