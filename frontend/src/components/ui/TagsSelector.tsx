@@ -1,49 +1,51 @@
-import { CreateProfileSchema } from "@/lib/validators/profileValidators";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  UseFormSetValue,
-  UseFormWatch,
   Path,
   PathValue,
+  UseFormSetValue,
+  UseFormWatch,
+  FieldValues,
 } from "react-hook-form";
 
-interface TagsSelectorProps {
-  name: Path<CreateProfileSchema>;
-  setValue: UseFormSetValue<CreateProfileSchema>;
-  watch: UseFormWatch<CreateProfileSchema>;
+interface TagsSelectorProps<T extends FieldValues> {
+  name: Path<T>;
+  setValue: UseFormSetValue<T>;
+  watch: UseFormWatch<T>;
   error?: string;
 }
 
-const TagsSelector: React.FC<TagsSelectorProps> = ({
+function TagsSelector<T extends FieldValues>({
   name,
   setValue,
   watch,
   error,
-}) => {
+}: TagsSelectorProps<T>) {
   const [inputValue, setInputValue] = useState("");
+
   const tags = (watch(name) || []) as string[];
 
   const handleAddTag = () => {
     const trimmed = inputValue.trim();
     if (trimmed && !tags.includes(trimmed)) {
-      setValue(name, [...tags, trimmed] as PathValue<CreateProfileSchema, Path<CreateProfileSchema>>, {
+      const updated = [...tags, trimmed];
+      setValue(name, updated as PathValue<T, typeof name>, {
         shouldValidate: true,
       });
     }
     setInputValue("");
   };
 
-  const handleRemoveTag = (tag: string) => {
-    const updated = tags.filter((t) => t !== tag);
-    setValue(name, updated as PathValue<CreateProfileSchema, Path<CreateProfileSchema>>, {
+  const handleRemoveTag = (tagToRemove: string) => {
+    const updated = tags.filter((tag) => tag !== tagToRemove);
+    setValue(name, updated as PathValue<T, typeof name>, {
       shouldValidate: true,
     });
   };
 
   return (
     <div className="mb-4 w-full">
-      <label className="block text-base text-black font-medium mb-1">
-        Tags <span className="text-gray-500">(optional)</span>
+      <label className="block text-base font-medium text-black dark:text-white mb-1">
+        Tags <span className="text-gray-500 text-sm">(optional)</span>
       </label>
 
       <div className="flex gap-2 mb-2">
@@ -51,10 +53,16 @@ const TagsSelector: React.FC<TagsSelectorProps> = ({
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddTag())}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleAddTag();
+            }
+          }}
           placeholder="Add a tag and press Enter"
-          className="flex-1 border text-gray-800 dark:text-gray-200 placeholder:text-gray-700 dark:placeholder:text-gray-300 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+          className="flex-1 border text-black dark:text-white dark:bg-[#1a1a1a] placeholder:text-gray-600 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-500 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
         />
+
         <button
           type="button"
           onClick={handleAddTag}
@@ -65,27 +73,19 @@ const TagsSelector: React.FC<TagsSelectorProps> = ({
       </div>
 
       {tags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mb-1">
           {tags.map((tag) => (
             <span
               key={tag}
-              className="flex items-center bg-gray-200 dark:text-gray-800 text-sm text-black px-3 py-1 rounded-full"
+              className="flex items-center bg-gray-200 dark:bg-gray-300 dark:text-gray-900 text-sm px-3 py-1 rounded-full"
             >
               {tag}
               <button
                 type="button"
                 onClick={() => handleRemoveTag(tag)}
-                className="ml-2 text-gray-600 hover:text-red-500"
+                className="ml-2 text-gray-600 hover:text-red-500 font-bold"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24px"
-                  viewBox="0 -960 960 960"
-                  width="24px"
-                  fill="currentColor"
-                >
-                  <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
-                </svg>
+                ×
               </button>
             </span>
           ))}
@@ -95,6 +95,6 @@ const TagsSelector: React.FC<TagsSelectorProps> = ({
       {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
     </div>
   );
-};
+}
 
 export default TagsSelector;

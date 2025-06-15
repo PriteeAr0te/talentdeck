@@ -97,6 +97,7 @@ const Login = () => {
                         <InputComponent
                             label="Email"
                             type="email"
+                            page="auth"
                             id="email"
                             registration={register("email")}
                             error={errors.email?.message}
@@ -105,6 +106,7 @@ const Login = () => {
                         <InputComponent
                             label="Password"
                             type="password"
+                            page="auth"
                             id="password"
                             registration={register("password")}
                             error={errors.password?.message}

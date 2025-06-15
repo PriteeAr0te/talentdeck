@@ -67,7 +67,6 @@ const EditProfile: React.FC = () => {
         console.log(mappedProfile)
         setProfile(mappedProfile);
 
-        // Set preview image URLs separately
         if (response.data.profilePicture) {
           setExistingProfilePictureUrl(response.data.profilePicture);
         }

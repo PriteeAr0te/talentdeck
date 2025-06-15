@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: process.env.BASE_URL || "https://talentdeck-kappa.vercel.app/api",
+    baseURL: "http://localhost:5000/api",
+    // baseURL: process.env.BASE_URL || "https://talentdeck-kappa.vercel.app/api",
     withCredentials: true,
 });
 

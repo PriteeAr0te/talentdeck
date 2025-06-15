@@ -9,13 +9,13 @@ import ImageUploadComponent from "@/components/ui/ImageUploadComponent";
 import { DynamicLinksComponent } from "@/components/ui/DynamicLinksComponent";
 import SkillsSelector from "@/components/ui/SkillsSelector";
 import DropdownComponent from "@/components/ui/DropdownComponent";
-import { ProfilePhotoUpload } from "@/components/ui/ProfilePhotoUpload";
 import TagsSelector from "@/components/ui/TagsSelector";
-
 import { useRouter } from "next/router";
 import { Slide, toast, ToastContainer } from "react-toastify";
 import API from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import CheckboxField from "../ui/CheckboxField";
+import ProfilePhotoUpload from "../ui/ProfilePhotoUpload";
 
 const CATEGORY_OPTIONS = [
     "Graphic Designer",
@@ -25,7 +25,6 @@ const CATEGORY_OPTIONS = [
     "Video Editor",
     "Other",
 ];
-
 
 const CreateProfileForm: React.FC = () => {
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
@@ -69,9 +68,9 @@ const CreateProfileForm: React.FC = () => {
             setUploadError("");
             const formData = new FormData();
 
-            formData.append("username", data.username);
+            formData.append("username", data.username.trim());
             formData.append("headline", data.headline || "");
-            formData.append("bio", data.bio || "");
+            formData.append("bio", data.bio?.trim() || "");
             formData.append("category", data.category);
             formData.append("location", JSON.stringify(data.location));
             formData.append("skills", JSON.stringify(data.skills));
@@ -107,9 +106,28 @@ const CreateProfileForm: React.FC = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="max-w-6xl mx-auto p-6 space-y-10 bg-white dark:bg-[#0A0011] rounded-xl">
 
                 <Section title="Basic Information" desc="Let us know who you are and what you do.">
-                    <InputComponent label="Username" id="username" registration={register("username")} error={errors.username?.message} />
-                    <InputComponent label="Headline" id="headline" registration={register("headline")} error={errors.headline?.message} />
-                    <TextareaComponent label="Bio" id="bio" registration={register("bio")} error={errors.bio?.message} placeholder="Tell us about yourself" />
+                    <InputComponent
+                        id="username"
+                        label="Username"
+                        registration={register("username")}
+                        error={errors.username?.message}
+                    />
+
+                    <InputComponent
+                        label="Headline"
+                        id="headline"
+                        registration={register("headline")}
+                        error={errors.headline?.message}
+                    />
+
+                    <TextareaComponent
+                        id="bio"
+                        label="Bio"
+                        placeholder="Tell us about yourself"
+                        registration={register("bio")}
+                        error={errors.bio?.message}
+                    />
+
                     <DropdownComponent
                         name="category"
                         label="Category"
@@ -118,22 +136,46 @@ const CreateProfileForm: React.FC = () => {
                         watch={watch}
                         error={errors.category?.message}
                     />
+
                 </Section>
 
-                {/* Skills & Location */}
                 <Section title="Skills & Location" desc="Highlight your strongest areas and where you’re based.">
-                    <SkillsSelector name="skills" control={control} setValue={setValue} watch={watch} error={errors.skills?.message} />
-                    <TagsSelector name="tags" setValue={setValue} watch={watch} error={errors.tags?.message} />
+                    <SkillsSelector
+                        name="skills"
+                        control={control}
+                        setValue={setValue}
+                        watch={watch}
+                        error={errors.skills?.message}
+                    />
+                    <TagsSelector
+                        name="tags"
+                        setValue={setValue}
+                        watch={watch}
+                        error={errors.tags?.message}
+                    />
                     <AddressSelector register={register} errors={errors} />
                 </Section>
 
                 <Section title="Profile Preferences" desc="Control visibility and availability.">
-                    <CheckboxField label="Available for Work" checked={watch("availableforwork") ?? false} onChange={(val) => setValue("availableforwork", val)} />
-                    <CheckboxField label="Public Profile" checked={watch("isVisible") ?? true} onChange={(val) => setValue("isVisible", val)} />
+                    <CheckboxField
+                        label="Available for Work"
+                        checked={watch("availableforwork") ?? false}
+                        onChange={(val) => setValue("availableforwork", val)}
+                    />
+
+                    <CheckboxField
+                        label="Public Profile"
+                        checked={watch("isVisible") ?? true}
+                        onChange={(val) => setValue("isVisible", val)}
+                    />
                 </Section>
 
                 <Section title="Profile Image" desc="Upload a clear and professional profile picture.">
-                    <ProfilePhotoUpload value={profilePicFile} onChange={setProfilePicFile} error={errors.profilePicture?.message} />
+                    <ProfilePhotoUpload
+                        value={profilePicFile}
+                        onChange={setProfilePicFile}
+                        error={errors.profilePicture?.message}
+                    />
                 </Section>
 
                 <Section title="Project Images" desc="Showcase your best work.">
@@ -143,30 +185,29 @@ const CreateProfileForm: React.FC = () => {
                 <Section title="Social Links" desc="Help people connect with you across platforms.">
                     <DynamicLinksComponent
                         name="socialLinks"
-                        fields={socialFields}
+                        label="Social Links"
                         register={register}
                         errors={errors}
+                        fields={socialFields}
                         append={addSocial}
                         remove={removeSocial}
-                        label="Social Links"
                     />
                 </Section>
 
                 <Section title="Portfolio Links" desc="Share your portfolio or relevant links.">
                     <DynamicLinksComponent
                         name="portfolioLinks"
-                        fields={portfolioFields}
+                        label="Portfolio Links"
                         register={register}
                         errors={errors}
+                        fields={portfolioFields}
                         append={addPortfolio}
                         remove={removePortfolio}
-                        label="Portfolio Links"
                     />
                 </Section>
 
-                {/* Submit */}
                 <div className="flex justify-end">
-                    <button type="submit" className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-secondary">
+                    <button type="submit" className="px-6 py-2 bg-primary dark:hover:text-[#51008c] text-white rounded-lg hover:bg-secondary">
                         Create Profile
                     </button>
                 </div>
@@ -187,16 +228,4 @@ const Section = ({ title, desc, children }: { title: string; desc: string; child
             <div className="space-y-4">{children}</div>
         </div>
     </fieldset>
-);
-
-const CheckboxField = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: (val: boolean) => void }) => (
-    <label className="flex items-center space-x-2">
-        <input
-            type="checkbox"
-            checked={checked}
-            onChange={(e) => onChange(e.target.checked)}
-            className="form-checkbox h-5 w-5 text-primary"
-        />
-        <span className="text-sm dark:text-gray-400 text-gray-700">{label}</span>
-    </label>
 );

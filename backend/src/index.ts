@@ -11,16 +11,15 @@ import connectDB from './config/db';
 import healthRoute from './routes/healthRoute';
 import authRoutes from './routes/authRoutes';
 import profileRoutes from './routes/ProfileRoutes';
-import path from 'path';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  origin: "http://localhost:3000",
+  // origin: process.env.FRONTEND_URL || "http://localhost:3000",
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -31,7 +30,7 @@ app.use(express.json());
 app.use('/api', healthRoute);
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
-app.use('/uploads', express.static(path.resolve(__dirname, './uploads')));
+// app.use('/uploads', express.static(path.resolve(__dirname, './uploads')));
 
 app.get('/', (_, res) => {
   res.send({
@@ -40,7 +39,6 @@ app.get('/', (_, res) => {
   })
 })
 
-// DB + Server Boot 
 connectDB()
   .then(() => {
     app.listen(PORT, () => {

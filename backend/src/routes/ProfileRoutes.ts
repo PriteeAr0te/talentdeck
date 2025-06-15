@@ -1,8 +1,8 @@
 import express from "express";
 import { createProfile, getMyProfile, updateProfile, deleteProfile, searchProfiles, getProfileByUsername } from "../controllers/ProfileController";
 import { protect } from "../middleware/authMiddleware";
-import upload from "../middleware/profileUploadMiddleware";
 import { publicLimiter } from "../middleware/rateLimiter";
+import { upload } from "../middleware/uploadMiddleware";
 
 const router = express.Router();
 

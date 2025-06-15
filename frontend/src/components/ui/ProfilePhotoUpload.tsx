@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -12,29 +12,31 @@ interface ProfilePhotoUploadProps {
   existingImageUrl?: string;
 }
 
-export const ProfilePhotoUpload = ({
+const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({
   value,
   onChange,
   label = 'Profile Photo',
   error,
   existingImageUrl,
-}: ProfilePhotoUploadProps) => {
-  const inputRef = useRef<HTMLInputElement | null>(null);
+}) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
+
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  
 
   useEffect(() => {
     if (value instanceof File) {
-      const url = URL.createObjectURL(value);
-      setPreviewUrl(url);
-      return () => URL.revokeObjectURL(url);
-    } else if (existingImageUrl) {
-      // Normalize path to valid URL
-      const normalizedPath = existingImageUrl.startsWith('http')
+      const fileUrl = URL.createObjectURL(value);
+      setPreviewUrl(fileUrl);
+
+      return () => URL.revokeObjectURL(fileUrl);
+    }
+
+    if (existingImageUrl) {
+      const fullUrl = existingImageUrl.startsWith('http')
         ? existingImageUrl
-        : `https://talentdeck-kappa.vercel.app/uploads/${existingImageUrl.split('\\').pop()}`;
-      setPreviewUrl(normalizedPath);
+        : `https://res.cloudinary.com/dmhocuxlk/image/upload/${existingImageUrl}`;
+      setPreviewUrl(fullUrl);
     } else {
       setPreviewUrl(null);
     }
@@ -46,20 +48,23 @@ export const ProfilePhotoUpload = ({
   };
 
   const getInitial = () => {
-    if (!user?.email) return '?';
-    return user.email.charAt(0).toUpperCase();
+    return user?.email?.[0]?.toUpperCase() || '?';
   };
 
   return (
     <div className="flex flex-col items-start gap-2 w-full">
-      <label className="text-sm font-medium dark:text-gray-200 text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
+        {label}
+      </label>
+
       <div className="flex items-center gap-6">
+
         <div className="relative w-24 h-24 rounded-full overflow-hidden border border-gray-300 group">
           {previewUrl ? (
             <>
               <Image
                 src={previewUrl}
-                alt="Profile"
+                alt="Profile Preview"
                 fill
                 className="object-cover"
                 unoptimized
@@ -76,7 +81,7 @@ export const ProfilePhotoUpload = ({
               </div>
             </>
           ) : (
-            <span className="text-gray-500 w-24 h-24 rounded-full text-5xl flex items-center justify-center">
+            <span className="w-full h-full text-5xl flex items-center justify-center text-gray-500 dark:text-gray-300">
               {getInitial()}
             </span>
           )}
@@ -85,14 +90,14 @@ export const ProfilePhotoUpload = ({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow ring-1 ring-gray-300 hover:bg-gray-50"
+          className="rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-gray-300 hover:bg-gray-100"
         >
           Upload
         </button>
 
         <input
-          ref={inputRef}
           type="file"
+          ref={inputRef}
           accept="image/*"
           className="hidden"
           onChange={handleFileChange}
@@ -103,3 +108,5 @@ export const ProfilePhotoUpload = ({
     </div>
   );
 };
+
+export default ProfilePhotoUpload;

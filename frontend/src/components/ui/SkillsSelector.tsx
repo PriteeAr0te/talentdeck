@@ -1,13 +1,14 @@
 import { useState } from "react";
 import {
-  UseFormSetValue,
-  UseFormWatch,
   Control,
   Path,
   PathValue,
+  UseFormSetValue,
+  UseFormWatch,
+  FieldValues,
 } from "react-hook-form";
 
-interface SkillsSelectorProps<T extends Record<string, unknown>> {
+interface SkillsSelectorProps<T extends FieldValues> {
   name: Path<T>;
   setValue: UseFormSetValue<T>;
   watch: UseFormWatch<T>;
@@ -15,7 +16,7 @@ interface SkillsSelectorProps<T extends Record<string, unknown>> {
   control: Control<T>;
 }
 
-function SkillsSelector<T extends Record<string, unknown>>({
+function SkillsSelector<T extends FieldValues>({
   name,
   setValue,
   watch,
@@ -27,40 +28,49 @@ function SkillsSelector<T extends Record<string, unknown>>({
 
   const handleAddSkill = () => {
     const trimmed = inputValue.trim();
+
     if (
       trimmed &&
-      Array.isArray(skills) &&
       !skills.includes(trimmed) &&
       skills.length < 10
     ) {
-      const updated = [...skills, trimmed];
-      setValue(name, updated as PathValue<T, typeof name>, {
+      const updatedSkills = [...skills, trimmed];
+      setValue(name, updatedSkills as PathValue<T, typeof name>, {
         shouldValidate: true,
       });
     }
-    setInputValue("");
+
+    setInputValue(""); 
   };
 
-  const handleRemoveSkill = (skill: string) => {
-    const updated = skills.filter((s) => s !== skill);
-    setValue(name, updated as PathValue<T, typeof name>, {
+  const handleRemoveSkill = (skillToRemove: string) => {
+    const updatedSkills = skills.filter((skill) => skill !== skillToRemove);
+    setValue(name, updatedSkills as PathValue<T, typeof name>, {
       shouldValidate: true,
     });
   };
 
   return (
     <div className="mb-4 w-full">
-      <label className="block text-base text-black font-medium mb-1">Skills</label>
+      <label className="block text-base font-medium text-black dark:text-white mb-1">
+        Skills
+      </label>
 
       <div className="flex gap-2 mb-2">
         <input
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddSkill())}
           placeholder="Type a skill and press Enter"
-          className="flex-1 border text-gray-800 dark:text-gray-200 placeholder:text-gray-700 dark:placeholder:text-gray-300 border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleAddSkill();
+            }
+          }}
+          className="flex-1 border text-black dark:text-white dark:bg-[#1a1a1a] placeholder:text-gray-600 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-500 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
         />
+
         <button
           type="button"
           onClick={handleAddSkill}
@@ -75,7 +85,7 @@ function SkillsSelector<T extends Record<string, unknown>>({
           {skills.map((skill) => (
             <span
               key={skill}
-              className="flex items-center bg-gray-200 dark:text-gray-800 text-sm text-black px-3 py-1 rounded-full"
+              className="flex items-center bg-gray-200 dark:bg-gray-300 dark:text-gray-900 text-sm px-3 py-1 rounded-full"
             >
               {skill}
               <button
@@ -83,15 +93,7 @@ function SkillsSelector<T extends Record<string, unknown>>({
                 onClick={() => handleRemoveSkill(skill)}
                 className="ml-2 text-gray-600 hover:text-red-500"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="18"
-                  viewBox="0 -960 960 960"
-                  width="18"
-                  fill="currentColor"
-                >
-                  <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
-                </svg>
+                ×
               </button>
             </span>
           ))}
@@ -99,7 +101,10 @@ function SkillsSelector<T extends Record<string, unknown>>({
       )}
 
       {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
-      <p className="text-sm text-gray-500 mt-2">{`Max 10 skills. (${skills.length}/10)`}</p>
+
+      <p className="text-sm text-gray-500 mt-2">
+        Max 10 skills ({skills.length}/10)
+      </p>
     </div>
   );
 }

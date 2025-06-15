@@ -66,6 +66,7 @@ const Register = () => {
                             id="fullName"
                             label="Full Name"
                             type="text"
+                            page="auth"
                             autoComplete="name"
                             placeholder="Full Name"
                             registration={register("fullName")}
@@ -76,6 +77,7 @@ const Register = () => {
                             id="email"
                             label="Email ID"
                             type="email"
+                            page="auth"
                             autoComplete="email"
                             placeholder="Email ID"
                             registration={register("email")}
@@ -86,6 +88,7 @@ const Register = () => {
                             id="password"
                             label="Password"
                             type="password"
+                            page="auth"
                             autoComplete="new-password"
                             placeholder="Password"
                             registration={register("password")}

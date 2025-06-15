@@ -2,32 +2,32 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  Path,
-  PathValue,
   UseFormSetValue,
   UseFormWatch,
+  Path,
+  PathValue,
+  FieldValues,
 } from "react-hook-form";
 
-// ✅ 1. Add a generic type with constraint Record<string, any>
-interface DropdownComponentProps<T extends Record<string, unknown>> {
-  name: Path<T>;
+interface DropdownComponentProps<FormValues extends FieldValues> {
+  name: Path<FormValues>;
   label?: string;
-  setValue: UseFormSetValue<T>;
-  watch?: UseFormWatch<T>;
   options: string[];
+  setValue: UseFormSetValue<FormValues>;
+  watch?: UseFormWatch<FormValues>;
   error?: string;
 }
 
-function DropdownComponent<T extends Record<string, unknown>>({
+function DropdownComponent<FormValues extends FieldValues>({
   name,
   label,
+  options,
   setValue,
   watch,
-  options,
   error,
-}: DropdownComponentProps<T>) {
-  const [selected, setSelected] = useState<string>("Select a category");
-  const detailsRef = useRef<HTMLDetailsElement | null>(null);
+}: DropdownComponentProps<FormValues>) {
+  const [selected, setSelected] = useState("Select an option");
+  const dropdownRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
     if (watch) {
@@ -39,31 +39,33 @@ function DropdownComponent<T extends Record<string, unknown>>({
   }, [watch, name]);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (detailsRef.current && !detailsRef.current.contains(e.target as Node)) {
-        detailsRef.current.removeAttribute("open");
+    const closeDropdown = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        dropdownRef.current.open = false;
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", closeDropdown);
+    return () => document.removeEventListener("mousedown", closeDropdown);
   }, []);
 
   const handleSelect = (option: string) => {
     setSelected(option);
-    setValue(name, option as PathValue<T, typeof name>);
-    detailsRef.current?.removeAttribute("open");
+    setValue(name, option as PathValue<FormValues, typeof name>);
+    if (dropdownRef.current) {
+      dropdownRef.current.open = false;
+    }
   };
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 w-full">
       {label && (
-        <label className="block text-base font-medium text-black mb-2">
+        <label className="block text-base font-medium text-black mb-2 dark:text-white">
           {label}
         </label>
       )}
 
       <details
-        ref={detailsRef}
+        ref={dropdownRef}
         className="w-full cursor-pointer border border-gray-300 rounded-lg bg-white dark:bg-[#0A0011] relative z-10"
       >
         <summary className="list-none px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0A0011] hover:bg-background-hover rounded-lg dark:hover:bg-[#0A0011]">
@@ -74,7 +76,7 @@ function DropdownComponent<T extends Record<string, unknown>>({
           {options.map((option) => (
             <li
               key={option}
-              className={`px-4 py-2 text-gray-800 cursor-pointer dark:text-gray-300 ${
+              className={`px-4 py-2 cursor-pointer dark:text-gray-300 ${
                 selected === option
                   ? "bg-background-active font-semibold"
                   : "hover:bg-background-hover"

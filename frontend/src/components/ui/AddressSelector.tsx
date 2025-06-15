@@ -1,52 +1,53 @@
 import React from "react";
-import InputComponent from "./InputComponent";
 import {
-  UseFormRegister,
   FieldErrors,
-  FieldPath,
   FieldValues,
+  UseFormRegister,
+  Path,
 } from "react-hook-form";
+import InputComponent from "./InputComponent";
 
-type AddressSelectorProps<T extends FieldValues> = {
+interface AddressSelectorProps<T extends FieldValues> {
   register: UseFormRegister<T>;
   errors: FieldErrors<T>;
-};
+}
 
 function AddressSelector<T extends FieldValues>({
   register,
   errors,
 }: AddressSelectorProps<T>) {
-  const getErrorMessage = (fieldPath: FieldPath<T>) => {
-    const error = (errors?.location as Record<string, { message?: string }>)?.[fieldPath];
-    if (error && typeof error === "object" && "message" in error) {
-      return (error as { message?: string }).message;
-    }
-    return undefined;
+ 
+  const getError = (field: "city" | "state" | "country"): string | undefined => {
+    const locationErrors = errors?.location as
+      | Partial<Record<"city" | "state" | "country", { message?: string }>>
+      | undefined;
+
+    return locationErrors?.[field]?.message;
   };
 
   return (
     <div className="mb-6">
-      <h3 className="text-base text-black font-medium mb-2">Location</h3>
+      <h3 className="text-base text-black dark:text-white font-medium mb-2">Location</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <InputComponent
+          id="city"
           label="City"
-          id="location.city"
-          registration={register("location.city" as FieldPath<T>)}
-          error={getErrorMessage("city" as FieldPath<T>)}
+          registration={register("location.city" as Path<T>)}
+          error={getError("city")}
           placeholder="e.g. Pune"
         />
         <InputComponent
+          id="state"
           label="State"
-          id="location.state"
-          registration={register("location.state" as FieldPath<T>)}
-          error={getErrorMessage("state" as FieldPath<T>)}
+          registration={register("location.state" as Path<T>)}
+          error={getError("state")}
           placeholder="e.g. Maharashtra"
         />
         <InputComponent
+          id="country"
           label="Country"
-          id="location.country"
-          registration={register("location.country" as FieldPath<T>)}
-          error={getErrorMessage("country" as FieldPath<T>)}
+          registration={register("location.country" as Path<T>)}
+          error={getError("country")}
           placeholder="e.g. India"
         />
       </div>
