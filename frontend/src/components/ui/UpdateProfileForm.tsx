@@ -111,7 +111,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
 
       if (response?.data?.success) {
         toast.success("Profile updated successfully!");
-        router.push("/");
+        router.push("/profile/view");
       } else {
         throw new Error("Unexpected response from server");
       }

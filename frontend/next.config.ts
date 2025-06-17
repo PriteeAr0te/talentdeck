@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
     domains: [
       "images.unsplash.com",
       "talentdeck-kappa.vercel.app",
+      "res.cloudinary.com",
     ],
   },
 
