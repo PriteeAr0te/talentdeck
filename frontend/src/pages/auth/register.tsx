@@ -7,9 +7,9 @@ import { registerUserSchema } from "@/lib/validators/authValidators";
 import Link from "next/link";
 import Head from "next/head";
 import InputComponent from "@/components/ui/InputComponent";
-import Button from "@/components/ui/Button";
 import {Slide, ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
+import ButtonComponent from "@/components/ui/ButtonComponent";
 
 type RegisterFormValues = z.infer<typeof registerUserSchema>;
 
@@ -101,9 +101,9 @@ const Register = () => {
                             </p>
                         )}
 
-                        <Button type="submit" loading={isSubmitting}>
+                        <ButtonComponent type="submit" loading={isSubmitting}>
                             Create Account
-                        </Button>
+                        </ButtonComponent>
 
                         <p className="mt-4 text-center text-sm text-gray-600">
                             Already have an account?{' '}

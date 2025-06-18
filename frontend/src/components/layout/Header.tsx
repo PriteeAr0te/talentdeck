@@ -3,10 +3,23 @@ import { useAuth } from '@/hooks/useAuth';
 import Image from 'next/image';
 import ProfileImg from '../../../public/img/profile.png'
 import useDarkMode from '@/hooks/useDarkMode';
+import API from '@/lib/api';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
+
+interface User {
+    id: string;
+    name: string;
+    email: string;
+    role?: string;
+    username?: string;
+    profileCreated?: boolean;
+}
 
 const Header: React.FC = () => {
   const [darkMode, toggleDarkMode] = useDarkMode();
-  const { logout, isLoggedIn, isProfileCreated } = useAuth();
+  const { logout, isLoggedIn, isProfileCreated, setUser, user } = useAuth();
+  const router = useRouter();
 
 
   const handleClose = () => {
@@ -15,7 +28,39 @@ const Header: React.FC = () => {
   };
 
   console.log("IsProfileCreated: ", isProfileCreated);
-  
+
+const deleteProfileHandler = async () => {
+  const confirm = window.confirm(
+    "Are you sure you want to delete your profile? This cannot be undone."
+  );
+  if (!confirm) return;
+
+  try {
+    const res = await API.delete("/profile");
+
+    if (res.status === 200) {
+      toast.success("Profile deleted successfully.");
+
+      const updatedUser: User = {
+        ...(user as User),
+        profileCreated: false,
+      };
+
+      delete updatedUser.username;
+
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+
+      router.push("/profile/create");
+    } else {
+      throw new Error("Unexpected error");
+    }
+  } catch (err) {
+    console.error("Delete error", err);
+    toast.error("Failed to delete profile. Please try again.");
+  }
+};
+
   return (
     <nav className="bg-dark shadow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,7 +80,7 @@ const Header: React.FC = () => {
           <div className="flex items-center space-x-4">
 
             <Link href="/talents">
-              <span className="hidden sm:block text-sm 2xl:text-base font-medium px-4 py-2.5 rounded-md text-primary bg-white transition hover:bg-[#7E21D4] hover:text-white cursor-pointer">
+              <span className="hidden sm:block text-sm 2xl:text-base font-medium text-[#2D004E] px-4 py-2.5 rounded-md bg-white transition hover:bg-[#7E21D4] hover:text-white cursor-pointer ">
                 Browse Talents
               </span>
             </Link>
@@ -81,23 +126,25 @@ const Header: React.FC = () => {
                       </span>
                     </Link>
                   ) : (
-                  <Link href="/profile/create">
-                    <span
-                      onClick={handleClose}
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
-                    >
-                      Create Profile
-                    </span>
-                  </Link>
+                    <Link href="/profile/create">
+                      <span
+                        onClick={handleClose}
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
+                      >
+                        Create Profile
+                      </span>
+                    </Link>
                   )}
-                  {/* <Link href="/profile/view">
-                    <span
-                      onClick={handleClose}
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
-                    >
-                      My Profile
-                    </span>
-                  </Link> */}
+                  {isProfileCreated &&
+                    <button className='w-full text-left' onClick={() => deleteProfileHandler()}>
+                      <span
+                        onClick={handleClose}
+                        className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
+                      >
+                        Delete Profile
+                      </span>
+                    </button>
+                  }
                   <Link href="/profile/edit">
                     <span
                       onClick={handleClose}

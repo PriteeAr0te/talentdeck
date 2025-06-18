@@ -88,7 +88,7 @@ const ViewProfile = () => {
           </p>
           <Link
             href="/profile/edit"
-            className="mt-3 inline-block px-4 py-2 text-sm bg-primary dark:hover:text-primary text-white rounded hover:bg-secondary"
+            className="mt-3 inline-block px-4 py-2 text-sm bg-primary dark:text-[#2D004E] dark:hover:text-[#2D004E] font-medium text-white rounded hover:bg-secondary"
           >
             Edit Profile
           </Link>
