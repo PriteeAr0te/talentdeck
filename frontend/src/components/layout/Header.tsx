@@ -6,7 +6,7 @@ import useDarkMode from '@/hooks/useDarkMode';
 
 const Header: React.FC = () => {
   const [darkMode, toggleDarkMode] = useDarkMode();
-  const { logout, isLoggedIn } = useAuth();
+  const { logout, isLoggedIn, isProfileCreated } = useAuth();
 
 
   const handleClose = () => {
@@ -14,6 +14,8 @@ const Header: React.FC = () => {
     if (dropdown?.open) dropdown.removeAttribute('open');
   };
 
+  console.log("IsProfileCreated: ", isProfileCreated);
+  
   return (
     <nav className="bg-dark shadow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,7 +34,7 @@ const Header: React.FC = () => {
 
           <div className="flex items-center space-x-4">
 
-            <Link href="/search">
+            <Link href="/talents">
               <span className="hidden sm:block text-sm 2xl:text-base font-medium px-4 py-2.5 rounded-md text-primary bg-white transition hover:bg-[#7E21D4] hover:text-white cursor-pointer">
                 Browse Talents
               </span>
@@ -68,10 +70,9 @@ const Header: React.FC = () => {
                   />
                 </summary>
 
-                {/* {console.log("isProfileCreated: ", isProfileCreated? isProfileCreated : '')} */}
                 <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-100 dark:border-gray-700">
-                  {/* {isProfileCreated && user?.username ? (
-                    <Link href={`/${user.username}`}>
+                  {isProfileCreated ? (
+                    <Link href='/profile/view'>
                       <span
                         onClick={handleClose}
                         className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
@@ -79,7 +80,7 @@ const Header: React.FC = () => {
                         My Profile
                       </span>
                     </Link>
-                  ) : ( */}
+                  ) : (
                   <Link href="/profile/create">
                     <span
                       onClick={handleClose}
@@ -88,15 +89,15 @@ const Header: React.FC = () => {
                       Create Profile
                     </span>
                   </Link>
-                  {/* )} */}
-                  <Link href="/profile/view">
+                  )}
+                  {/* <Link href="/profile/view">
                     <span
                       onClick={handleClose}
                       className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"
                     >
                       My Profile
                     </span>
-                  </Link>
+                  </Link> */}
                   <Link href="/profile/edit">
                     <span
                       onClick={handleClose}

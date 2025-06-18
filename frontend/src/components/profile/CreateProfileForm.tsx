@@ -30,8 +30,7 @@ const CreateProfileForm: React.FC = () => {
     const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
     const [projectImagesFiles, setProjectImagesFiles] = useState<File[]>([]);
     const [uploadError, setUploadError] = useState("");
-
-    const { setIsProfileCreated } = useAuth();
+    const { setUser } = useAuth();
     const router = useRouter();
 
     const {
@@ -45,6 +44,7 @@ const CreateProfileForm: React.FC = () => {
     } = useForm<CreateProfileSchema>({
         resolver: zodResolver(createProfileSchema),
         defaultValues: {
+            category: undefined,
             skills: [],
             socialLinks: [{ label: "", url: "" }],
             portfolioLinks: [{ label: "", url: "" }],
@@ -63,7 +63,11 @@ const CreateProfileForm: React.FC = () => {
         name: "portfolioLinks",
     });
 
+    const selectedCategory = watch('category');
+    console.log("Selected category:", selectedCategory);
+
     const onSubmit = async (data: CreateProfileSchema) => {
+        console.log("create form data: ", data)
         try {
             setUploadError("");
             const formData = new FormData();
@@ -74,6 +78,7 @@ const CreateProfileForm: React.FC = () => {
             formData.append("category", data.category);
             formData.append("location", JSON.stringify(data.location));
             formData.append("skills", JSON.stringify(data.skills));
+            formData.append("tags", JSON.stringify(data.tags));
             formData.append("availableforwork", String(data.availableforwork));
             formData.append("isVisible", String(data.isVisible));
             formData.append("socialLinks", JSON.stringify(data.socialLinks));
@@ -88,7 +93,12 @@ const CreateProfileForm: React.FC = () => {
 
             if (res.status === 201 || res.data?.isProfileCreated) {
                 toast.success("Profile created successfully!");
-                setIsProfileCreated(true);
+                const storedUser = localStorage.getItem("user");
+                if (storedUser) {
+                    const updatedUser = { ...JSON.parse(storedUser),username: data.username.trim(), profileCreated: true };
+                    localStorage.setItem("user", JSON.stringify(updatedUser));
+                    setUser(updatedUser)
+                }
                 reset();
                 setProfilePicFile(null);
                 setProjectImagesFiles([]);

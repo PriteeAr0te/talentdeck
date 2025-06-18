@@ -30,7 +30,6 @@ app.use(express.json());
 app.use('/api', healthRoute);
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
-// app.use('/uploads', express.static(path.resolve(__dirname, './uploads')));
 
 app.get('/', (_, res) => {
   res.send({

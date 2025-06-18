@@ -87,7 +87,7 @@ export const createProfile = async (req: AuthRequest, res: Response): Promise<vo
 
         res.status(201).json({
             message: "Profile created successfully.",
-            isProfileCreated: true,
+            profileCreated: true,
         });
 
     } catch (error) {

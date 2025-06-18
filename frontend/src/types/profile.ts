@@ -1,4 +1,3 @@
-// types/profile.d.ts (or types/profile.ts if you prefer)
 export interface ProfileType {
     _id: string;
     userId: string;

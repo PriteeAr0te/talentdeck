@@ -12,7 +12,7 @@ const CreateProfile: React.FC = () => {
         if (loading) return;
 
         if (!isLoggedIn) {
-            router.push('/login');
+            router.push('/');
         } else if(user?.profileCreated) {
             router.push(`/`);
         }

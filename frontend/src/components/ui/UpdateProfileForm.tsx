@@ -20,6 +20,7 @@ import { AxiosError } from "axios";
 import ProfilePhotoUpload from "./ProfilePhotoUpload";
 import CheckboxField from "./CheckboxField";
 import TagsSelector from "./TagsSelector";
+import { useAuth } from "@/hooks/useAuth";
 
 interface UpdateProfileFormProps {
   defaultValues: UpdateProfileSchema;
@@ -46,6 +47,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
   const [projectImagesToKeep, setProjectImagesToKeep] = useState<string[]>(existingProjectImageUrls ?? []);
   const [uploadError, setUploadError] = useState<string>("");
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const {
     register,
@@ -111,6 +113,12 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
 
       if (response?.data?.success) {
         toast.success("Profile updated successfully!");
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          const updatedUser = { ...JSON.parse(storedUser), username: response?.data?.username?.trim(), profileCreated: true };
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+          setUser(updatedUser);
+        }
         router.push("/profile/view");
       } else {
         throw new Error("Unexpected response from server");

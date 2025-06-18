@@ -2,12 +2,12 @@ import { createContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 interface User {
-  id: string;
-  name: string;
-  email: string;
-  role?: string;
-  username?: string;
-  profileCreated?: boolean;
+    id: string;
+    name: string;
+    email: string;
+    role?: string;
+    username?: string;
+    profileCreated?: boolean;
 }
 
 interface AuthContextType {
@@ -17,29 +17,27 @@ interface AuthContextType {
     logout: () => void;
     loading: boolean;
     isProfileCreated: boolean;
-    setIsProfileCreated: React.Dispatch<React.SetStateAction<boolean>>;
+    setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-
     const [token, setToken] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
-    const [isProfileCreated, setIsProfileCreated] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
         const storedUser = localStorage.getItem("user");
-      
+
         if (storedToken && storedUser) {
-          setToken(storedToken);
-          setUser(JSON.parse(storedUser) as User);
+            setToken(storedToken);
+            setUser(JSON.parse(storedUser) as User);
         }
         setLoading(false);
-      }, []);
+    }, []);
 
     const login = (newToken: string, userData: User) => {
         setToken(newToken);
@@ -53,11 +51,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.removeItem("user");
         setToken(null);
         setUser(null);
-        router.push("/login");
+        router.push("/");
     }
 
+    const isProfileCreated = !!user?.profileCreated;
+
     return (
-        <AuthContext.Provider value={{ user, token, login, logout, loading, isProfileCreated, setIsProfileCreated }}>
+        <AuthContext.Provider value={{ user, token, login, logout, loading, isProfileCreated, setUser }}>
             {children}
         </AuthContext.Provider>
     )

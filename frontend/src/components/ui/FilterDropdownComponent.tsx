@@ -1,50 +1,39 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  UseFormSetValue,
-  UseFormWatch,
-  Path,
-  PathValue,
-  FieldValues,
-} from "react-hook-form";
 
-interface DropdownComponentProps<FormValues extends FieldValues> {
-  name: Path<FormValues>;
+interface FilterDropdownProps {
   label?: string;
   options: string[];
-  setValue: UseFormSetValue<FormValues>;
-  watch?: UseFormWatch<FormValues>;
-  error?: string;
+  value: string;
+  onChange: (value: string) => void;
   width?: string;
   placeholder?: string;
 }
 
-function DropdownComponent<FormValues extends FieldValues>({
-  name,
+function FilterDropdownComponent({
   label,
-  width="full",
-  placeholder="Select an option",
   options,
-  setValue,
-  watch,
-  error,
-}: DropdownComponentProps<FormValues>) {
+  value,
+  onChange,
+  width = "full",
+  placeholder = "Select an option",
+}: FilterDropdownProps) {
   const [selected, setSelected] = useState(placeholder);
   const dropdownRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
-    if (watch) {
-      const value = watch(name);
-      if (typeof value === "string") {
-        setSelected(value);
-      }
+    if (typeof value === "string") {
+      setSelected(value || placeholder);
     }
-  }, [watch, name]);
+  }, [value, placeholder]);
 
   useEffect(() => {
     const closeDropdown = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         dropdownRef.current.open = false;
       }
     };
@@ -54,7 +43,7 @@ function DropdownComponent<FormValues extends FieldValues>({
 
   const handleSelect = (option: string) => {
     setSelected(option);
-    setValue(name, option as PathValue<FormValues, typeof name>);
+    onChange(option);
     if (dropdownRef.current) {
       dropdownRef.current.open = false;
     }
@@ -70,17 +59,20 @@ function DropdownComponent<FormValues extends FieldValues>({
 
       <details
         ref={dropdownRef}
-        className={`w-${width} cursor-pointer border border-gray-300 rounded-lg bg-white dark:bg-[#0A0011] relative scale-z-105`}
+        className={`w-${width} cursor-pointer border border-gray-300 rounded-lg bg-white dark:bg-[#0A0011] relative z-10`}
       >
-        <summary className={`list-none px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0A0011] hover:bg-background-hover rounded-lg dark:hover:bg-[#0A0011] ${width === 'fit' ? 'min-w-[240px]' : ''}`}>
-          {selected}
+        <summary
+          className={`list-none px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0A0011] hover:bg-background-hover rounded-lg ${
+            width === "fit" ? "min-w-[240px]" : ""
+          }`}
+        >
+          {options.includes(selected) ? selected : placeholder}
         </summary>
 
-        <ul className="w-full absolute top-10 left-0 border-t text-black border-gray-300 bg-white dark:bg-[#0A0011] shadow-md rounded-lg max-h-62 overflow-y-auto">
+        <ul className="w-full absolute top-10 left-0 border-t text-black border-gray-300 bg-white dark:bg-[#0A0011] shadow-md rounded-lg max-h-62 overflow-y-auto z-50">
           {options.map((option) => (
             <li
               key={option}
-              value={option}
               className={`px-4 py-2 cursor-pointer dark:text-gray-300 ${
                 selected === option
                   ? "bg-background-active font-semibold"
@@ -93,10 +85,8 @@ function DropdownComponent<FormValues extends FieldValues>({
           ))}
         </ul>
       </details>
-
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   );
 }
 
-export default DropdownComponent;
+export default FilterDropdownComponent;

@@ -49,7 +49,7 @@ const ViewProfile = () => {
       }
     };
     if (token) fetchProfile();
-    else router.push('/login');
+    else router.push('/');
   }, [token, router]);
 
   if (loading) return <p className="text-center dark:text-white">Loading...</p>;
@@ -70,6 +70,7 @@ const ViewProfile = () => {
               alt="Profile"
               width={128}
               height={128}
+              style={{ height: 'auto' }}
               className="object-cover w-full h-full"
             />
           ) : (

@@ -5,7 +5,10 @@ export const profileSearchSchema = z.object({
     skills: z.string().optional(),
     tags: z.string().optional(),
     category: z.enum(["Graphic Designer", "UI/UX Designer", "Software Developer", "Content Creator", "Video Editor", "Other"]).optional(),
-    availableforwork: z.boolean().optional(),
+    availableforwork: z
+        .string()
+        .transform((val) => val === 'true')
+        .optional(),
     "location.city": z.string().optional(),
     "location.country": z.string().optional(),
     "location.state": z.string().optional(),

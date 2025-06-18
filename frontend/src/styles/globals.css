@@ -15,7 +15,7 @@
   --text-dark: #030105;
   --text-light: #212529;
   --text-link: #007bff;
-  --border-focus: #A57FC0;
+  --prime: #4B0082;
   --border-primary: #ced4da;
   --border-hover: #4B0082;
   --primary-bg: white;
@@ -28,6 +28,7 @@
   --background: #101828;
   --text: #DBCCE6;
   --dark: #160026;
+  --prime: #A57FC0;
   --primary-bg: #0a0011;
   --background-hover: #101828;
   --background-active: #101828;

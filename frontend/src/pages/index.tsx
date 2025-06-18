@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <div
-      className={`grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 bg-white dark:bg-black`}
+      className={`grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 bg-background dark:bg-[#0A0011]`}
     >
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <Image
@@ -13,12 +13,13 @@ export default function Home() {
           alt="Next.js logo"
           width={180}
           height={38}
-          priority
+          style={{ height: 'auto' }}
+          priority={true}
         />
         <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2 tracking-[-.01em] text-black dark:text-white">
             Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white dark:text-black px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
+            <code className="bg-black/[.05] dark:bg-white dark:text-[#000000] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
               src/pages/index.tsx
             </code>
             .

@@ -54,7 +54,7 @@ const EditProfile: React.FC = () => {
       if (loading) return;
 
       if (!isLoggedIn) {
-        router.push('/login');
+        router.push('/');
         return;
       }
 
