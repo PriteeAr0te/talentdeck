@@ -57,7 +57,7 @@ const Register = () => {
 
             <main className="flex items-center justify-center bg-primary-bg dark:bg-[#0a0011] p-4 py-14">
                 <div className="w-full max-w-md bg-white shadow-custom rounded-2xl p-8">
-                    <h1 className="text-2xl font-bold text-primary mb-6 text-center">
+                    <h1 className="text-2xl font-bold text-[#2D004E] mb-6 text-center">
                         Create an Account
                     </h1>
 

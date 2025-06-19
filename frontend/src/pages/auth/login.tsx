@@ -87,7 +87,7 @@ const Login = () => {
             <ToastContainer position="top-right" transition={Slide} className="z-50" autoClose={6000} closeButton={true} pauseOnHover={true} />
             <main className="min-h-[calc(100vh-70px)] flex items-center justify-center bg-primary-bg dark:bg-[#0a0011] p-4">
                 <div className="w-full max-w-md bg-white shadow-custom rounded-2xl p-8">
-                    <h1 className="text-2xl font-bold text-primary mb-6 text-center">
+                    <h1 className="text-2xl font-bold text-[#2D004E] mb-6 text-center">
                         Login to TalentDeck
                     </h1>
                     <form
@@ -119,7 +119,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-secondary cursor-pointer dark:hover:bg-[#250040] transition-all duration-150"
+                            className="w-full bg-[#4B0082] text-white py-2.5 rounded-lg hover:bg-[#4B0082] cursor-pointer dark:hover:bg-[#250040] transition-all duration-150"
                         >
                             {isSubmitting ? "Logging in..." : "Login"}
                         </button>
