@@ -7,7 +7,7 @@ import { registerUserSchema } from "@/lib/validators/authValidators";
 import Link from "next/link";
 import Head from "next/head";
 import InputComponent from "@/components/ui/InputComponent";
-import {Slide, ToastContainer, toast } from "react-toastify";
+import { Slide, ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
 import ButtonComponent from "@/components/ui/ButtonComponent";
 
@@ -15,11 +15,11 @@ type RegisterFormValues = z.infer<typeof registerUserSchema>;
 
 type ErrorWithResponse = {
     response?: {
-      data?: {
-        message?: string;
-      };
+        data?: {
+            message?: string;
+        };
     };
-  };  
+};
 
 const Register = () => {
     const router = useRouter();

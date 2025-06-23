@@ -5,6 +5,7 @@ import { profileSearchSchema } from "../validators/ProfileSearch";
 import sanitizeHtml from 'sanitize-html';
 import { slugifyUserName } from "../utils/slagifyUserName";
 import { ZodError } from "zod";
+import { User } from "../models/User";
 
 interface AuthRequest extends Request {
     user?: {
@@ -44,6 +45,7 @@ export const createProfile = async (req: AuthRequest, res: Response): Promise<vo
             ...req.body,
             location: JSON.parse(req.body.location),
             skills: JSON.parse(req.body.skills),
+            tags: JSON.parse(req.body.tags),
             portfolioLinks: JSON.parse(req.body.portfolioLinks),
             socialLinks: JSON.parse(req.body.socialLinks),
             availableforwork: req.body.availableforwork === "true",
@@ -84,6 +86,7 @@ export const createProfile = async (req: AuthRequest, res: Response): Promise<vo
 
         const newProfile = new Profile(newProfileData);
         await newProfile.save();
+        await User.findByIdAndUpdate(userId, { profileCreated: true });
 
         res.status(201).json({
             message: "Profile created successfully.",
@@ -119,81 +122,81 @@ export const getMyProfile = async (req: AuthRequest, res: Response): Promise<voi
 };
 
 export const updateProfile = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
-    const userId = req.user?.id;
-
-    if (!userId) {
-      res.status(401).json({ error: "Unauthorized" });
-      return;
-    }
-
-    const rawData: any = { ...req.body };
-
-    const stringFields = ["location", "skills", "tags", "portfolioLinks", "socialLinks"];
-    for (const key of stringFields) {
-      if (typeof rawData[key] === "string") {
-        try {
-          rawData[key] = JSON.parse(rawData[key]);
-        } catch {
-          rawData[key] = [];
-        }
-      }
-    }
-
-    rawData.availableforwork = rawData.availableforwork === "true";
-    rawData.isVisible = rawData.isVisible === "true";
-
     try {
-      updateProfileSchema.parse(rawData);
-    } catch (err) {
-      if (err instanceof ZodError) {
-        res.status(400).json({ error: err.flatten() });
-        return;
-      }
-      throw err;
+        const userId = req.user?.id;
+
+        if (!userId) {
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+        }
+
+        const rawData: any = { ...req.body };
+
+        const stringFields = ["location", "skills", "tags", "portfolioLinks", "socialLinks"];
+        for (const key of stringFields) {
+            if (typeof rawData[key] === "string") {
+                try {
+                    rawData[key] = JSON.parse(rawData[key]);
+                } catch {
+                    rawData[key] = [];
+                }
+            }
+        }
+
+        rawData.availableforwork = rawData.availableforwork === "true";
+        rawData.isVisible = rawData.isVisible === "true";
+
+        try {
+            updateProfileSchema.parse(rawData);
+        } catch (err) {
+            if (err instanceof ZodError) {
+                res.status(400).json({ error: err.flatten() });
+                return;
+            }
+            throw err;
+        }
+
+        if (rawData.bio) rawData.bio = sanitizeHtml(rawData.bio);
+        if (rawData.headline) rawData.headline = sanitizeHtml(rawData.headline);
+
+        const files = req.files as { [fieldName: string]: Express.Multer.File[] } | undefined;
+
+        if (files?.profilePicture?.[0]) {
+            rawData.profilePicture = files.profilePicture[0].path;
+        }
+
+        let retainedImages: string[] = [];
+        if (typeof rawData.projectImagesToKeep === "string") {
+            try {
+                retainedImages = JSON.parse(rawData.projectImagesToKeep);
+            } catch {
+                retainedImages = [];
+            }
+        } else if (Array.isArray(rawData.projectImagesToKeep)) {
+            retainedImages = rawData.projectImagesToKeep;
+        }
+
+        const uploadedImages = files?.projectImages?.map((file) => file.path) ?? [];
+
+        rawData.projectImages = [...retainedImages, ...uploadedImages];
+
+        const updatedProfile = await Profile.findOneAndUpdate(
+            { userId },
+            { $set: rawData },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedProfile) {
+            res.status(404).json({ error: "Profile not found" });
+            return;
+        }
+
+        res.status(200).json({ success: true, data: updatedProfile });
+
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
-
-    if (rawData.bio) rawData.bio = sanitizeHtml(rawData.bio);
-    if (rawData.headline) rawData.headline = sanitizeHtml(rawData.headline);
-
-    const files = req.files as { [fieldName: string]: Express.Multer.File[] } | undefined;
-
-    if (files?.profilePicture?.[0]) {
-      rawData.profilePicture = files.profilePicture[0].path;
-    }
-
-    let retainedImages: string[] = [];
-    if (typeof rawData.projectImagesToKeep === "string") {
-      try {
-        retainedImages = JSON.parse(rawData.projectImagesToKeep);
-      } catch {
-        retainedImages = [];
-      }
-    } else if (Array.isArray(rawData.projectImagesToKeep)) {
-      retainedImages = rawData.projectImagesToKeep;
-    }
-
-    const uploadedImages = files?.projectImages?.map((file) => file.path) ?? [];
-
-    rawData.projectImages = [...retainedImages, ...uploadedImages];
-
-    const updatedProfile = await Profile.findOneAndUpdate(
-      { userId },
-      { $set: rawData },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedProfile) {
-      res.status(404).json({ error: "Profile not found" });
-      return;
-    }
-
-    res.status(200).json({ success: true, data: updatedProfile });
-
-  } catch (error) {
-    console.error("Error updating profile:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
 };
 
 export const deleteProfile = async (req: AuthRequest, res: Response): Promise<void> => {

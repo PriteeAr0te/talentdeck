@@ -62,13 +62,13 @@ function TagsSelector<T extends FieldValues>({
             }
           }}
           placeholder="Add a tag and press Enter"
-          className="flex-1 border text-black dark:text-white dark:bg-[#1a1a1a] placeholder:text-gray-600 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-500 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+          className="flex-1 border text-black dark:text-white placeholder:text-gray-600 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-500 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
         />
 
         <button
           type="button"
           onClick={handleAddTag}
-          className="bg-primary text-white text-sm px-4 py-2.5 rounded-lg hover:bg-primary-dark transition"
+          className="bg-primary text-white cursor-pointer dark:text-gray-900 font-medium text-sm px-4 py-2.5 rounded-lg hover:bg-primary-dark transition"
         >
           Add
         </button>
@@ -85,7 +85,7 @@ function TagsSelector<T extends FieldValues>({
               <button
                 type="button"
                 onClick={() => handleRemoveTag(tag)}
-                className="ml-2 text-gray-600 hover:text-red-500 font-bold"
+                className="ml-2 text-gray-600 hover:text-red-500 font-bold cursor-pointer"
               >
                 ×
               </button>

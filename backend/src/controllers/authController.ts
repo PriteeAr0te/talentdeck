@@ -7,7 +7,6 @@ import { HydratedDocument } from "mongoose";
 import { Profile } from "../models/Profile";
 
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
-    // const { fullName, email, password } = req.body;
 
     try {
         const validatedData = registerUserSchema.parse(req.body);
@@ -24,9 +23,9 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
             return;
         }
 
-        const profile = await Profile.create({ user: user._id });
+        // const profile = await Profile.create({ user: user._id });
 
-        const profileCreated = profile ? true : false;
+        const profileCreated = false;
 
         res.status(201).json({
             token: generateToken(user._id.toString(), user.role),

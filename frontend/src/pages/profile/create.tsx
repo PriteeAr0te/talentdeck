@@ -8,15 +8,16 @@ const CreateProfile: React.FC = () => {
     const router = useRouter();
     console.log(isProfileCreated)
 
-    useEffect(() => {
-        if (loading) return;
+   useEffect(() => {
+    if (loading) return;
 
-        if (!isLoggedIn) {
-            router.push('/');
-        } else if(user?.profileCreated) {
-            router.push(`/`);
-        }
-    }, [isLoggedIn, user, loading, isProfileCreated, router ]);
+    if (!isLoggedIn) {
+        router.push('/');
+    } else if (user?.profileCreated && router.pathname === "/profile/create") {
+        router.push(`/profile/view`);
+    }
+}, [isLoggedIn, user, loading, isProfileCreated, router]);
+
 
     return (
         <main className="dark:bg-[#0A0011] bg-white">

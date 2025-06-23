@@ -2,11 +2,12 @@ import { Document, Schema, model, HydratedDocument, ObjectId } from "mongoose";
 import bcrypt from "bcryptjs";
 
 export interface IUser extends Document {
-  _id: ObjectId;  
+  _id: ObjectId;
   fullName: string;
   email: string;
   password: string;
   role: string;
+  profileCreated: boolean,
   createdAt: Date;
   updatedAt: Date;
   matchPassword(enteredPassword: string): Promise<boolean>;
@@ -31,13 +32,17 @@ const userSchema = new Schema<IUser>({
     enum: ["creator"],
     default: "creator",
   },
+  profileCreated: {
+    type: Boolean,
+    default: false,
+  }
 },
   { timestamps: true }
 );
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
-    return next(); // Skip if password wasn't changed
+    return next();
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -45,7 +50,6 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// 🔍 Method to Match Password (Login check)
 userSchema.methods.matchPassword = async function (
   enteredPassword: string
 ): Promise<boolean> {

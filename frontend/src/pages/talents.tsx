@@ -62,12 +62,12 @@ export default function SearchPage() {
   }, [q, category, available, sort, page]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white p-6">
+    <div className="min-h-screen text-gray-900 dark:text-white py-6 px-4 sm:p-6 md:px-10 lg:px-20 2xl:px-28">
       <div className="flex flex-col md:flex-row md:items-start flex-wrap md:justify-end gap-4 mb-6 xl:justify-between">
         <input
           type="search"
           placeholder="Search Talents..."
-          className="px-4 py-2 border rounded-md w-full md:w-1/3 dark:bg-gray-800 focus:outline-0 focus:border-primary focus:dark:border-[#A57FC0]"
+          className="px-4 py-2 border rounded-md w-full md:w-1/3 focus:outline-0 focus:border-primary focus:dark:border-[#A57FC0]"
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
@@ -112,15 +112,17 @@ export default function SearchPage() {
         {profiles?.length > 0 ?
           profiles.map((profile) => (
             <Link key={profile._id} href={`/talent/${profile.username}`}>
-              <div className="border rounded-lg p-4 hover:shadow-lg transition bg-white dark:bg-gray-800 h-full">
-                <Image
-                  src={profile.profilePicture || '/default-avatar.png'}
-                  alt={profile.username}
-                  width={64}
-                  height={64}
-                  style={{ height: 'auto' }}
-                  className="rounded-full mb-2"
-                />
+              <div className="border rounded-lg p-4 hover:shadow-lg transition bg-white dark:bg-gray-900 h-full">
+                <div className=''>
+                  <Image
+                    src={profile.profilePicture || '/default-avatar.png'}
+                    alt={profile.username}
+                    width={64}
+                    height={64}
+                    style={{ width: 'auto', maxHeight: '64px', minWidth:'64px', objectFit: 'cover' }}
+                    className="rounded-full mb-2"
+                  />
+                </div>
                 <h3 className="font-semibold">{profile.username}</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{profile.headline}</p>
                 <p className="text-xs mt-1">{profile.category}</p>
@@ -138,7 +140,7 @@ export default function SearchPage() {
           <button
             key={i + 1}
             onClick={() => setPage(i + 1)}
-            className={`px-4 py-2 rounded-md ${page === i + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+            className={`px-4 py-2 rounded-md ${page === i + 1 ? 'bg-[#250040] text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
           >
             {i + 1}
           </button>

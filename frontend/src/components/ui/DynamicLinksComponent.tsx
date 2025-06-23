@@ -43,7 +43,7 @@ function DynamicLinksComponent<T extends FieldValues, N extends ArrayPath<T>>({
         <button
           type="button"
           onClick={handleAdd}
-          className="flex items-center text-primary dark:text-secondary text-sm font-medium hover:underline"
+          className="flex items-center text-primary cursor-pointer dark:text-gray-300 text-sm font-medium hover:underline"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +77,7 @@ function DynamicLinksComponent<T extends FieldValues, N extends ArrayPath<T>>({
             key={field.id}
             className="relative border border-gray-200 rounded-lg p-4 mb-4 dark:border-gray-600"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
               <input
                 {...register(`${name}.${index}.label` as Path<T>)}
                 placeholder="Label (e.g. GitHub)"
@@ -108,7 +108,7 @@ function DynamicLinksComponent<T extends FieldValues, N extends ArrayPath<T>>({
             <button
               type="button"
               onClick={() => remove(index)}
-              className="absolute top-2 right-2 text-gray-600 hover:text-red-500 dark:text-gray-300 transition"
+              className="absolute top-2 right-2 text-gray-600 hover:text-red-500 dark:text-gray-300 transition cursor-pointer"
               aria-label="Remove link"
             >
               ✕

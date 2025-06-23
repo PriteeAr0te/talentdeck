@@ -264,7 +264,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
         </Section>
 
         <div className="flex justify-end">
-          <button type="submit" className="px-6 py-2 bg-primary dark:hover:text-[#51008c] text-white rounded-lg hover:bg-secondary">
+          <button type="submit" className="px-6 py-2 bg-primary text-white dark:text-gray-900 font-medium hover:dark:text-gray-100 rounded-lg hover:bg-secondary cursor-pointer">
             Update Profile
           </button>
         </div>

@@ -19,7 +19,7 @@ export default function TalentPublicPage({ profile }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white p-6">
+    <div className="min-h-screen text-gray-900 dark:text-white p-6">
       <TalentProfile profile={profile} />
     </div>
   );

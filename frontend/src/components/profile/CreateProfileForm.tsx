@@ -64,7 +64,6 @@ const CreateProfileForm: React.FC = () => {
     });
 
     const selectedCategory = watch('category');
-    console.log("Selected category:", selectedCategory);
 
     const onSubmit = async (data: CreateProfileSchema) => {
         console.log("create form data: ", data)
@@ -95,14 +94,14 @@ const CreateProfileForm: React.FC = () => {
                 toast.success("Profile created successfully!");
                 const storedUser = localStorage.getItem("user");
                 if (storedUser) {
-                    const updatedUser = { ...JSON.parse(storedUser),username: data.username.trim(), profileCreated: true };
+                    const updatedUser = { ...JSON.parse(storedUser), username: data.username.trim(), profileCreated: true };
                     localStorage.setItem("user", JSON.stringify(updatedUser));
                     setUser(updatedUser)
                 }
                 reset();
                 setProfilePicFile(null);
                 setProjectImagesFiles([]);
-                router.push("/");
+                router.push("/profile/view");
             }
         } catch (err) {
             console.log("Error creating profile:", err);
@@ -218,7 +217,7 @@ const CreateProfileForm: React.FC = () => {
                 </Section>
 
                 <div className="flex justify-end">
-                    <button type="submit" className="px-6 py-2 bg-primary dark:hover:text-[#51008c] text-white rounded-lg hover:bg-secondary">
+                    <button type="submit" className="px-6 py-2 bg-primary text-white dark:text-gray-900 font-medium cursor-pointer hover:dark:text-gray-100 rounded-lg hover:bg-secondary">
                         Create Profile
                     </button>
                 </div>

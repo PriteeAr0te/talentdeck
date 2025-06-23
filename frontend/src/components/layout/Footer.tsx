@@ -4,7 +4,7 @@ import { FaHeart } from 'react-icons/fa';
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-dark border-t border-gray-200 dark:border-gray-700 py-6">
+    <footer className="w-full bg-[#160026] border-t border-gray-200 dark:border-gray-700 py-6">
       <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between text-sm text-gray-600 dark:text-gray-200 font-medium">
         <div className="mb-4 md:mb-0">
           © {new Date().getFullYear()} TalentDeck. Built with

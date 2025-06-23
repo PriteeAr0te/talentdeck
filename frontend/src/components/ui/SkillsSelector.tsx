@@ -68,13 +68,13 @@ function SkillsSelector<T extends FieldValues>({
               handleAddSkill();
             }
           }}
-          className="flex-1 border text-black dark:text-white dark:bg-[#1a1a1a] placeholder:text-gray-600 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-500 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+          className="flex-1 border text-black dark:text-white placeholder:text-gray-600 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-500 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
         />
 
         <button
           type="button"
           onClick={handleAddSkill}
-          className="bg-primary text-white text-sm px-4 py-2.5 rounded-lg hover:bg-primary-dark transition"
+          className="bg-primary text-white cursor-pointer dark:text-gray-900 font-medium text-sm px-4 py-2.5 rounded-lg hover:bg-primary-dark transition"
         >
           Add
         </button>
@@ -91,7 +91,7 @@ function SkillsSelector<T extends FieldValues>({
               <button
                 type="button"
                 onClick={() => handleRemoveSkill(skill)}
-                className="ml-2 text-gray-600 hover:text-red-500"
+                className="ml-2 text-gray-600 hover:text-red-500 cursor-pointer"
               >
                 ×
               </button>

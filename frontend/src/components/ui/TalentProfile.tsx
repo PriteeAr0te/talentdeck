@@ -32,7 +32,7 @@ export default function TalentProfile({ profile }: Props) {
           alt={profile.username}
           width={120}
           height={120}
-          style={{ height: 'auto' }}
+          style={{ height: 'auto', maxHeight: '120px', maxWidth: '120px', objectFit: 'cover' }}
           priority={true}
           className="rounded-full object-cover border shadow-md"
         />
