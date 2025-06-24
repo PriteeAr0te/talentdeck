@@ -51,7 +51,7 @@ export default function TalentFilterPanel({ filters, setFilters }: TalentFilterP
                 <input
                     type="checkbox"
                     id="available"
-                    checked={filters.availableforwork || false}
+                    checked={filters.availableforwork || true}
                     onChange={() =>
                         setFilters((prev) => ({
                             ...prev,

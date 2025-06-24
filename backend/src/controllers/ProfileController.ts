@@ -227,6 +227,8 @@ export const searchProfiles = async (req: Request, res: Response): Promise<void>
     try {
         const parsed = profileSearchSchema.safeParse(req.query);
 
+        console.log("query: ", req.query);
+
         if (!parsed.success) {
             res.status(400).json({ error: parsed.error.flatten() });
             return;

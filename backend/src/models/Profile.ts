@@ -61,7 +61,7 @@ const profileSchema = new Schema<IProfile>(
         },
         skills: [String],
         tags: [String],
-        availableforwork: { type: Boolean, default: false },
+        availableforwork: { type: Boolean, default: true },
         isVisible: { type: Boolean, default: true },
         portfolioLinks: [
             {
