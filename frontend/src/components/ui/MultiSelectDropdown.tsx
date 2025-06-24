@@ -1,32 +1,27 @@
+// components/ui/MultiSelectDropdown.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 
-interface FilterDropdownProps {
+interface MultiSelectDropdownProps {
   label?: string;
   options: string[];
-  value: string;
-  onChange: (value: string) => void;
+  selected: string[];
+  onChange: (values: string[]) => void;
   width?: string;
   placeholder?: string;
 }
 
-function FilterDropdownComponent({
+export default function MultiSelectDropdown({
   label,
   options,
-  value,
+  selected,
   onChange,
   width = "full",
-  placeholder = "Select an option",
-}: FilterDropdownProps) {
-  const [selected, setSelected] = useState(placeholder);
+  placeholder = "Select options",
+}: MultiSelectDropdownProps) {
   const dropdownRef = useRef<HTMLDetailsElement>(null);
-
-  useEffect(() => {
-    if (typeof value === "string") {
-      setSelected(value || placeholder);
-    }
-  }, [value, placeholder]);
+  const [selectedLabel, setSelectedLabel] = useState<string>(placeholder);
 
   useEffect(() => {
     const closeDropdown = (e: MouseEvent) => {
@@ -41,11 +36,21 @@ function FilterDropdownComponent({
     return () => document.removeEventListener("mousedown", closeDropdown);
   }, []);
 
+  useEffect(() => {
+    if (selected.length === 0) {
+      setSelectedLabel(placeholder);
+    } else if (selected.length <= 2) {
+      setSelectedLabel(selected.join(", "));
+    } else {
+      setSelectedLabel(`${selected.slice(0, 2).join(", ")}, +${selected.length - 2} more`);
+    }
+  }, [selected, placeholder]);
+
   const handleSelect = (option: string) => {
-    setSelected(option);
-    onChange(option);
-    if (dropdownRef.current) {
-      dropdownRef.current.open = false;
+    if (selected.includes(option)) {
+      onChange(selected.filter((item) => item !== option));
+    } else {
+      onChange([...selected, option]);
     }
   };
 
@@ -66,20 +71,24 @@ function FilterDropdownComponent({
             width === "fit" ? "min-w-[240px]" : ""
           }`}
         >
-          {options.includes(selected) ? selected : placeholder}
+          {selectedLabel}
         </summary>
 
         <ul className="w-full absolute top-10 left-0 border-t text-black border-gray-300 bg-white dark:bg-[#0A0011] shadow-md rounded-lg max-h-62 overflow-y-auto z-50">
           {options.map((option) => (
             <li
               key={option}
-              className={`px-4 py-2 cursor-pointer dark:text-gray-300 ${
-                selected === option
-                  ? "bg-background-active font-semibold"
-                  : "hover:bg-background-hover"
+              className={`px-4 py-2 cursor-pointer dark:text-gray-300 flex items-center gap-2 hover:bg-background-hover ${
+                selected.includes(option) ? "bg-background-active font-semibold" : ""
               }`}
               onClick={() => handleSelect(option)}
             >
+              <input
+                type="checkbox"
+                checked={selected.includes(option)}
+                readOnly
+                className="form-checkbox h-4 w-4 text-blue-600"
+              />
               {option}
             </li>
           ))}
@@ -88,5 +97,3 @@ function FilterDropdownComponent({
     </div>
   );
 }
-
-export default FilterDropdownComponent;

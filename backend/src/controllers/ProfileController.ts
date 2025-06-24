@@ -274,7 +274,10 @@ export const searchProfiles = async (req: Request, res: Response): Promise<void>
             filter["location.state"] = state;
         }
 
-        const skip = (page - 1) * limit;
+        const safePage = Math.max(Number(page) || 1, 1);
+        const safeLimit = Math.min(Number(limit) || 10, 50);
+        const skip = (safePage - 1) * safeLimit;
+
         const sortField = sortBy || "createdAt";
         const sortOptions: Record<string, 1 | -1> = {
             [sortField]: sortOrder === "asc" ? 1 : -1,
@@ -282,14 +285,14 @@ export const searchProfiles = async (req: Request, res: Response): Promise<void>
 
         const [total, profiles] = await Promise.all([
             Profile.countDocuments(filter),
-            Profile.find(filter).sort(sortOptions).skip(skip).limit(limit),
+            Profile.find(filter).sort(sortOptions).skip(skip).limit(safeLimit).lean(),
         ]);
 
         res.status(200).json({
             meta: {
                 total,
-                page,
-                pages: Math.ceil(total / limit),
+                page: safePage,
+                pages: Math.ceil(total / safeLimit),
             },
             data: profiles,
         });
