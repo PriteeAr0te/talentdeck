@@ -6,6 +6,7 @@ import sanitizeHtml from 'sanitize-html';
 import { slugifyUserName } from "../utils/slagifyUserName";
 import { ZodError } from "zod";
 import { User } from "../models/User";
+import { normalizeTagOrSkill } from "../utils/normalize";
 
 interface AuthRequest extends Request {
     user?: {
@@ -41,13 +42,30 @@ export const createProfile = async (req: AuthRequest, res: Response): Promise<vo
             return;
         }
 
+        const parseArray = (input: any): any[] => {
+            try {
+                return typeof input === 'string' ? JSON.parse(input) : [];
+            } catch {
+                return [];
+            }
+        };
+
+        const location = parseArray(req.body.location);
+        const portfolioLinks = parseArray(req.body.portfolioLinks);
+        const socialLinks = parseArray(req.body.socialLinks);
+        let skills = parseArray(req.body.skills);
+        let tags = parseArray(req.body.tags);
+
+        skills = skills.map(normalizeTagOrSkill);
+        tags = tags.map(normalizeTagOrSkill);
+
         const fullInput = {
             ...req.body,
-            location: JSON.parse(req.body.location),
-            skills: JSON.parse(req.body.skills),
-            tags: JSON.parse(req.body.tags),
-            portfolioLinks: JSON.parse(req.body.portfolioLinks),
-            socialLinks: JSON.parse(req.body.socialLinks),
+            location,
+            skills,
+            tags,
+            portfolioLinks,
+            socialLinks,
             availableforwork: req.body.availableforwork === "true",
             isVisible: req.body.isVisible === "true",
             profilePicture: profilePictureFile.path || '',
@@ -142,6 +160,14 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
                 }
             }
         }
+
+        rawData.skills = Array.isArray(rawData.skills)
+            ? rawData.skills.map(normalizeTagOrSkill)
+            : [];
+
+        rawData.tags = Array.isArray(rawData.tags)
+            ? rawData.tags.map(normalizeTagOrSkill)
+            : [];
 
         rawData.availableforwork = rawData.availableforwork === "true";
         rawData.isVisible = rawData.isVisible === "true";
@@ -337,3 +363,13 @@ export const getProfileByUsername = async (req: Request, res: Response): Promise
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+export const getAllSkills = async (_req: Request, res: Response): Promise<void> => {
+    const skills = await Profile.distinct("skills");
+    res.json(skills)
+}
+
+export const getAllTags = async (_req: Request, res: Response): Promise<void> => {
+    const tags = await Profile.distinct("tags");
+    res.json(tags)
+}

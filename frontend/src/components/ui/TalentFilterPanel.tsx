@@ -1,9 +1,12 @@
 "use client";
 
-import FilterDropdownComponent from "@/components/ui/FilterDropdownComponent";
+import { useEffect, useState } from "react";
+import API from "@/lib/api"; // Your Axios wrapper
 import MultiSelectDropdown from "@/components/ui/MultiSelectDropdown";
+import FilterDropdownComponent from "@/components/ui/FilterDropdownComponent";
 import { SearchParams } from "@/types/searchParams";
 import LocationSelectorFilter from "./LocationSelectorFilter";
+import { useDebouncedSearch } from "@/hooks/useDebouncedCallback";
 
 interface TalentFilterPanelProps {
     filters: SearchParams;
@@ -19,21 +22,44 @@ const categories = [
     "Other",
 ];
 
-const mockSkills = ["React", "Node", "TypeScript", "MongoDB", "Figma"];
-const mockTags = ["freelancer", "remote", "available", "experienced"];
-
 export default function TalentFilterPanel({ filters, setFilters }: TalentFilterPanelProps) {
+    const [skillsOptions, setSkillsOptions] = useState<string[]>([]);
+    const [tagsOptions, setTagsOptions] = useState<string[]>([]);
+    const [q, setQ] = useState(filters.q || '');
+
+    useEffect(() => {
+        const fetchOptions = async () => {
+            try {
+                const [skillsRes, tagsRes] = await Promise.all([
+                    API.get("/profile/skills"),
+                    API.get("/profile/tags"),
+                ]);
+                setSkillsOptions(skillsRes.data);
+                setTagsOptions(tagsRes.data);
+            } catch (err) {
+                console.error("Failed to fetch skills/tags", err);
+            }
+        };
+
+        fetchOptions();
+    }, []);
+    
+    useDebouncedSearch(q, 500, (val) => {
+        setFilters((prev) => {
+            if (prev.q === val) return prev;
+            return { ...prev, q: val };
+        });
+    });
+
     return (
         <div className="space-y-6">
-            <div>
-                <input
-                    type="search"
-                    placeholder="Search talents..."
-                    value={filters.q || ""}
-                    className="px-4 py-2 border rounded-md w-full focus:outline-0 focus:border-primary focus:dark:border-[#A57FC0]"
-                    onChange={(e) => setFilters((prev) => ({ ...prev, q: e.target.value }))}
-                />
-            </div>
+            <input
+                type="search"
+                placeholder="Search talents..."
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                className="px-4 py-2 border rounded-md w-full focus:outline-0 focus:border-primary focus:dark:border-[#A57FC0]"
+            />
 
             <FilterDropdownComponent
                 label="Category"
@@ -51,7 +77,7 @@ export default function TalentFilterPanel({ filters, setFilters }: TalentFilterP
                 <input
                     type="checkbox"
                     id="available"
-                    checked={filters.availableforwork || true}
+                    checked={filters.availableforwork ?? false}
                     onChange={() =>
                         setFilters((prev) => ({
                             ...prev,
@@ -67,20 +93,16 @@ export default function TalentFilterPanel({ filters, setFilters }: TalentFilterP
 
             <MultiSelectDropdown
                 label="Skills"
-                options={mockSkills}
+                options={skillsOptions}
                 selected={filters.skills || []}
-                onChange={(skills) =>
-                    setFilters((prev) => ({ ...prev, skills }))
-                }
+                onChange={(skills) => setFilters((prev) => ({ ...prev, skills }))}
             />
 
             <MultiSelectDropdown
                 label="Tags"
-                options={mockTags}
+                options={tagsOptions}
                 selected={filters.tags || []}
-                onChange={(tags) =>
-                    setFilters((prev) => ({ ...prev, tags }))
-                }
+                onChange={(tags) => setFilters((prev) => ({ ...prev, tags }))}
             />
 
             <LocationSelectorFilter
