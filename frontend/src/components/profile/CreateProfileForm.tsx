@@ -63,7 +63,7 @@ const CreateProfileForm: React.FC = () => {
         name: "portfolioLinks",
     });
 
-    const selectedCategory = watch('category');
+    watch('category');
 
     const onSubmit = async (data: CreateProfileSchema) => {
         console.log("create form data: ", data)

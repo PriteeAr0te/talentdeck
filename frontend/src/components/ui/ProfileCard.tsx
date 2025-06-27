@@ -38,7 +38,7 @@ export default function ProfileCard({ profile }: { profile: ProfileType }) {
 
       <button
         onClick={handleCopy}
-        className="absolute bottom-3 right-3 text-gray-500 hover:text-primary"
+        className="absolute bottom-3 right-3 text-gray-500 hover:text-primary cursor-pointer"
         title="Copy Profile Link"
       >
         <Copy size={16} />

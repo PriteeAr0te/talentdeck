@@ -8,12 +8,12 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 
 interface User {
-    id: string;
-    name: string;
-    email: string;
-    role?: string;
-    username?: string;
-    profileCreated?: boolean;
+  id: string;
+  name: string;
+  email: string;
+  role?: string;
+  username?: string;
+  profileCreated?: boolean;
 }
 
 const Header: React.FC = () => {
@@ -27,39 +27,37 @@ const Header: React.FC = () => {
     if (dropdown?.open) dropdown.removeAttribute('open');
   };
 
-  console.log("IsProfileCreated: ", isProfileCreated);
+  const deleteProfileHandler = async () => {
+    const confirm = window.confirm(
+      "Are you sure you want to delete your profile? This cannot be undone."
+    );
+    if (!confirm) return;
 
-const deleteProfileHandler = async () => {
-  const confirm = window.confirm(
-    "Are you sure you want to delete your profile? This cannot be undone."
-  );
-  if (!confirm) return;
+    try {
+      const res = await API.delete("/profile");
 
-  try {
-    const res = await API.delete("/profile");
+      if (res.status === 200) {
+        toast.success("Profile deleted successfully.");
 
-    if (res.status === 200) {
-      toast.success("Profile deleted successfully.");
+        const updatedUser: User = {
+          ...(user as User),
+          profileCreated: false,
+        };
 
-      const updatedUser: User = {
-        ...(user as User),
-        profileCreated: false,
-      };
+        delete updatedUser.username;
 
-      delete updatedUser.username;
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setUser(updatedUser);
 
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      setUser(updatedUser);
-
-      router.push("/profile/create");
-    } else {
-      throw new Error("Unexpected error");
+        router.push("/profile/create");
+      } else {
+        throw new Error("Unexpected error");
+      }
+    } catch (err) {
+      console.error("Delete error", err);
+      toast.error("Failed to delete profile. Please try again.");
     }
-  } catch (err) {
-    console.error("Delete error", err);
-    toast.error("Failed to delete profile. Please try again.");
-  }
-};
+  };
 
   return (
     <nav className="bg-dark shadow">
@@ -136,7 +134,7 @@ const deleteProfileHandler = async () => {
                     </Link>
                   )}
                   {isProfileCreated &&
-                    <button className='w-full text-left' onClick={() => deleteProfileHandler()}>
+                    <button className='w-full text-left cursor-pointer' onClick={() => deleteProfileHandler()}>
                       <span
                         onClick={handleClose}
                         className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-background-hover dark:hover:bg-background-hover cursor-pointer"

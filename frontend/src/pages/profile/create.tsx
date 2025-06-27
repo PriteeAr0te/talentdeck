@@ -6,7 +6,6 @@ import CreateProfileForm from '@/components/profile/CreateProfileForm';
 const CreateProfile: React.FC = () => {
     const { isLoggedIn, user, loading, isProfileCreated } = useAuth();
     const router = useRouter();
-    console.log(isProfileCreated)
 
    useEffect(() => {
     if (loading) return;

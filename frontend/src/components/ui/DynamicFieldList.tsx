@@ -19,7 +19,7 @@ const DynamicFieldList: React.FC<DynamicFieldListProps> = ({ name, label }) => {
         <button
           type="button"
           onClick={() => append({ label: "", url: "" })}
-          className="text-sm text-blue-600 hover:underline"
+          className="text-sm text-blue-600 hover:underline cursor-pointer"
         >
           + Add
         </button>
@@ -49,7 +49,7 @@ const DynamicFieldList: React.FC<DynamicFieldListProps> = ({ name, label }) => {
           <button
             type="button"
             onClick={() => remove(index)}
-            className="text-red-500 hover:text-red-700 p-1"
+            className="text-red-500 hover:text-red-700 p-1 cursor-pointer"
           >
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
           </button>

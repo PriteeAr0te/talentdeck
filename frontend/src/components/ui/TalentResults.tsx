@@ -26,7 +26,7 @@ export default function TalentResults({ filters, setFilters }: TalentResultsProp
           ...rest
         } = filters;
 
-        const paramsToSend: any = {
+        const paramsToSend: Record<string, unknown> = {
           ...rest,
           ...(category && category !== "All Categories" ? { category } : {}),
           ...(skills && Array.isArray(skills) ? { skills: skills.join(",") } : {}),
@@ -69,7 +69,7 @@ export default function TalentResults({ filters, setFilters }: TalentResultsProp
             onClick={() =>
               setFilters((prev) => ({ ...prev, page: prev.page - 1 }))
             }
-            className="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-700 disabled:opacity-50"
+            className="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-700 disabled:opacity-50 cursor-pointer"
           >
             Prev
           </button>
@@ -83,7 +83,7 @@ export default function TalentResults({ filters, setFilters }: TalentResultsProp
             onClick={() =>
               setFilters((prev) => ({ ...prev, page: prev.page + 1 }))
             }
-            className="px-4 py-2 rounded-md bg-[#250040] text-white disabled:opacity-50"
+            className="px-4 py-2 rounded-md bg-[#250040] text-white disabled:opacity-50 cursor-pointer"
           >
             Next
           </button>
