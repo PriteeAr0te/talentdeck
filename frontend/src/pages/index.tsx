@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import API from "@/lib/api";
 import { Spotlight } from "@/components/ui/Spotlight";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/ButtonNew";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -19,7 +19,7 @@ interface Profile {
 
 export default function HomePage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const {isProfileCreated} = useAuth();
+  const { isProfileCreated } = useAuth();
 
   useEffect(() => {
     const fetchFeaturedProfiles = async () => {
