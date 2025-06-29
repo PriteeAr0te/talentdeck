@@ -50,7 +50,7 @@ function FilterDropdownComponent({
   };
 
   return (
-    <div className={`mb-4 w-${width}`}>
+    <div className={`w-${width}`}>
       {label && (
         <label className="block text-base font-medium text-black mb-2 dark:text-white">
           {label}
@@ -59,24 +59,24 @@ function FilterDropdownComponent({
 
       <details
         ref={dropdownRef}
-        className={`w-${width} cursor-pointer border border-gray-300 rounded-lg bg-white dark:bg-[#0A0011] relative`}
+        className={`w-${width} cursor-pointer border border-br-primary rounded-lg bg-transparent relative`}
       >
         <summary
-          className={`list-none px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0A0011] hover:bg-background-hover rounded-lg ${
+          className={`list-none px-4 py-2 text-foreground dark:text-gray-300 bg-transparent rounded-lg ${
             width === "fit" ? "min-w-[240px]" : ""
           }`}
         >
           {options.includes(selected) ? selected : placeholder}
         </summary>
 
-        <ul className="w-full absolute top-10 left-0 border-t text-black border-gray-300 bg-white dark:bg-[#0A0011] shadow-md rounded-lg max-h-62 overflow-y-auto z-50">
+        <ul className="w-full absolute top-10 left-0 border-t text-black border-bg-primary bg-background-secondary shadow-md rounded-lg focus:outline-none max-h-62 overflow-y-auto z-50">
           {options.map((option) => (
             <li
               key={option}
               className={`px-4 py-2 cursor-pointer dark:text-gray-300 ${
                 selected === option
-                  ? "bg-background-active font-semibold"
-                  : "hover:bg-background-hover"
+                  ? "bg-accent font-semibold"
+                  : "hover:bg-secondary"
               }`}
               onClick={() => handleSelect(option)}
             >

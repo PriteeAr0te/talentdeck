@@ -7,7 +7,7 @@ import { registerUserSchema } from "@/lib/validators/authValidators";
 import Link from "next/link";
 import Head from "next/head";
 import InputComponent from "@/components/ui/InputComponent";
-import { Slide, ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import ButtonComponent from "@/components/ui/ButtonComponent";
 
@@ -46,7 +46,6 @@ const Register = () => {
 
     return (
         <>
-            <ToastContainer position="top-right" transition={Slide} autoClose={6000} closeButton={true} pauseOnHover={true} />
             <Head>
                 <title>Register | TalentDeck</title>
                 <meta
@@ -55,9 +54,9 @@ const Register = () => {
                 />
             </Head>
 
-            <main className="flex items-center justify-center bg-primary-bg dark:bg-[#0a0011] p-4 py-14">
-                <div className="w-full max-w-md bg-white shadow-custom rounded-2xl p-8">
-                    <h1 className="text-2xl font-bold text-[#2D004E] mb-6 text-center">
+            <main className="flex items-center justify-center bg-background p-4 py-14">
+                <div className="w-full max-w-md bg-background-secondary shadow-custom rounded-2xl p-8">
+                    <h1 className="text-2xl font-bold text-foreground mb-6 text-center">
                         Create an Account
                     </h1>
 
@@ -105,9 +104,9 @@ const Register = () => {
                             Create Account
                         </ButtonComponent>
 
-                        <p className="mt-4 text-center text-sm text-gray-600">
+                        <p className="mt-4 text-center text-sm text-foreground/80">
                             Already have an account?{' '}
-                            <Link href="/login" className="text-indigo-600 hover:underline">
+                            <Link href="/login" className="text-primary font-medium hover:underline">
                                 Sign in
                             </Link>
                         </p>

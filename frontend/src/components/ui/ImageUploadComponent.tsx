@@ -71,7 +71,7 @@ const ImageUploadComponent: React.FC<ImageUploadComponentProps> = ({
       )}
 
       <div
-        className="border border-dashed border-gray-400 rounded-lg p-4 py-6 text-center cursor-pointer bg-white dark:bg-[#0A0011]"
+        className="border border-dashed border-gray-400 rounded-lg p-4 py-6 text-center cursor-pointer bg-background"
         onClick={() => inputRef.current?.click()}
       >
         <svg className="mx-auto size-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor">

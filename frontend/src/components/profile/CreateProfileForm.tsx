@@ -11,7 +11,7 @@ import SkillsSelector from "@/components/ui/SkillsSelector";
 import DropdownComponent from "@/components/ui/DropdownComponent";
 import TagsSelector from "@/components/ui/TagsSelector";
 import { useRouter } from "next/router";
-import { Slide, toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import API from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import CheckboxField from "../ui/CheckboxField";
@@ -66,7 +66,7 @@ const CreateProfileForm: React.FC = () => {
     watch('category');
 
     const onSubmit = async (data: CreateProfileSchema) => {
-        console.log("create form data: ", data)
+        console.log("create form data: ", data);
         try {
             setUploadError("");
             const formData = new FormData();
@@ -84,20 +84,21 @@ const CreateProfileForm: React.FC = () => {
             formData.append("portfolioLinks", JSON.stringify(data.portfolioLinks));
 
             if (profilePicFile) formData.append("profilePicture", profilePicFile);
-            projectImagesFiles.forEach(file => formData.append("projectImages", file));
+            projectImagesFiles.forEach((file) =>
+                formData.append("projectImages", file)
+            );
 
             const res = await API.post("/profile", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            if (res.status === 201 || res.data?.isProfileCreated) {
+            if (res.status === 201 || res.data?.profileCreated) {
                 toast.success("Profile created successfully!");
-                const storedUser = localStorage.getItem("user");
-                if (storedUser) {
-                    const updatedUser = { ...JSON.parse(storedUser), username: data.username.trim(), profileCreated: true };
-                    localStorage.setItem("user", JSON.stringify(updatedUser));
-                    setUser(updatedUser)
-                }
+
+                const updatedUser = res.data.user;
+                localStorage.setItem("user", JSON.stringify(updatedUser));
+                setUser(updatedUser);
+
                 reset();
                 setProfilePicFile(null);
                 setProjectImagesFiles([]);
@@ -111,7 +112,6 @@ const CreateProfileForm: React.FC = () => {
 
     return (
         <>
-            <ToastContainer position="top-right" autoClose={5000} transition={Slide} />
             <form onSubmit={handleSubmit(onSubmit)} className="max-w-6xl mx-auto p-6 space-y-10 bg-white dark:bg-[#0A0011] rounded-xl">
 
                 <Section title="Basic Information" desc="Let us know who you are and what you do.">

@@ -47,7 +47,7 @@ export default function LocationSelectorFilter({ location, onChange }: LocationS
       <FilterDropdownComponent
         label="Country"
         value={selectedCountry}
-        options={["", ...countries]}
+        options={[...countries]}
         placeholder="Select Country"
         onChange={(country) => {
           setSelectedCountry(country);
@@ -60,7 +60,7 @@ export default function LocationSelectorFilter({ location, onChange }: LocationS
         <FilterDropdownComponent
           label="State"
           value={selectedState}
-          options={["", ...(statesMap[selectedCountry] || [])]}
+          options={[...(statesMap[selectedCountry] || [])]}
           placeholder="Select State"
           onChange={(state) => {
             setSelectedState(state);
@@ -73,7 +73,7 @@ export default function LocationSelectorFilter({ location, onChange }: LocationS
         <FilterDropdownComponent
           label="City"
           value={selectedCity}
-          options={["", ...(citiesMap[selectedState] || [])]}
+          options={[...(citiesMap[selectedState] || [])]}
           placeholder="Select City"
           onChange={setSelectedCity}
         />

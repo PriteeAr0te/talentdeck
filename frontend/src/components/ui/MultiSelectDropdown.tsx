@@ -64,22 +64,22 @@ export default function MultiSelectDropdown({
 
       <details
         ref={dropdownRef}
-        className={`w-${width} cursor-pointer border border-gray-300 rounded-lg bg-white dark:bg-[#0A0011] relative`}
+        className={`w-${width} cursor-pointer border border-br-primary rounded-lg bg-transparent relative`}
       >
         <summary
-          className={`list-none px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0A0011] hover:bg-background-hover rounded-lg ${
+          className={`list-none px-4 py-2 text-gray-700 dark:text-gray-300 bg-transparent ${
             width === "fit" ? "min-w-[240px]" : ""
           }`}
         >
           {selectedLabel}
         </summary>
 
-        <ul className="w-full absolute top-10 left-0 border-t text-black border-gray-300 bg-white dark:bg-[#0A0011] shadow-md rounded-lg max-h-62 overflow-y-auto z-50">
+        <ul className="w-full absolute top-10 left-0 border text-black border-br-primary bg-background-secondary shadow-md rounded-lg max-h-62 overflow-y-auto z-50">
           {options.map((option) => (
             <li
               key={option}
-              className={`px-4 py-2 cursor-pointer dark:text-gray-300 flex items-center gap-2 hover:bg-background-hover ${
-                selected.includes(option) ? "bg-background-active font-semibold" : ""
+              className={`px-4 py-2 cursor-pointer dark:text-gray-300 flex items-center gap-2 hover:bg-secondary ${
+                selected.includes(option) ? "bg-accent/50 font-semibold" : ""
               }`}
               onClick={() => handleSelect(option)}
             >

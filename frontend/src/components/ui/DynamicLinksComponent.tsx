@@ -81,7 +81,7 @@ function DynamicLinksComponent<T extends FieldValues, N extends ArrayPath<T>>({
               <input
                 {...register(`${name}.${index}.label` as Path<T>)}
                 placeholder="Label (e.g. GitHub)"
-                className={`w-full border px-3 py-2.5 text-sm rounded-lg text-black dark:text-white dark:bg-[#1a1a1a] focus:outline-none ${
+                className={`w-full border px-3 py-2.5 text-sm rounded-lg text-foreground focus:outline-none ${
                   labelError
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300 dark:border-gray-500 focus:border-primary"
@@ -94,7 +94,7 @@ function DynamicLinksComponent<T extends FieldValues, N extends ArrayPath<T>>({
               <input
                 {...register(`${name}.${index}.url` as Path<T>)}
                 placeholder="URL (e.g. https://github.com/yourname)"
-                className={`w-full border px-3 py-2.5 text-sm rounded-lg text-black dark:text-white dark:bg-[#1a1a1a] focus:outline-none ${
+                className={`w-full border px-3 py-2.5 text-sm rounded-lg text-foreground focus:outline-none ${
                   urlError
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300 dark:border-gray-500 focus:border-primary"

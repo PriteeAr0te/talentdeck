@@ -90,7 +90,7 @@ const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-gray-300 hover:bg-gray-100 cursor-pointer"
+          className="px-4 mt-2 bg-btn-primary text-gray-200 hover:text-foreground dark:text-foreground py-2.5 rounded-lg hover:bg-secondary cursor-pointer transition-all duration-150 disabled:opacity-50"
         >
           Upload
         </button>

@@ -70,21 +70,21 @@ function DropdownComponent<FormValues extends FieldValues>({
 
       <details
         ref={dropdownRef}
-        className={`w-${width} cursor-pointer border border-gray-300 rounded-lg bg-white dark:bg-[#0A0011] relative scale-z-105`}
+        className={`w-${width} cursor-pointer border border-gray-300 rounded-lg bg-background relative scale-z-105`}
       >
-        <summary className={`list-none px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0A0011] hover:bg-background-hover rounded-lg dark:hover:bg-[#0A0011] ${width === 'fit' ? 'min-w-[240px]' : ''}`}>
+        <summary className={`list-none px-4 py-2 text-gray-700 dark:text-gray-300 bg-background rounded-lg ${width === 'fit' ? 'min-w-[240px]' : ''}`}>
           {selected}
         </summary>
 
-        <ul className="w-full absolute top-10 left-0 border-t text-black border-gray-300 bg-white dark:bg-[#0A0011] shadow-md rounded-lg max-h-62 overflow-y-auto">
+        <ul className="w-full absolute top-10 left-0 border-t text-black border-gray-300 bg-background-secondary shadow-md rounded-lg max-h-62 overflow-y-auto">
           {options.map((option) => (
             <li
               key={option}
               value={option}
               className={`px-4 py-2 cursor-pointer dark:text-gray-300 ${
                 selected === option
-                  ? "bg-background-active font-semibold"
-                  : "hover:bg-background-hover"
+                  ? "bg-accent font-semibold"
+                  : "hover:bg-secondary"
               }`}
               onClick={() => handleSelect(option)}
             >

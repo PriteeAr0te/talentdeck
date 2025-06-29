@@ -89,7 +89,7 @@ const EditProfile: React.FC = () => {
   }, [isLoggedIn, loading]);
 
   return (
-    <main className="dark:bg-[#0A0011] bg-white min-h-screen">
+    <main className="bg-background min-h-screen">
       <div className="max-w-5xl mx-auto px-4 py-10">
         <h1 className="text-3xl font-semibold mb-8 text-black dark:text-white">Edit Your Profile</h1>
 

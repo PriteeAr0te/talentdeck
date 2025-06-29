@@ -29,7 +29,7 @@ const InputComponent = React.forwardRef<HTMLInputElement, InputComponentProps>(
           <label
             htmlFor={props.id}
             className={`block text-base font-medium mb-1 ${
-              isAuth ? "text-black dark:text-gray-900" : "text-black dark:text-gray-200"
+              isAuth ? "text-foreground" : "text-black dark:text-gray-200"
             }`}
           >
             {label}
@@ -44,14 +44,14 @@ const InputComponent = React.forwardRef<HTMLInputElement, InputComponentProps>(
             if (typeof ref === "function") ref(e);
           }}
           type={isPasswordField && showPassword ? "text" : type}
-          className={`w-full border px-3 py-2.5 text-sm rounded-lg focus:outline-none ${
+          className={`w-full border px-3 py-2.5 text-foreground/90 text-sm rounded-lg focus:outline-none placeholder:text-foreground/60 ${
             isAuth
-              ? "text-black dark:text-gray-800"
-              : "text-black dark:text-gray-100"
+              ? "text-foreground/90"
+              : ""
           } ${
             error
               ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 dark:border-gray-400 focus:border-primary"
+              : "border-br-primary focus:border-primary"
           } pr-10`}
         />
 
@@ -59,7 +59,7 @@ const InputComponent = React.forwardRef<HTMLInputElement, InputComponentProps>(
           <button
             type="button"
             onClick={togglePasswordVisibility}
-            className="absolute right-3 top-[40px] transform text-gray-700 hover:text-gray-600 dark:hover:text-gray-800 cursor-pointer"
+            className="absolute right-3 top-[40px] transform text-foreground focus:outline-none hover:text-gray-600 dark:hover:text-gray-400 cursor-pointer"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>

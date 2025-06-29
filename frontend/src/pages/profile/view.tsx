@@ -61,7 +61,7 @@ const ViewProfile = () => {
   };
 
   return (
-    <div className="mx-auto px-4 md:px-10 xl:px-28 2xl:px-32 p-6 bg-white dark:bg-[#0A0011] text-gray-800 dark:text-gray-100">
+    <div className="mx-auto px-4 md:px-10 xl:px-28 2xl:px-32 p-6 bg-background text-foreground">
       <div className="flex flex-col md:flex-row md:items-center gap-6 border-b pb-6">
         <div className="w-32 h-32 rounded-full overflow-hidden border">
           {profile.profilePicture ? (
@@ -80,7 +80,7 @@ const ViewProfile = () => {
           )}
         </div>
         <div className="flex-1">
-          <h1 className="text-2xl font-semibold dark:text-white text-gray-900">{profile.username}</h1>
+          <h1 className="text-2xl font-semibold text-foreground">{profile.username}</h1>
           <p className="py-2 text-xl font-semibold text-primary dark:text-gray-300">{profile.headline}</p>
           <p className="text-base mt-1 mb-2">{profile.category}</p>
           <p className="text-sm text-gray-700 dark:text-gray-400">
@@ -88,7 +88,7 @@ const ViewProfile = () => {
           </p>
           <Link
             href="/profile/edit"
-            className="mt-3 inline-block px-4 py-2 text-sm bg-primary dark:text-[#2D004E] dark:hover:text-[#2D004E] font-medium text-white rounded hover:bg-secondary"
+            className="mt-3 inline-block px-4 py-2 text-sm bg-primary font-medium text-white dark:text-[#0b060f] hover:text-foreground rounded hover:bg-secondary"
           >
             Edit Profile
           </Link>
@@ -109,7 +109,7 @@ const ViewProfile = () => {
             {profile.skills.map((skill) => (
               <span
                 key={skill}
-                className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm"
+                className="px-3 py-1 bg-bg-chip rounded-full text-sm"
               >
                 {skill}
               </span>
@@ -124,7 +124,7 @@ const ViewProfile = () => {
               {profile.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-3 py-1 bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-white rounded-full text-sm"
+                  className="px-3 py-1 bg-bg-chip rounded-full text-sm"
                 >
                   {tag}
                 </span>
@@ -154,7 +154,7 @@ const ViewProfile = () => {
           <ul className="list-disc list-inside space-y-1">
             {profile.socialLinks.map((link) => (
               <li key={link.url}>
-                <a href={link.url} target="_blank" rel="noopener" className="text-blue-500 hover:underline">
+                <a href={link.url} target="_blank" rel="noopener" className="text-primary hover:underline">
                   {link.label}
                 </a>
               </li>
@@ -167,7 +167,7 @@ const ViewProfile = () => {
           <ul className="list-disc list-inside space-y-1">
             {profile.portfolioLinks.map((link) => (
               <li key={link.url}>
-                <a href={link.url} target="_blank" rel="noopener" className="text-blue-500 hover:underline">
+                <a href={link.url} target="_blank" rel="noopener" className="text-primary hover:underline">
                   {link.label}
                 </a>
               </li>

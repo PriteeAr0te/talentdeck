@@ -12,7 +12,7 @@ export default function ProfileCard({ profile }: { profile: ProfileType }) {
   };
 
   return (
-    <div className="border rounded-xl p-4 bg-white dark:bg-[#0A0011] shadow hover:shadow-lg transition h-full relative">
+    <div className="border rounded-lg p-4 bg-background-secondary shadow hover:shadow-lg transition h-full relative">
       <Link href={`/talent/${profile.username}`}>
         <div className="flex items-center gap-4 mb-3">
           <Image
@@ -25,13 +25,13 @@ export default function ProfileCard({ profile }: { profile: ProfileType }) {
           <div>
             <h3 className="font-semibold text-lg">{profile.username}</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">{profile.headline}</p>
-            <p className="text-xs text-purple-700 dark:text-purple-300">{profile.category}</p>
+            <p className="text-xs text-purple-700 mt-2 dark:text-purple-300">{profile.category}</p>
           </div>
         </div>
       </Link>
 
       {profile.availableforwork && (
-        <span className="absolute top-3 right-3 bg-green-100 text-green-700 px-2 py-1 text-xs rounded-full">
+        <span className="absolute top-3 right-3 bg-bg-chip text-foreground px-2 py-1 text-xs rounded-full">
           Available
         </span>
       )}

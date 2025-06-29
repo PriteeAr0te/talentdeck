@@ -58,7 +58,7 @@ export default function TalentFilterPanel({ filters, setFilters }: TalentFilterP
                 placeholder="Search talents..."
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                className="px-4 py-2 border rounded-md w-full focus:outline-0 focus:border-primary focus:dark:border-[#A57FC0]"
+                className="px-4 py-2 border border-br-primary rounded-md w-full focus:outline-0 focus:border-primary focus:dark:border-[#A57FC0]"
             />
 
             <FilterDropdownComponent
@@ -84,7 +84,7 @@ export default function TalentFilterPanel({ filters, setFilters }: TalentFilterP
                             availableforwork: !prev.availableforwork,
                         }))
                     }
-                    className="form-checkbox h-4 w-4 text-violet-600"
+                    className="form-checkbox h-4 w-4 text-primary"
                 />
                 <label htmlFor="available" className="text-sm">
                     Available for work

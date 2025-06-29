@@ -106,9 +106,12 @@ export const createProfile = async (req: AuthRequest, res: Response): Promise<vo
         await newProfile.save();
         await User.findByIdAndUpdate(userId, { profileCreated: true });
 
+        const updatedUser = await User.findById(userId).select("-password");
+
         res.status(201).json({
             message: "Profile created successfully.",
             profileCreated: true,
+            user: updatedUser
         });
 
     } catch (error) {

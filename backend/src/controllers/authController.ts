@@ -23,8 +23,6 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
             return;
         }
 
-        // const profile = await Profile.create({ user: user._id });
-
         const profileCreated = false;
 
         res.status(201).json({
@@ -66,16 +64,23 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
         const profile = await Profile.findOne({ user: user._id });
 
-        const profileCreated = profile ? true : false;
+        const profileCreated = Boolean(profile);
+
+        if(profileCreated && !user.profileCreated) {
+            user.profileCreated = true;
+            await user.save();
+        }
+
+        const updatedUser = await User.findById(user._id).select("-password")
 
         res.status(200).json({
             token: generateToken(user._id.toString(), user.role),
             user: {
-                _id: user._id.toString(),
-                fullName: user.fullName,
-                email: user.email,
-                role: user.role,
-                profileCreated,
+                _id: updatedUser?._id.toString(),
+                fullName: updatedUser?.fullName,
+                email: updatedUser?.email,
+                role: updatedUser?.role,
+                profileCreated: updatedUser?.profileCreated ?? false,
             },
             message: "Login Successfully"
         });

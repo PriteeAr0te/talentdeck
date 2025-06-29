@@ -74,7 +74,7 @@ function SkillsSelector<T extends FieldValues>({
         <button
           type="button"
           onClick={handleAddSkill}
-          className="bg-primary text-white cursor-pointer dark:text-gray-900 font-medium text-sm px-4 py-2.5 rounded-lg hover:bg-primary-dark transition"
+          className="px-4 mt-2 bg-btn-primary text-gray-200 hover:text-foreground dark:text-foreground py-2 rounded-lg hover:bg-secondary cursor-pointer transition-all duration-150 disabled:opacity-50"
         >
           Add
         </button>

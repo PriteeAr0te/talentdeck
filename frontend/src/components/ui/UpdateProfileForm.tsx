@@ -13,7 +13,7 @@ import ImageUploadComponent from "@/components/ui/ImageUploadComponent";
 import { DynamicLinksComponent } from "@/components/ui/DynamicLinksComponent";
 import SkillsSelector from "@/components/ui/SkillsSelector";
 import DropdownComponent from "@/components/ui/DropdownComponent";
-import { Slide, toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import API from "@/lib/api";
 import { AxiosError } from "axios";
@@ -21,6 +21,7 @@ import ProfilePhotoUpload from "./ProfilePhotoUpload";
 import CheckboxField from "./CheckboxField";
 import TagsSelector from "./TagsSelector";
 import { useAuth } from "@/hooks/useAuth";
+import ButtonComponent from "./ButtonComponent";
 
 interface UpdateProfileFormProps {
   defaultValues: UpdateProfileSchema;
@@ -144,8 +145,7 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={5000} transition={Slide} />
-      <form onSubmit={handleSubmit(onSubmit)} className="max-w-6xl mx-auto p-6 space-y-10 bg-white dark:bg-[#0A0011] rounded-xl">
+      <form onSubmit={handleSubmit(onSubmit)} className="max-w-6xl mx-auto p-6 space-y-10 bg-background rounded-xl">
 
         <Section title="Basic Information" desc="Let us know who you are and what you do.">
           <InputComponent
@@ -264,9 +264,9 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
         </Section>
 
         <div className="flex justify-end">
-          <button type="submit" className="px-6 py-2 bg-primary text-white dark:text-gray-900 font-medium hover:dark:text-gray-100 rounded-lg hover:bg-secondary cursor-pointer">
+          <ButtonComponent type="submit" width="fit">
             Update Profile
-          </button>
+          </ButtonComponent>
         </div>
       </form>
     </>

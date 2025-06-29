@@ -8,19 +8,19 @@ import { loginUserSchema } from "@/lib/validators/authValidators";
 import API from "@/lib/api";
 import { z } from "zod";
 import Link from "next/link";
-import { Slide, ToastContainer, toast } from "react-toastify";
+import ButtonComponent from "@/components/ui/ButtonComponent";
+import { toast } from "react-toastify";
 
 type LoginFormValues = z.infer<typeof loginUserSchema>;
 
 type ErrorWithResponse = {
     response?: {
-      status?: number;
-      data?: {
-        message?: string;
-      };
+        status?: number;
+        data?: {
+            message?: string;
+        };
     };
-  };
-  
+};
 
 const Login = () => {
 
@@ -38,7 +38,7 @@ const Login = () => {
 
     const onSubmit = async (data: LoginFormValues) => {
         try {
-            setError(""); 
+            setError("");
 
             const response = await API.post("/auth/login", {
                 email: data.email,
@@ -52,11 +52,8 @@ const Login = () => {
             }
 
             login(token, user);
+            toast.success("Login Successful!");
             router.push("/");
-            console.log("Login successful");
-            setTimeout(() => {
-                toast.success("Login Successful!");
-            }, 5000);
 
         } catch (err: unknown) {
             const error = err as ErrorWithResponse;
@@ -75,7 +72,6 @@ const Login = () => {
                 setError(message);
             }
 
-            // Only log unexpected errors in dev
             if (process.env.NODE_ENV !== "production") {
                 console.warn("Handled login error:", status, message);
             }
@@ -84,10 +80,9 @@ const Login = () => {
 
     return (
         <>
-            <ToastContainer position="top-right" transition={Slide} className="z-50" autoClose={6000} closeButton={true} pauseOnHover={true} />
-            <main className="min-h-[calc(100vh-70px)] flex items-center justify-center bg-primary-bg dark:bg-[#0a0011] p-4">
-                <div className="w-full max-w-md bg-white shadow-custom rounded-2xl p-8">
-                    <h1 className="text-2xl font-bold text-[#2D004E] mb-6 text-center">
+            <main className="min-h-[calc(100vh-70px)] flex items-center justify-center bg-background p-4">
+                <div className="w-full max-w-md bg-background-secondary shadow-custom rounded-2xl p-8">
+                    <h1 className="text-2xl font-bold text-foreground mb-6 text-center">
                         Login to TalentDeck
                     </h1>
                     <form
@@ -95,10 +90,11 @@ const Login = () => {
                     >
 
                         <InputComponent
-                            label="Email"
+                            label="Email ID"
                             type="email"
                             page="auth"
                             id="email"
+                            placeholder="Email ID"
                             registration={register("email")}
                             error={errors.email?.message}
                         />
@@ -108,6 +104,7 @@ const Login = () => {
                             type="password"
                             page="auth"
                             id="password"
+                            placeholder="Password"
                             registration={register("password")}
                             error={errors.password?.message}
                         />
@@ -116,16 +113,13 @@ const Login = () => {
                             <p className="text-sm text-red-500 text-center">{error}</p>
                         )}
 
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="w-full bg-[#4B0082] text-white py-2.5 rounded-lg hover:bg-[#4B0082] cursor-pointer dark:hover:bg-[#250040] transition-all duration-150"
-                        >
+                        <ButtonComponent type="submit" disabled={isSubmitting} loading={isSubmitting}>
                             {isSubmitting ? "Logging in..." : "Login"}
-                        </button>
-                        <p className="mt-4 text-center text-sm text-gray-600">
+                        </ButtonComponent>
+
+                        <p className="mt-4 text-center text-sm text-foreground/80">
                             Don’t have an account?{' '}
-                            <Link href="/register" className="text-indigo-600 hover:underline">
+                            <Link href="/register" className="text-primary font-medium hover:underline">
                                 Create one
                             </Link>
                         </p>
