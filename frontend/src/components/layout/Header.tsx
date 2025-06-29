@@ -164,7 +164,7 @@ const Header: React.FC = () => {
               </details>
             ) : (
               <Link href="/login">
-                <span className="hidden sm:block text-sm 2xl:text-base font-medium px-4 py-2.5 rounded-md text-white transition hover:bg-[#7E21D4] hover:text-white cursor-pointer">
+                <span className="text-sm 2xl:text-base font-medium px-4 py-2.5 rounded-md text-white transition hover:bg-[#7E21D4] hover:text-white cursor-pointer">
                   Login
                 </span>
               </Link>

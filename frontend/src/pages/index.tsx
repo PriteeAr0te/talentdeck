@@ -9,6 +9,7 @@ import { Spotlight } from "@/components/ui/Spotlight";
 import { Button } from "@/components/ui/ButtonNew";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/router";
 
 interface Profile {
   username: string;
@@ -19,7 +20,8 @@ interface Profile {
 
 export default function HomePage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const { isProfileCreated } = useAuth();
+  const { isProfileCreated, isLoggedIn } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchFeaturedProfiles = async () => {
@@ -64,9 +66,19 @@ export default function HomePage() {
             <Link href="/talents">
               <Button variant="default" size="lg">Browse Talents</Button>
             </Link>
-            <Link href={`${isProfileCreated ? '/profile/view' : '/profile/create'}`}>
-              <Button variant="secondary" size="lg">Create Your Profile</Button>
-            </Link>
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={() => {
+                if (!isLoggedIn) {
+                  router.push('/auth/login');
+                } else {
+                  router.push(isProfileCreated ? '/profile/view' : '/profile/create');
+                }
+              }}
+            >
+              Create Your Profile
+            </Button>
           </div>
         </div>
       </section>
