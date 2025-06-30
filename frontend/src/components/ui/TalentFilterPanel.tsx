@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import API from "@/lib/api"; // Your Axios wrapper
+import API from "@/lib/api";
 import MultiSelectDropdown from "@/components/ui/MultiSelectDropdown";
 import FilterDropdownComponent from "@/components/ui/FilterDropdownComponent";
 import { SearchParams } from "@/types/searchParams";
@@ -21,6 +21,20 @@ const categories = [
     "Video Editor",
     "Other",
 ];
+
+const sortOptions = [
+    "Newest First",
+    "Oldest First",
+    "Name (A-Z)",
+    "Name (Z-A)"
+];
+
+const sortMap: Record<string, { sortBy: "createdAt" | "username"; sortOrder: "asc" | "desc" }> = {
+    "Newest First": { sortBy: "createdAt", sortOrder: "desc" },
+    "Oldest First": { sortBy: "createdAt", sortOrder: "asc" },
+    "Name (A-Z)": { sortBy: "username", sortOrder: "asc" },
+    "Name (Z-A)": { sortBy: "username", sortOrder: "desc" },
+};
 
 export default function TalentFilterPanel({ filters, setFilters }: TalentFilterPanelProps) {
     const [skillsOptions, setSkillsOptions] = useState<string[]>([]);
@@ -43,7 +57,7 @@ export default function TalentFilterPanel({ filters, setFilters }: TalentFilterP
 
         fetchOptions();
     }, []);
-    
+
     useDebouncedSearch(q, 500, (val) => {
         setFilters((prev) => {
             if (prev.q === val) return prev;
@@ -90,6 +104,33 @@ export default function TalentFilterPanel({ filters, setFilters }: TalentFilterP
                     Available for work
                 </label>
             </div>
+
+            <FilterDropdownComponent
+                label="Select Sort Options"
+                options={[...sortOptions]}
+                value={
+                    Object.entries(sortMap).find(
+                        ([, v]) =>
+                            v.sortBy === filters.sortBy && v.sortOrder === filters.sortOrder
+                    )?.[0] || ""
+                }
+                onChange={(label) => {
+                    const selected = sortMap[label];
+                    if (selected) {
+                        setFilters((prev) => ({
+                            ...prev,
+                            sortBy: selected.sortBy,
+                            sortOrder: selected.sortOrder,
+                        }));
+                    } else {
+                        setFilters((prev) => {
+                            const { ...rest } = prev;
+                            return rest;
+                        });
+                    }
+                }}
+            />
+
 
             <MultiSelectDropdown
                 label="Skills"

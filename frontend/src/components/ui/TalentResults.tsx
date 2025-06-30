@@ -63,7 +63,7 @@ export default function TalentResults({ filters, setFilters }: TalentResultsProp
       </div>
 
       {totalProfiles > 50 && (
-        <div className="flex justify-center mt-10 gap-3 items-center">
+        <div className="flex justify-center mt-18 gap-3 items-center">
           <button
             disabled={filters.page === 1}
             onClick={() =>
