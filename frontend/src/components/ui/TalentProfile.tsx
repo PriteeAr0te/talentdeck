@@ -1,6 +1,10 @@
+import { useAuth } from '@/hooks/useAuth';
+import API from '@/lib/api';
 import { ProfileType } from '@/types/profile';
 import Image from 'next/image';
-import { JSX } from 'react';
+import { useRouter } from 'next/router';
+import { JSX, useState } from 'react';
+import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import {
   FaGithub,
   FaLinkedin,
@@ -9,6 +13,8 @@ import {
   FaYoutube,
   FaGlobe,
 } from 'react-icons/fa';
+import { FiShare2 } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 
 interface Props {
   profile: ProfileType;
@@ -24,6 +30,38 @@ const iconMap: Record<string, JSX.Element> = {
 };
 
 export default function TalentProfile({ profile }: Props) {
+  const [bookmarked, setBookmarked] = useState<boolean>(false);
+  const router = useRouter();
+  const { isLoggedIn } = useAuth();
+
+  const handleBookmark = async () => {
+    if (!isLoggedIn) {
+      toast.info("Please login to bookmark this profile.");
+      router.push("/login");
+      return;
+    }
+
+    try {
+      const res = await API.post(`/profile/bookmarks/${profile._id}`);
+      setBookmarked(res.data.bookmarked);
+      toast.success(
+        res.data.bookmarked
+          ? "Profile bookmarked successfully!"
+          : "Bookmark removed."
+      );
+    } catch (err) {
+      console.error("Bookmark toggle failed:", err);
+      toast.error("Something went wrong. Try again.");
+    }
+  };
+
+  const handleCopy = async () => {
+    const url = `${window.location.origin}/talent/${profile.username}`;
+    await navigator.clipboard.writeText(url);
+    toast.success("Profile link copied!");
+  };
+
+
   return (
     <div className="max-w-5xl mx-auto space-y-6 p-4 md:p-6">
       <div className="flex flex-col md:flex-row items-center gap-6">
@@ -37,7 +75,25 @@ export default function TalentProfile({ profile }: Props) {
           className="rounded-full object-cover border shadow-md"
         />
         <div className="text-center md:text-left">
-          <h1 className="text-3xl font-bold">{profile.username}</h1>
+          <div className="flex items-center gap-5 justify-start mb-2">
+            <h1 className="text-3xl font-bold">{profile.username}</h1>
+
+            <button
+              onClick={handleBookmark}
+              className="dark:text-gray-100 mt-2 hover:text-primary cursor-pointer focus:outline-none"
+              title="Bookmark this profile"
+            >
+              {bookmarked ? <AiFillStar size={22} /> : <AiOutlineStar size={22} />}
+            </button>
+
+            <button
+              onClick={handleCopy}
+              className="dark:text-gray-100 mt-2 hover:text-primary cursor-pointer focus:outine-none"
+              title="Copy Profile Link"
+            >
+              <FiShare2 size={22} />
+            </button>
+          </div>
           {profile.headline && (
             <p className="text-gray-600 dark:text-gray-400 mt-1">{profile.headline}</p>
           )}

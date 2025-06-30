@@ -6,7 +6,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     return (
         <div data-theme="dark">
             <Header />
-            <main className="min-h-100 w-full bg-background mb-16">{children}</main>
+            <main className="min-h-100 w-full bg-background">{children}</main>
             <div className="max-h-[105px]">
                 <Footer />
             </div>

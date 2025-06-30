@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { FaHeart } from 'react-icons/fa';
 
 export default function Footer() {
+  
   return (
-    <footer className="w-full fixed bottom-0 bg-background-footer border-t border-gray-200 dark:border-gray-700 py-6">
+    <footer className="w-full bottom-0 bg-background-footer border-t border-gray-200 dark:border-gray-700 py-6">
       <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between text-sm text-foreground font-medium">
         <div className="mb-4 md:mb-0">
           © {new Date().getFullYear()} TalentDeck. Built with
@@ -30,7 +31,7 @@ export default function Footer() {
             GitHub
           </Link>
           <Link
-            href="https://www.linkedin.com/in/pritee-reactdev/"
+            href="https://www.linkedin.com/in/pritee-reactdev"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:underline"

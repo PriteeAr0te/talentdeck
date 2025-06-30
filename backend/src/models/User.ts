@@ -1,5 +1,6 @@
 import { Document, Schema, model, HydratedDocument, ObjectId } from "mongoose";
 import bcrypt from "bcryptjs";
+import { Profile } from "./Profile";
 
 export interface IUser extends Document {
   _id: ObjectId;
@@ -8,6 +9,7 @@ export interface IUser extends Document {
   password: string;
   role: string;
   profileCreated: boolean,
+  bookmarks: ObjectId[],
   createdAt: Date;
   updatedAt: Date;
   matchPassword(enteredPassword: string): Promise<boolean>;
@@ -35,7 +37,14 @@ const userSchema = new Schema<IUser>({
   profileCreated: {
     type: Boolean,
     default: false,
-  }
+  },
+  bookmarks: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: Profile,
+      default: [],
+    }
+  ]
 },
   { timestamps: true }
 );

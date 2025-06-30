@@ -376,3 +376,55 @@ export const getAllTags = async (_req: Request, res: Response): Promise<void> =>
     const tags = await Profile.distinct("tags");
     res.json(tags)
 }
+
+export const toggleBookmark = async (req: AuthRequest, res: Response): Promise<void> => {
+    const userId = req.user?.id;
+    const { profileId } = req.params;
+
+    if(!userId || !profileId) {
+        res.status(400).json({ error: "Invalid Data." });
+        return;
+    }
+
+    const user = await User.findById(userId);
+    if(!user) {
+        res.status(404).json({ error: "User not found." });
+        return;
+    }
+
+    const mongoose = require("mongoose");
+    const objectIdProfileId = new mongoose.Types.ObjectId(profileId);
+
+    const index = user.bookmarks.indexOf(objectIdProfileId);
+
+    if(index > -1) {
+        user.bookmarks.splice(index, 1);
+    } else {
+        user.bookmarks.push(objectIdProfileId);
+    }
+
+    await user.save();
+    res.status(200).json({
+        message: index > -1 ? "Bookmark removed." : "Bookmark added.",
+        bookmarked: index === -1,
+        bookmarks: user.bookmarks
+    });
+}
+
+export const getAllBookmarks = async (req: AuthRequest, res: Response): Promise<void> => {
+    const userId = req.user?.id;
+
+    if(!userId) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+    }
+
+    const user = await User.findById(userId).populate('bookmarks').select('bookmarks');
+
+    if(!user) {
+        res.status(404).json({ error: "User not found." });
+        return;
+    }
+
+    res.status(200).json({data: user.bookmarks});
+}
