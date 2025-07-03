@@ -1,6 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import API from '@/lib/api';
 import { ProfileType } from '@/types/profile';
+// import { Link } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { JSX, useState } from 'react';
@@ -32,7 +33,7 @@ const iconMap: Record<string, JSX.Element> = {
 export default function TalentProfile({ profile }: Props) {
   const [bookmarked, setBookmarked] = useState<boolean>(false);
   const router = useRouter();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
 
   const handleBookmark = async () => {
     if (!isLoggedIn) {
@@ -97,6 +98,9 @@ export default function TalentProfile({ profile }: Props) {
           {profile.headline && (
             <p className="text-gray-600 dark:text-gray-400 mt-1">{profile.headline}</p>
           )}
+          <a href={`mailto:${user?.email}`} className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {user?.email}
+          </a>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {profile.category} • {profile.location.city}, {profile.location.country}
           </p>

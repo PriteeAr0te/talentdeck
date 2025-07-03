@@ -1,10 +1,3 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
-
 export const cleanLinks = (links: { label?: string; url?: string; isVisible?: boolean }[]) =>
   links
     .map((link) => ({

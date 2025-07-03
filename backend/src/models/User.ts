@@ -13,6 +13,10 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
   matchPassword(enteredPassword: string): Promise<boolean>;
+  profile?: {
+    profilePicture?: string;
+    [key: string]: any;
+  };
 }
 
 const userSchema = new Schema<IUser>({
@@ -46,8 +50,19 @@ const userSchema = new Schema<IUser>({
     }
   ]
 },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  },
 );
+
+userSchema.virtual("profile", {
+  ref: "Profile",
+  localField: "_id",
+  foreignField: "userId",
+  justOne: true,
+});
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {

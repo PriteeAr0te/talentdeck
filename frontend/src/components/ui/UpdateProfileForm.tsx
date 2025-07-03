@@ -22,6 +22,7 @@ import CheckboxField from "./CheckboxField";
 import TagsSelector from "./TagsSelector";
 import { useAuth } from "@/hooks/useAuth";
 import ButtonComponent from "./ButtonComponent";
+import { cleanLinks } from "@/lib/utils";
 
 interface UpdateProfileFormProps {
   defaultValues: UpdateProfileSchema;
@@ -94,8 +95,8 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
       formData.append("tags", JSON.stringify(data.tags ?? []));
       formData.append("availableforwork", String(data.availableforwork));
       formData.append("isVisible", String(data.isVisible));
-      formData.append("portfolioLinks", JSON.stringify(data.portfolioLinks ?? []));
-      formData.append("socialLinks", JSON.stringify(data.socialLinks ?? []));
+      formData.append("portfolioLinks", JSON.stringify(cleanLinks(data.portfolioLinks ?? [])));
+      formData.append("socialLinks", JSON.stringify(cleanLinks(data.socialLinks ?? [])));
       formData.append("projectImagesToKeep", JSON.stringify(projectImagesToKeep));
 
       if (profilePicFile) {

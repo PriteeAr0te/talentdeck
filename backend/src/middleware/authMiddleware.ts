@@ -4,7 +4,6 @@ import { requireEnv } from "../config/validateEnv";
 
 const JWT_SECRET = requireEnv("JWT_SECRET");
 
-// ✅ Define the expected shape of the JWT payload
 interface JwtPayload {
   id: string;
   role: "creator"; 

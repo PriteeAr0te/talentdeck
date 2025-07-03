@@ -16,6 +16,7 @@ import API from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import CheckboxField from "../ui/CheckboxField";
 import ProfilePhotoUpload from "../ui/ProfilePhotoUpload";
+import { cleanLinks } from "@/lib/utils";
 
 const CATEGORY_OPTIONS = [
     "Graphic Designer",
@@ -80,8 +81,8 @@ const CreateProfileForm: React.FC = () => {
             formData.append("tags", JSON.stringify(data.tags));
             formData.append("availableforwork", String(data.availableforwork));
             formData.append("isVisible", String(data.isVisible));
-            formData.append("socialLinks", JSON.stringify(data.socialLinks));
-            formData.append("portfolioLinks", JSON.stringify(data.portfolioLinks));
+            formData.append("socialLinks", JSON.stringify(cleanLinks(data.socialLinks ?? [])));
+            formData.append("portfolioLinks", JSON.stringify(cleanLinks(data.portfolioLinks ?? [])));
 
             if (profilePicFile) formData.append("profilePicture", profilePicFile);
             projectImagesFiles.forEach((file) =>

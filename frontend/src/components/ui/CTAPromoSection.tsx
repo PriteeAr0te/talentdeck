@@ -16,7 +16,6 @@ export default function CallToActionSection() {
       ref={ref}
       className="relative w-full px-4 sm:px-6 lg:px-12 py-20 border-t border-border bg-gradient-to-br from-background via-background-secondary to-background"
     >
-      {/* Scroll-reactive background pulse */}
       <motion.div
         style={{ opacity: bgOpacity }}
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-primary/20 via-accent/10 to-background blur-2xl"

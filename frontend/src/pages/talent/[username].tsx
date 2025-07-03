@@ -8,7 +8,6 @@ interface Props {
 }
 
 export default function TalentPublicPage({ profile }: Props) {
-  // const router = useRouter();
 
   if (!profile) {
     return (

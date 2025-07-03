@@ -70,7 +70,7 @@ export default function FeaturesSection() {
     return (
         <section
             ref={ref}
-            className="w-full px-4 sm:px-6 lg:px-12 py-16 md:py-24 bg-background border-t border-border"
+            className="w-full px-4 sm:px-6 lg:px-12 py-16 bg-background border-t border-border"
         >
             <div className="max-w-5xl mx-auto text-center mb-12">
                 <motion.h2

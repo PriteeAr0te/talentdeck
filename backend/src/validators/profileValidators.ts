@@ -1,8 +1,14 @@
-// src/validators/profileValidator.ts
 import { z } from "zod";
 
-const urlSchema = z.string().url();
+const urlSchema = z.string().url().or(z.literal("")).transform((val) => {
+    if (val === "") return undefined;
+    return val;
+});
 
+const labelSchema = z.string().or(z.literal("")).transform((val) => {
+    if (val === "") return undefined;
+    return val;
+});
 export const createProfileSchema = z.object({
     username: z
         .string()
@@ -50,8 +56,8 @@ export const createProfileSchema = z.object({
     portfolioLinks: z
         .array(
             z.object({
-                label: z.string().min(2, "Label is required."),
-                url: urlSchema,
+                label: labelSchema.optional(),
+                url: urlSchema.optional(),
             })
         )
         .optional(),
@@ -59,9 +65,9 @@ export const createProfileSchema = z.object({
     socialLinks: z
         .array(
             z.object({
-                label: z.string().min(2, "Label is required."),
+                label: labelSchema.optional(),
                 isVisible: z.boolean().optional(),
-                url: urlSchema,
+                url: urlSchema.optional(),
             })
         )
         .optional(),

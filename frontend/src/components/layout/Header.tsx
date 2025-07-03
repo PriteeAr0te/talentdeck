@@ -10,7 +10,7 @@ const Header: React.FC = () => {
   const [darkMode, toggleDarkMode] = useDarkMode();
   const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
 
-  const { logout, isLoggedIn, isProfileCreated } = useAuth();
+  const { logout, isLoggedIn, isProfileCreated, user } = useAuth();
 
   const dropdownRef = useRef<HTMLDetailsElement | null>(null);
 
@@ -35,6 +35,7 @@ const Header: React.FC = () => {
     if (dropdown?.open) dropdown.removeAttribute('open');
   };
 
+
   return (
     <>
       <DeleteProfileDialog
@@ -45,7 +46,6 @@ const Header: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
 
-            {/* Logo */}
             <Link href="/" className="flex-shrink-0 flex items-center">
               <Image
                 className="h-8 w-auto"
@@ -85,10 +85,10 @@ const Header: React.FC = () => {
                 <details id="profile-dropdown" className="relative group" ref={dropdownRef}>
                   <summary className="cursor-pointer flex items-center list-none focus:outline-none">
                     <Image
-                      className="h-8 w-8 rounded-full border border-br-primary shadow"
-                      width={60}
-                      height={60}
-                      src={ProfileImg}
+                      className="h-10 w-10 object-cover rounded-full border border-br-primary shadow"
+                      width={68}
+                      height={68}
+                      src={user?.profile?.profilePicture|| ProfileImg}
                       alt="Profile"
                     />
                   </summary>
@@ -133,6 +133,17 @@ const Header: React.FC = () => {
                         className="block px-4 py-2 text-sm text-foreground hover:bg-muted cursor-pointer"
                       >
                         Edit Profile
+                      </span>
+                    </Link>
+
+                    <Link href={isLoggedIn ? "/bookmarks" : "/login"}>
+                      <span
+                        onClick={() => {
+                          handleClose();
+                        }}
+                        className="block px-4 py-2 text-sm text-foreground hover:bg-muted cursor-pointer w-full text-left"
+                      >
+                        Bookmarks
                       </span>
                     </Link>
 

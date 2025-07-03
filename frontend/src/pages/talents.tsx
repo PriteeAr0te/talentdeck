@@ -9,7 +9,7 @@ export default function TalentSearchPage() {
   const [filters, setFilters] = useState<SearchParams>({
     q: '',
     category: '',
-    availableforwork: true,
+    availableforwork: undefined,
     sortBy: 'createdAt',
     sortOrder: 'desc',
     skills: [],

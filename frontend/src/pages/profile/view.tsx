@@ -70,7 +70,7 @@ const ViewProfile = () => {
               alt="Profile"
               width={128}
               height={128}
-              style={{ height: 'auto' }}
+              // style={{ height: 'auto' }}
               className="object-cover w-full h-full"
             />
           ) : (
@@ -137,19 +137,19 @@ const ViewProfile = () => {
           <h2 className="text-lg font-medium mb-2">Project Images</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {profile.projectImages.map((img, idx) => (
-              <div key={idx} className="relative w-full h-32 rounded overflow-hidden border">
+              <div key={idx} className="relative w-full h-48 rounded overflow-hidden">
                 <Image
                   src={imageUrl(img)}
                   alt={`Project ${idx + 1}`}
                   fill
-                  className="object-cover"
+                  className="object-fill w-full h-full"
                 />
               </div>
             ))}
           </div>
         </section>
 
-        <section>
+        {profile.portfolioLinks.length > 0 && <section>
           <h2 className="text-lg font-medium mb-2">Social Links</h2>
           <ul className="list-disc list-inside space-y-1">
             {profile.socialLinks.map((link) => (
@@ -160,9 +160,9 @@ const ViewProfile = () => {
               </li>
             ))}
           </ul>
-        </section>
+        </section>}
 
-        <section>
+        {profile.portfolioLinks.length > 0 && <section>
           <h2 className="text-lg font-medium mb-2">Portfolio Links</h2>
           <ul className="list-disc list-inside space-y-1">
             {profile.portfolioLinks.map((link) => (
@@ -173,7 +173,7 @@ const ViewProfile = () => {
               </li>
             ))}
           </ul>
-        </section>
+        </section>}
       </div>
     </div>
   );

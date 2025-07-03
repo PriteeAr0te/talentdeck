@@ -75,7 +75,6 @@ export const createProfile = async (req: AuthRequest, res: Response): Promise<vo
         const parsedData = createProfileSchema.safeParse(fullInput);
         if (!parsedData.success) {
             res.status(400).json({ error: parsedData.error.flatten() });
-            console.log("Zod Validation Error", parsedData.error.flatten());
             return;
         }
 
@@ -256,8 +255,6 @@ export const searchProfiles = async (req: Request, res: Response): Promise<void>
     try {
         const parsed = profileSearchSchema.safeParse(req.query);
 
-        console.log("query: ", req.query);
-
         if (!parsed.success) {
             res.status(400).json({ error: parsed.error.flatten() });
             return;
@@ -378,16 +375,18 @@ export const getAllTags = async (_req: Request, res: Response): Promise<void> =>
 }
 
 export const toggleBookmark = async (req: AuthRequest, res: Response): Promise<void> => {
+    console.log("user: ", req.user);
     const userId = req.user?.id;
     const { profileId } = req.params;
 
-    if(!userId || !profileId) {
+    if (!userId || !profileId) {
         res.status(400).json({ error: "Invalid Data." });
         return;
     }
 
     const user = await User.findById(userId);
-    if(!user) {
+
+    if (!user) {
         res.status(404).json({ error: "User not found." });
         return;
     }
@@ -395,36 +394,65 @@ export const toggleBookmark = async (req: AuthRequest, res: Response): Promise<v
     const mongoose = require("mongoose");
     const objectIdProfileId = new mongoose.Types.ObjectId(profileId);
 
-    const index = user.bookmarks.indexOf(objectIdProfileId);
+    const index = user.bookmarks.findIndex((b) => b.toString() === profileId);
+    let bookmarked = false;
 
-    if(index > -1) {
-        user.bookmarks.splice(index, 1);
-    } else {
+    if (index === -1) {
         user.bookmarks.push(objectIdProfileId);
+        bookmarked = true;
+    } else {
+        user.bookmarks.splice(index, 1);
+        bookmarked = false;
     }
 
     await user.save();
+    await user.populate("bookmarks");
+
+    const bookmarks = Array.isArray(user.bookmarks)
+        ? user.bookmarks.map((b: any) => b._id.toString())
+        : [];
+
     res.status(200).json({
-        message: index > -1 ? "Bookmark removed." : "Bookmark added.",
-        bookmarked: index === -1,
-        bookmarks: user.bookmarks
+        message: bookmarked ? "Bookmark added." : "Bookmark removed.",
+        bookmarked,
+        bookmarks,
+        user: {
+            id: user._id.toString(),
+            fullname: user.fullName,
+            email: user.email,
+            role: user.role,
+            profileCreated: user.profileCreated,
+            bookmarks,
+        }
     });
 }
 
 export const getAllBookmarks = async (req: AuthRequest, res: Response): Promise<void> => {
-    const userId = req.user?.id;
+    console.log("📌 Hit GET /profile/bookmarks");
+    try {
+        const userId = req.user?.id;
 
-    if(!userId) {
-        res.status(401).json({ error: "Unauthorized" });
+        if (!userId) {
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+        }
+
+        const user = await User.findById(userId)
+            .populate("bookmarks")
+            .select("bookmarks");
+
+        if (!user) {
+            res.status(404).json({ error: "User not found." });
+            return;
+        }
+
+        const validBookmarks = user?.bookmarks.filter(Boolean);
+
+        res.status(200).json({ data: validBookmarks });
+        return;
+    } catch (error) {
+        console.error("Error in getAllBookmarks:", error);
+        res.status(500).json({ error: "Internal server error" });
         return;
     }
-
-    const user = await User.findById(userId).populate('bookmarks').select('bookmarks');
-
-    if(!user) {
-        res.status(404).json({ error: "User not found." });
-        return;
-    }
-
-    res.status(200).json({data: user.bookmarks});
-}
+};

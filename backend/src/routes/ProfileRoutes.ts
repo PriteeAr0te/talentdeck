@@ -26,6 +26,7 @@ router.put(
     updateProfile
 );
 
+router.get("/bookmarks", protect, getAllBookmarks);
 router.get("/me", protect, getMyProfile);
 router.delete("/", protect, deleteProfile);
 router.get("/skills", getAllSkills);
@@ -33,6 +34,5 @@ router.get("/tags", getAllTags);
 router.get("/", publicLimiter, searchProfiles);
 router.get("/:username", publicLimiter, getProfileByUsername);
 router.post("/bookmarks/:profileId", protect, toggleBookmark)
-router.get("/bookmarks", protect, getAllBookmarks);
 
 export default router;

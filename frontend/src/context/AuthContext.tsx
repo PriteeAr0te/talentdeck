@@ -1,13 +1,21 @@
-import { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import API from "@/lib/api";
+
+interface ProfileSummary {
+    profilePicture?: string;
+    username?: string;
+}
 
 interface User {
     id: string;
-    name: string;
+    fullName?: string;
     email: string;
     role?: string;
     username?: string;
     profileCreated?: boolean;
+    bookmarks?: string[];
+    profile?: ProfileSummary;
 }
 
 interface AuthContextType {
@@ -28,17 +36,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState<boolean>(true);
     const router = useRouter();
 
+    const logout = React.useCallback(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setToken(null);
+        setUser(null);
+        router.push("/");
+    }, [router]);
+
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
-        const storedUser = localStorage.getItem("user");
-        console.log("User: ", storedUser)
 
-        if (storedToken && storedUser) {
+        if (storedToken) {
             setToken(storedToken);
-            setUser(JSON.parse(storedUser) as User);
+
+            API.post("/auth/me")
+                .then((res) => {
+                    setUser(res.data.user);
+                    localStorage.setItem("user", JSON.stringify(res.data.user));
+                })
+                .catch((err) => {
+                    console.error("Failed to fetch user in AuthContext:", err);
+                    logout();
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        } else {
+            setLoading(false);
         }
-        setLoading(false);
-    }, []);
+    }, [logout]);
+
 
     const login = (newToken: string, userData: User) => {
         setToken(newToken);
@@ -46,14 +74,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.setItem("token", newToken);
         localStorage.setItem("user", JSON.stringify(userData));
     };
-
-    const logout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        setToken(null);
-        setUser(null);
-        router.push("/");
-    }
 
     const isProfileCreated = !!user?.profileCreated;
 

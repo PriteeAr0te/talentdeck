@@ -66,7 +66,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
         const profileCreated = Boolean(profile);
 
-        if(profileCreated && !user.profileCreated) {
+        if (profileCreated && !user.profileCreated) {
             user.profileCreated = true;
             await user.save();
         }
@@ -95,6 +95,38 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+export const getUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) {
+            res.status(401).json({ message: "Unauthorized" });
+            return;
+        }
+        const user = await User.findById(userId).select("-password").populate("profile");
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
 
+        res.status(200).json({
+            user: {
+                _id: user._id.toString(),
+                fullName: user.fullName,
+                email: user.email,
+                role: user.role,
+                profileCreated: user.profileCreated,
+                bookmarks: user.bookmarks.map(bookmark => bookmark.toString()),
+                profile: {
+                    profilePicture: user.profile?.profilePicture || null,
+                    username: user.profile?.username || null,
+                }
+            },
+            message: "User fetched successfully"
+        });
+    } catch (error: any) {
+        console.error("Error fetching user:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
 
 

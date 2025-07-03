@@ -91,12 +91,19 @@ export default function TalentFilterPanel({ filters, setFilters }: TalentFilterP
                 <input
                     type="checkbox"
                     id="available"
-                    checked={filters.availableforwork ?? false}
-                    onChange={() =>
-                        setFilters((prev) => ({
-                            ...prev,
-                            availableforwork: !prev.availableforwork,
-                        }))
+                    checked={filters.availableforwork === true}
+                    onChange={(e) =>
+                        setFilters((prev) => {
+                            const checked = e.target.checked;
+                            const updated = {...prev};
+
+                            if (checked) {
+                                updated.availableforwork = true;
+                            } else {
+                                delete updated.availableforwork;
+                            }
+                            return updated;
+                        })
                     }
                     className="form-checkbox h-4 w-4 text-primary"
                 />

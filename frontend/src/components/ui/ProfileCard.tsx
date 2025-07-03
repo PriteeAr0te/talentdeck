@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ProfileType } from "@/types/profile";
 import Image from "next/image";
@@ -13,8 +13,14 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function ProfileCard({ profile }: { profile: ProfileType }) {
   const [bookmarked, setBookmarked] = useState<boolean>(false);
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, setUser, user } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (isLoggedIn && user?.bookmarks?.includes(profile._id)) {
+      setBookmarked(true);
+    }
+  }, [isLoggedIn, user, profile._id]);
 
   const handleBookmark = async () => {
     if (!isLoggedIn) {
@@ -26,6 +32,12 @@ export default function ProfileCard({ profile }: { profile: ProfileType }) {
     try {
       const res = await API.post(`/profile/bookmarks/${profile._id}`);
       setBookmarked(res.data.bookmarked);
+      console.log("bookmarked", res.data.bookmarked);
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        setUser(res.data.user);
+        console.log("Bookmarks: ", res.data.user)
+      }
       toast.success(
         res.data.bookmarked
           ? "Profile bookmarked successfully!"
@@ -44,7 +56,7 @@ export default function ProfileCard({ profile }: { profile: ProfileType }) {
   };
 
   return (
-    <div className="border rounded-lg p-4 bg-background-secondary shadow hover:shadow-lg transition h-full relative">
+    <div className="border rounded-lg p-4 py-2 pb-4 bg-background-secondary shadow hover:shadow-lg transition h-full relative">
       <div className="w-full flex justify-end items-center gap-2 mb-2">
 
         {profile.availableforwork && (
@@ -71,13 +83,13 @@ export default function ProfileCard({ profile }: { profile: ProfileType }) {
       </div>
 
       <Link href={`/talent/${profile.username}`}>
-        <div className="flex items-center gap-4 mb-3">
+        <div className="flex items-center gap-4">
           <Image
             src={profile.profilePicture || "/default-avatar.png"}
             alt={profile.username}
-            width={64}
-            height={64}
-            className="rounded-full object-cover"
+            width={70}
+            height={70}
+            className="rounded-full max-h-[70px] max-w-[70px] min-w-[70px] object-cover"
           />
           <div>
             <h3 className="font-semibold text-lg">{profile.username}</h3>

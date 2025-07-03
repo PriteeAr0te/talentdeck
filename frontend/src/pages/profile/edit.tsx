@@ -86,7 +86,7 @@ const EditProfile: React.FC = () => {
     };
 
     fetchProfile();
-  }, [isLoggedIn, loading]);
+  }, [isLoggedIn, loading, router]);
 
   return (
     <main className="bg-background min-h-screen">

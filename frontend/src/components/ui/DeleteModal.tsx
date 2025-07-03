@@ -13,6 +13,10 @@ interface User {
   role?: string;
   username?: string;
   profileCreated?: boolean;
+  profile?: {
+    profilePicture?: string;
+    username?: string;
+  };
 }
 
 interface DeleteProfileDialogProps {
@@ -22,7 +26,7 @@ interface DeleteProfileDialogProps {
 
 const DeleteProfileDialog: React.FC<DeleteProfileDialogProps> = ({ open, onOpenChange }) => {
   const router = useRouter();
-  const {user, setUser} = useAuth();
+  const { user, setUser } = useAuth();
 
   const handleDelete = async () => {
     try {
@@ -45,7 +49,7 @@ const DeleteProfileDialog: React.FC<DeleteProfileDialogProps> = ({ open, onOpenC
         router.push("/profile/create");
       }
     } catch (err) {
-        console.log("Error deleting profile:", err);
+      console.log("Error deleting profile:", err);
       toast.error("Failed to delete profile. Please try again.");
     }
   };
