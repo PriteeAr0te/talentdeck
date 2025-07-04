@@ -5,6 +5,8 @@ import ProfileImg from '../../../public/img/profile.png'
 import useDarkMode from '@/hooks/useDarkMode';
 import { useEffect, useRef, useState } from 'react';
 import DeleteProfileDialog from '../ui/DeleteModal';
+import LightLogo from '../../../public/img/logo-light.png';
+import DarkLogo from '../../../public/img/logo-dark.png';
 
 const Header: React.FC = () => {
   const [darkMode, toggleDarkMode] = useDarkMode();
@@ -48,13 +50,12 @@ const Header: React.FC = () => {
 
             <Link href="/" className="flex-shrink-0 flex items-center">
               <Image
-                className="h-8 w-auto"
+                className="h-[60px] w-auto"
                 width={200}
                 height={60}
-                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
+                src={darkMode ? LightLogo : DarkLogo}
                 alt="TalentDeck Logo"
               />
-              <span className="ml-2 font-bold text-lg text-foreground">TalentDeck</span>
             </Link>
 
             <div className="flex items-center space-x-4">

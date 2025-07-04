@@ -48,12 +48,12 @@ export default function HeroSection() {
                     transition={{ delay: 0.6, duration: 0.6 }}
                     className="mt-10 flex items-center justify-center gap-x-6"
                 >
-                    <Link href="/talents" className={cn("relative h-11 flex items-center justify-center rounded-md w-40 overflow-hidden border border-foreground/50 text-foreground shadow-md transition-all duration-200 before:absolute before:bottom-0 before:left-0 before:right-0 before:top-0 before:m-auto before:h-0 before:w-0 before:rounded-md before:bg-primary before:duration-300 before:ease-out hover:text-white hover:shadow-primary/50 hover:before:h-40 hover:before:w-40 hover:before:opacity-80")}>
+                    <Link href="/talents" className={cn("hidden relative h-11 sm:flex items-center justify-center rounded-md w-40 overflow-hidden border border-foreground/50 text-foreground shadow-md transition-all duration-200 before:absolute before:bottom-0 before:left-0 before:right-0 before:top-0 before:m-auto before:h-0 before:w-0 before:rounded-md before:bg-primary before:duration-300 before:ease-out hover:text-white hover:shadow-primary/50 hover:before:h-40 hover:before:w-40 hover:before:opacity-80")}>
                         <span className="relative z-10">Browse Talents</span>
                     </Link>
                     <Link
                         href={isProfileCreated ? "/profile/view" : "/profile/create"}
-                        className="text-sm 2xl:text-base font-medium px-4 py-2.5 rounded-md text-foreground hover:text-foreground bg-btn-secondary hover:bg-secondary transition cursor-pointer"
+                        className="text-sm 2xl:text-base font-medium px-4 py-2.5 rounded-md text-foreground hover:text-foreground bg-secondary dark:bg-btn-secondary hover:bg-btn-primary transition cursor-pointer"
                     >
                         {isProfileCreated ? "My Profile" : "Create Profile"}
                     </Link>
