@@ -19,7 +19,6 @@ export default function TalentPublicPage() {
       try {
         const res = await API.get(`/profile/${username}`);
         setProfile(res.data.data);
-        console.log("Profile fetched successfully:", res.data.data);
       } catch (error) {
         console.error("Failed to fetch profile:", error);
         setProfile(null);

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import Image from 'next/image';
-import ProfileImg from '../../../public/img/profile.png'
+import ProfileImg from '../../../public/img/profile.jpg'
 import useDarkMode from '@/hooks/useDarkMode';
 import { useEffect, useRef, useState } from 'react';
 import DeleteProfileDialog from '../ui/DeleteModal';
@@ -161,7 +161,7 @@ const Header: React.FC = () => {
                 </details>
               ) : (
                 <Link href="/login">
-                  <span className="text-sm 2xl:text-base font-medium px-4 py-2.5 rounded-md text-foreground hover:text-foreground bg-btn-secondary hover:bg-secondary transition cursor-pointer">
+                  <span className="text-sm 2xl:text-base font-medium px-4 py-2.5 rounded-md text-btn hover:text-foreground bg-primary hover:bg-secondary transition cursor-pointer">
                     Login
                   </span>
                 </Link>

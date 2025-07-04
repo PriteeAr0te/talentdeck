@@ -3,7 +3,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProfileSchema, CreateProfileSchema } from "@/lib/validators/profileValidators";
 import InputComponent from "@/components/ui/InputComponent";
-import TextareaComponent from "@/components/ui/TextareaComponent";
+// import TextareaComponent from "@/components/ui/TextareaComponent";
 import AddressSelector from "@/components/ui/AddressSelector";
 import ImageUploadComponent from "@/components/ui/ImageUploadComponent";
 import { DynamicLinksComponent } from "@/components/ui/DynamicLinksComponent";
@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/useAuth";
 import CheckboxField from "../ui/CheckboxField";
 import ProfilePhotoUpload from "../ui/ProfilePhotoUpload";
 import { cleanLinks } from "@/lib/utils";
+import RichTextEditorComponent from "../rich-text-editor/RichTextareaComponent";
 
 const CATEGORY_OPTIONS = [
     "Graphic Designer",
@@ -115,6 +116,14 @@ const CreateProfileForm: React.FC = () => {
         <>
             <form onSubmit={handleSubmit(onSubmit)} className="max-w-6xl mx-auto p-6 space-y-10 bg-white dark:bg-[#0A0011] rounded-xl">
 
+                <Section title="Profile Image" desc="Upload a clear and professional profile picture.">
+                    <ProfilePhotoUpload
+                        value={profilePicFile}
+                        onChange={setProfilePicFile}
+                        error={errors.profilePicture?.message}
+                    />
+                </Section>
+
                 <Section title="Basic Information" desc="Let us know who you are and what you do.">
                     <InputComponent
                         id="username"
@@ -130,11 +139,11 @@ const CreateProfileForm: React.FC = () => {
                         error={errors.headline?.message}
                     />
 
-                    <TextareaComponent
+                    <RichTextEditorComponent
                         id="bio"
                         label="Bio"
-                        placeholder="Tell us about yourself"
-                        registration={register("bio")}
+                        value={watch("bio") ?? ""}
+                        onChange={(val) => setValue("bio", val, { shouldValidate: true })}
                         error={errors.bio?.message}
                     />
 
@@ -181,14 +190,6 @@ const CreateProfileForm: React.FC = () => {
                     />
                 </Section>
 
-                <Section title="Profile Image" desc="Upload a clear and professional profile picture.">
-                    <ProfilePhotoUpload
-                        value={profilePicFile}
-                        onChange={setProfilePicFile}
-                        error={errors.profilePicture?.message}
-                    />
-                </Section>
-
                 <Section title="Project Images" desc="Showcase your best work.">
                     <ImageUploadComponent value={projectImagesFiles} onChange={setProjectImagesFiles} error={uploadError} />
                 </Section>
@@ -232,7 +233,7 @@ export default CreateProfileForm;
 const Section = ({ title, desc, children }: { title: string; desc: string; children: React.ReactNode }) => (
     <fieldset>
         <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
-            <div>
+            <div className="mb-3 sm:mb-2">
                 <h2 className="text-lg font-semibold dark:text-white text-gray-900">{title}</h2>
                 <p className="text-sm dark:text-gray-400 text-gray-500 mt-1">{desc}</p>
             </div>

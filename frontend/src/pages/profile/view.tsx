@@ -114,11 +114,14 @@ const ViewProfile = () => {
           {profile.bio && (
             <section>
               <h2 className="text-lg font-medium mb-1">About</h2>
-              <p className="text-sm leading-6 text-gray-700 dark:text-gray-300">{profile.bio}</p>
+              <p
+                className="text-sm leading-6 text-gray-700 dark:text-gray-300"
+                dangerouslySetInnerHTML={{ __html: profile.bio }}
+              />
             </section>
           )}
 
-          <section>
+          {profile.skills && profile.skills.length > 0 && <section>
             <h2 className="text-lg font-medium mb-1">Skills</h2>
             <div className="flex flex-wrap gap-2">
               {profile.skills.map((skill) => (
@@ -130,7 +133,7 @@ const ViewProfile = () => {
                 </span>
               ))}
             </div>
-          </section>
+          </section>}
 
           {profile.tags && profile.tags.length > 0 && (
             <section>
@@ -148,47 +151,53 @@ const ViewProfile = () => {
             </section>
           )}
 
-          <section>
-            <h2 className="text-lg font-medium mb-2">Project Images</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {profile.projectImages.map((img, idx) => (
-                <div key={idx} className="relative w-full h-48 rounded overflow-hidden">
-                  <Image
-                    src={imageUrl(img)}
-                    alt={`Project ${idx + 1}`}
-                    fill
-                    className="object-fill w-full h-full"
-                  />
-                </div>
-              ))}
-            </div>
-          </section>
+          {Array.isArray(profile.socialLinks) && profile.socialLinks.length > 0 &&
+            <section>
+              <h2 className="text-lg font-medium mb-2">Social Links</h2>
+              <ul className="list-disc list-inside space-y-1">
+                {profile.socialLinks.map((link) => (
+                  <li key={link.url}>
+                    <a href={link.url} target="_blank" rel="noopener" className="text-primary hover:underline">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          }
 
-          {profile.portfolioLinks.length > 0 && <section>
-            <h2 className="text-lg font-medium mb-2">Social Links</h2>
-            <ul className="list-disc list-inside space-y-1">
-              {profile.socialLinks.map((link) => (
-                <li key={link.url}>
-                  <a href={link.url} target="_blank" rel="noopener" className="text-primary hover:underline">
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>}
+          {Array.isArray(profile.portfolioLinks) && profile.portfolioLinks.length > 0 &&
+            <section>
+              <h2 className="text-lg font-medium mb-2">Portfolio Links</h2>
+              <ul className="list-disc list-inside space-y-1">
+                {profile.portfolioLinks.map((link) => (
+                  <li key={link.url}>
+                    <a href={link.url} target="_blank" rel="noopener" className="text-primary hover:underline">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          }
 
-          {profile.portfolioLinks.length > 0 && <section>
-            <h2 className="text-lg font-medium mb-2">Portfolio Links</h2>
-            <ul className="list-disc list-inside space-y-1">
-              {profile.portfolioLinks.map((link) => (
-                <li key={link.url}>
-                  <a href={link.url} target="_blank" rel="noopener" className="text-primary hover:underline">
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>}
+          {Array.isArray(profile.projectImages) && profile.projectImages?.length > 0 &&
+            <section>
+              <h2 className="text-lg font-medium mb-2">Project Images</h2>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+                {profile.projectImages.map((img, idx) => (
+                  <div key={idx} className="relative w-full h-48 rounded overflow-hidden">
+                    <Image
+                      src={imageUrl(img)}
+                      alt={`Project ${idx + 1}`}
+                      fill
+                      className="object-fill w-full h-full"
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+          }
         </div>
       </div>
     </>

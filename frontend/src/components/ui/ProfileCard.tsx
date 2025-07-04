@@ -56,7 +56,7 @@ export default function ProfileCard({ profile }: { profile: ProfileType }) {
   };
 
   return (
-    <div className="border rounded-lg p-4 py-2 pb-4 bg-background-secondary shadow hover:shadow-lg transition h-full relative">
+    <div className="border rounded-lg p-4 py-2 pb-4 bg-background-secondary shadow hover:shadow-lg transition h-fit relative">
       <div className="w-full flex justify-end items-center gap-2 mb-2">
 
         {profile.availableforwork && (

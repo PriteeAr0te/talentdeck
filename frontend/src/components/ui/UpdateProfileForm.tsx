@@ -7,7 +7,6 @@ import {
   updateProfileSchema,
 } from "@/lib/validators/profileValidators";
 import InputComponent from "@/components/ui/InputComponent";
-import TextareaComponent from "@/components/ui/TextareaComponent";
 import AddressSelector from "@/components/ui/AddressSelector";
 import ImageUploadComponent from "@/components/ui/ImageUploadComponent";
 import { DynamicLinksComponent } from "@/components/ui/DynamicLinksComponent";
@@ -23,6 +22,7 @@ import TagsSelector from "./TagsSelector";
 import { useAuth } from "@/hooks/useAuth";
 import ButtonComponent from "./ButtonComponent";
 import { cleanLinks } from "@/lib/utils";
+import RichTextEditorComponent from "../rich-text-editor/RichTextareaComponent";
 
 interface UpdateProfileFormProps {
   defaultValues: UpdateProfileSchema;
@@ -146,7 +146,16 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="max-w-6xl mx-auto p-6 space-y-10 bg-background rounded-xl">
+      <form onSubmit={handleSubmit(onSubmit)} className="max-w-6xl mx-auto p-4 sm:p-6 space-y-10 bg-background rounded-xl">
+
+        <Section title="Profile Image" desc="Upload a clear and professional profile picture.">
+          <ProfilePhotoUpload
+            value={profilePicFile}
+            onChange={(file) => setProfilePicFile(file)}
+            existingImageUrl={existingProfilePictureUrl}
+            error={errors.profilePicture?.message}
+          />
+        </Section>
 
         <Section title="Basic Information" desc="Let us know who you are and what you do.">
           <InputComponent
@@ -163,13 +172,12 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
             error={errors.headline?.message}
           />
 
-          <TextareaComponent
-            label="Bio"
+          <RichTextEditorComponent
             id="bio"
-            registration={register("bio")}
+            label="Bio"
+            value={watch("bio") ?? ""}
+            onChange={(val) => setValue("bio", val, { shouldValidate: true })}
             error={errors.bio?.message}
-            rows={5}
-            placeholder="Tell us about yourself"
           />
 
           <DropdownComponent<Partial<CreateProfileSchema>>
@@ -180,7 +188,6 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
             options={CATEGORY_OPTIONS}
             error={errors.category?.message}
           />
-
         </Section>
 
         <Section title="Skills & Location" desc="Highlight your strongest areas and where you’re based.">
@@ -220,15 +227,6 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
           />
         </Section>
 
-        <Section title="Profile Image" desc="Upload a clear and professional profile picture.">
-          <ProfilePhotoUpload
-            value={profilePicFile}
-            onChange={(file) => setProfilePicFile(file)}
-            existingImageUrl={existingProfilePictureUrl}
-            error={errors.profilePicture?.message}
-          />
-        </Section>
-
         <Section title="Project Images" desc="Showcase your best work.">
           <ImageUploadComponent
             value={projectImagesFiles}
@@ -237,7 +235,6 @@ const UpdateProfileForm: React.FC<UpdateProfileFormProps> = ({
             onRetainUrlsChange={setProjectImagesToKeep}
             error={uploadError}
           />
-
         </Section>
 
         <Section title="Social Links" desc="Help people connect with you across platforms.">
@@ -280,7 +277,7 @@ export default UpdateProfileForm;
 const Section = ({ title, desc, children }: { title: string; desc: string; children: React.ReactNode }) => (
   <fieldset>
     <div className="grid grid-cols-1 md:grid-cols-[30%_1fr] gap-x-6 border-b border-[#D0D5DD] pb-6">
-      <div>
+      <div className="mb-3 sm:mb-2">
         <h2 className="text-lg font-semibold dark:text-white text-gray-900">{title}</h2>
         <p className="text-sm dark:text-gray-400 text-gray-500 mt-1">{desc}</p>
       </div>

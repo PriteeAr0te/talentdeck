@@ -64,7 +64,7 @@ export default function SidebarLayout({ sidebar, children }: SidebarLayoutProps)
         )}
       </AnimatePresence>
 
-      <main className="flex-1 p-4 overflow-y-auto">
+      <main className="flex-1 p-4 overflow-y-auto min-h-screen">
         {children}
       </main>
     </div>

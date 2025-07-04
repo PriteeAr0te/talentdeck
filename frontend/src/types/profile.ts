@@ -1,6 +1,10 @@
 export interface ProfileType {
   _id: string;
-  userId: string;
+  userId: {
+    _id: string;
+    fullName: string;
+    email: string;
+  };
   username: string;
   headline?: string;
   category: "Graphic Designer" | "UI/UX Designer" | "Software Developer" | "Content Creator" | "Video Editor" | "Other";

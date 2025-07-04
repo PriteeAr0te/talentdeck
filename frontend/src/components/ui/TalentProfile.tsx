@@ -15,7 +15,6 @@ import {
 } from 'react-icons/fa';
 import { FiShare2 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
-
 interface Props {
   profile: ProfileType;
 }
@@ -30,22 +29,19 @@ const iconMap: Record<string, JSX.Element> = {
 };
 
 export default function TalentProfile({ profile }: Props) {
-  const [bookmarked, setBookmarked] = useState<boolean>(false);
-  const [liked, setLiked] = useState<boolean>(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [liked, setLiked] = useState(false);
   const router = useRouter();
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, setUser } = useAuth();
 
   useEffect(() => {
-    if (!user?.id || !Array.isArray(profile.likes)) return;
+    if (!user || !profile?._id) return;
 
-    const userLiked = profile.likes.some((like) => {
-      if (typeof like === "string") return like === user.id;
-      if (typeof like === "object" && "_id" in like) return like._id === user.id;
-      return false;
-    });
+    setLiked(profile.likes?.includes(user.id) || false);
 
-    setLiked(userLiked);
-  }, [user?.id, profile.likes]);
+    setBookmarked(user.bookmarks?.includes(profile._id) || false);
+  }, [user, profile]);
+
 
   const handleBookmark = async () => {
     if (!isLoggedIn) {
@@ -56,9 +52,17 @@ export default function TalentProfile({ profile }: Props) {
 
     try {
       const res = await API.post(`/profile/bookmarks/${profile._id}`);
-      setBookmarked(res.data.bookmarked);
+      const isNowBookmarked = res.data.bookmarked;
+
+      setBookmarked(isNowBookmarked);
+
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        setUser(res.data.user);
+      }
+
       toast.success(
-        res.data.bookmarked
+        isNowBookmarked
           ? "Profile bookmarked successfully!"
           : "Bookmark removed."
       );
@@ -67,6 +71,7 @@ export default function TalentProfile({ profile }: Props) {
       toast.error("Something went wrong. Try again.");
     }
   };
+
 
   const handleCopy = async () => {
     const url = `${window.location.origin}/talent/${profile.username}`;
@@ -85,20 +90,18 @@ export default function TalentProfile({ profile }: Props) {
       const hasLiked = res.data.liked;
 
       setLiked(hasLiked);
-
-      if (hasLiked) {
-        profile.likes?.push({ _id: user!.id });
-      } else {
-        profile.likes = profile.likes?.filter((like) =>
-          typeof like === "string"
-            ? like !== user!.id
-            : (like as { _id: string })._id !== user!.id
-        );
+      if (res.data.likes) {
+        profile.likes = res.data.likes;
       }
+      // toast.success(
+      //   hasLiked
+      //     ? "Profile liked successfully!"
+      //     : "Like removed." 
+      // );
 
     } catch (err) {
       toast.error("Something went wrong.");
-      console.log("Like toggle failed:", err);
+      console.error("Like toggle failed:", err);
     }
   };
 
@@ -115,43 +118,45 @@ export default function TalentProfile({ profile }: Props) {
           className="rounded-full object-cover border shadow-md"
         />
         <div className="text-center md:text-left">
-          <div className="flex items-center gap-5 justify-start mb-2">
+          <div className="flex flex-col sm:flex-row items-center gap-5 justify-start mb-2">
             <h1 className="text-3xl font-bold">{profile.username}</h1>
 
-            <button
-              onClick={handleBookmark}
-              className="dark:text-gray-100 mt-2 hover:text-primary cursor-pointer focus:outline-none"
-              title="Bookmark this profile"
-            >
-              {bookmarked ? <AiFillStar size={22} /> : <AiOutlineStar size={22} />}
-            </button>
-
-            <button
-              onClick={handleCopy}
-              className="dark:text-gray-100 mt-2 hover:text-primary cursor-pointer focus:outine-none"
-              title="Copy Profile Link"
-            >
-              <FiShare2 size={22} />
-            </button>
-
-            <span
-              className="dark:text-gray-100 mt-2 flex items-center gap-1"
-            >
+            <div className='flex items-center gap-3'>
               <button
-                className='hover:text-primary cursor-pointer focus:outine-none'
-                title="React to this profile"
-                onClick={handleLike}>
-                {liked ? <AiFillLike size={22} /> : <AiOutlineLike size={22} />}
+                onClick={handleBookmark}
+                className="dark:text-gray-100 mt-2 hover:text-primary cursor-pointer focus:outline-none"
+                title="Bookmark this profile"
+              >
+                {bookmarked ? <AiFillStar size={22} /> : <AiOutlineStar size={22} />}
               </button>
-            </span>
+
+              <button
+                onClick={handleCopy}
+                className="dark:text-gray-100 mt-2 hover:text-primary cursor-pointer focus:outine-none"
+                title="Copy Profile Link"
+              >
+                <FiShare2 size={22} />
+              </button>
+
+              <span
+                className="dark:text-gray-100 mt-2 flex items-center gap-1"
+              >
+                <button
+                  className='hover:text-primary cursor-pointer focus:outine-none'
+                  title="React to this profile"
+                  onClick={handleLike}>
+                  {liked ? <AiFillLike size={22} /> : <AiOutlineLike size={22} />}
+                </button>
+              </span>
+            </div>
           </div>
           {profile.headline && (
-            <p className="text-gray-600 dark:text-gray-400 mt-1">{profile.headline}</p>
+            <p className="text-gray-500 dark:text-gray-300 mt-1">{profile.headline}</p>
           )}
-          <a href={`mailto:${user?.email}`} className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {user?.email}
+          <a href={`mailto:${profile?.userId?.email}`} className="text-sm text-gray-500 dark:text-gray-300 mt-1.5">
+            {profile?.userId?.email}
           </a>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-300 mt-1.5">
             {profile.category} • {profile.location.city}, {profile.location.country}
           </p>
         </div>
@@ -160,9 +165,10 @@ export default function TalentProfile({ profile }: Props) {
       {profile.bio && (
         <div>
           <h3 className="text-xl font-semibold mb-2">About</h3>
-          <p className="text-gray-800 dark:text-gray-300 text-base leading-relaxed">
-            {profile.bio}
-          </p>
+          <p
+            className="text-gray-800 dark:text-gray-300 text-base leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: profile.bio }}
+          />
         </div>
       )}
 
@@ -239,7 +245,7 @@ export default function TalentProfile({ profile }: Props) {
       {Array.isArray(profile.projectImages) && profile.projectImages?.length > 0 && (
         <div>
           <h3 className="text-xl font-semibold mb-2">Projects</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
             {profile.projectImages.map((img, index) => (
               <Image
                 key={index}

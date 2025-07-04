@@ -14,7 +14,7 @@ export default function CallToActionSection() {
   return (
     <section
       ref={ref}
-      className="relative w-full px-4 sm:px-6 lg:px-12 py-20 border-t border-border bg-gradient-to-br from-background via-background-secondary to-background"
+      className="relative w-full px-4 sm:px-6 lg:px-12 py-16 border-t border-border bg-gradient-to-br from-background via-background-secondary to-background"
     >
       <motion.div
         style={{ opacity: bgOpacity }}
@@ -32,7 +32,7 @@ export default function CallToActionSection() {
         </motion.h2>
 
         <motion.p
-          className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto mb-10"
+          className="text-foreground/80 text-base md:text-lg max-w-2xl mx-auto mb-10"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2, duration: 0.7 }}
@@ -50,10 +50,9 @@ export default function CallToActionSection() {
             className="relative inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-btn hover:text-foreground bg-primary hover:bg-secondary shadow-lg transition-all duration-300 ease-out group overflow-hidden"
           >
             <span className="relative z-10">🔥 Be an Early Builder</span>
-            <span className="absolute inset-0 w-full h-full bg-accent opacity-0 group-hover:opacity-10 transition duration-300" />
           </Link>
 
-          <p className="text-muted-foreground mt-4">
+          <p className="text-foreground font-medium mt-4">
             Be one of the first 100 shaping TalentDeck.
           </p>
         </motion.div>

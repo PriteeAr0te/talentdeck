@@ -69,15 +69,7 @@ const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({
                 className="object-cover"
                 unoptimized
               />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 10l4.553-4.553a1 1 0 10-1.414-1.414L13.586 8.586a2 2 0 11-2.828 2.828l-4.553 4.553a1 1 0 001.414 1.414L11 12.414a2 2 0 012.828-2.828z"
-                  />
-                </svg>
+              <div className="absolute inset-0 bg-black/40 opacity-0 flex items-center justify-center transition-opacity">
               </div>
             </>
           ) : (

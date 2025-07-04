@@ -1,4 +1,5 @@
 @import "tailwindcss";
+/* @import "tw-typography"; */
 @import "tw-animate-css";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -7,8 +8,8 @@
   --black: #000000;
   --foreground: #0b060f;
   --primary: #4a0080;
-  --btn-primary:#822BBF;
-  --btn-secondary:#EAD4FA;
+  --btn-primary: #822BBF;
+  --btn-secondary: #EAD4FA;
   --br-primary: #0000001a;
   --bg-chip: #AF79D5;
   --btn: #ffffff;
@@ -54,9 +55,9 @@
   --black: #ffffff;
   --foreground: #f5f0f9;
   --primary: #ca80ff;
-  --btn-primary:#632C8B;
-  --bg-chip:#602A86;
-  --btn-secondary:#170F1D;
+  --btn-primary: #632C8B;
+  --bg-chip: #602A86;
+  --btn-secondary: #170F1D;
   --br-primary: #ffffff1a;
   --btn: #020105;
   --secondary: #520b84;
@@ -169,7 +170,20 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  h1 {
+    @apply text-2xl font-bold;
+  }
+
+  h2 {
+    @apply text-xl font-semibold;
+  }
+
+  h3 {
+    @apply text-lg;
   }
 }

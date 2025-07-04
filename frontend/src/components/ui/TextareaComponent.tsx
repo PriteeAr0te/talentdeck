@@ -47,6 +47,8 @@ const TextareaComponent = React.forwardRef<HTMLTextAreaElement, TextareaComponen
           } focus:outline-none`}
         />
 
+        {/* Here instead of <textarea/> i want to use <RichTextEditor/> */}
+
         <div className="mt-1 flex justify-between text-xs text-gray-500">
           <span>{charCount}/{maxLength} characters</span>
           {error && <span className="text-red-500">{error}</span>}

@@ -4,7 +4,6 @@ import path from 'path';
 
 const storage = multer.diskStorage({
     destination: function (_req, _file, cb) {
-        // Absolute path to backend/src/uploads
         cb(null, path.resolve(__dirname, '../uploads'));
     },
     filename: function (_req, file, cb) {

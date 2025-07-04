@@ -1,11 +1,5 @@
 import { z } from "zod";
 
-// 🔤 Name must: 
-// - only contain letters and spaces
-// - not start/end with space
-// - no digits or special characters
-// - only one space between words
-// - 3 to 40 characters
 const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
 
 export const registerUserSchema = z.object({

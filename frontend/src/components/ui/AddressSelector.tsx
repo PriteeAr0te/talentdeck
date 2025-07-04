@@ -26,7 +26,7 @@ function AddressSelector<T extends FieldValues>({
   };
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 mt-2">
       <h3 className="text-base text-black dark:text-white font-medium mb-2">Location</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <InputComponent

@@ -159,6 +159,7 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
         }
 
         const rawData: any = { ...req.body };
+        console.log("Raw data received for profile update:", rawData);
 
         const stringFields = ["location", "skills", "tags", "portfolioLinks", "socialLinks"];
         for (const key of stringFields) {
@@ -347,7 +348,10 @@ export const getProfileByUsername = async (req: Request, res: Response): Promise
             return;
         }
 
-        const profile = await Profile.findOne({ username, isVisible: true }).populate("likes", "_id").lean();
+        const profile = await Profile.findOne({ username, isVisible: true })
+            .populate("likes", "_id")
+            .populate("userId", "fullName email")
+            .lean();
 
         if (!profile) {
             res.status(404).json({ error: "Profile not found." });
@@ -357,14 +361,18 @@ export const getProfileByUsername = async (req: Request, res: Response): Promise
         profile.bio = sanitizeHtml(profile.bio || "");
         profile.headline = sanitizeHtml(profile.headline || "");
 
+        const likes = profile.likes?.map((like: any) =>
+            typeof like === "object" && like !== null && "_id" in like ? like._id.toString() : like
+        );
+
         res.status(200).json({
             success: true,
             data: {
                 ...profile,
                 profilePicture: profile.profilePicture || "",
                 projectImages: profile.projectImages || [],
-                likes: profile.likes || [],
-                likesCount: profile.likes?.length || 0,
+                likes: likes || [],
+                likesCount: likes?.length || 0,
             },
         });
 
@@ -488,18 +496,26 @@ export const toggleLike = async (req: AuthRequest, res: Response): Promise<void>
         const mongoose = require("mongoose");
         const objectIdUserId = new mongoose.Types.ObjectId(userId);
 
+        let liked = false;
+
         if (index !== undefined && index > -1) {
             profile.likes?.splice(index, 1);
         } else {
             profile.likes?.push(objectIdUserId);
+            liked = true;
         }
 
         await profile.save();
         await profile.populate("likes");
 
+        const likes = Array.isArray(profile.likes)
+            ? profile.likes.map((b: any) => b._id.toString())
+            : [];
+
         res.status(200).json({
-            liked: index === -1,
-            likesCount: profile.likes?.length,
+            liked,
+            likes,
+            likesCount: likes.length || 0,
         });
 
     } catch (error) {

@@ -12,7 +12,7 @@ export default function Footer() {
           <span className='px-1.5'><FaHeart className="text-red-500 inline-block" /></span>
           by{' '}
           <a
-            href="https://github.com/PriteeAr0te"
+            href="https://talentdeck-next.netlify.app"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:underline"

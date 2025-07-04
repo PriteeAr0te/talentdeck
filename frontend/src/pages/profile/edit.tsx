@@ -64,15 +64,15 @@ const EditProfile: React.FC = () => {
         if (!token) throw new Error('Token not found');
 
         const response = await API.get('/profile/me');
-        const mappedProfile = mapProfileToFormValues(response.data);
+        const mappedProfile = mapProfileToFormValues(response.data.data);
         console.log(mappedProfile)
         setProfile(mappedProfile);
 
-        if (response.data.profilePicture) {
-          setExistingProfilePictureUrl(response.data.profilePicture);
+        if (response.data.data.profilePicture) {
+          setExistingProfilePictureUrl(response.data.data.profilePicture);
         }
-        if (response.data.projectImages?.length) {
-          setExistingProjectImageUrls(response.data.projectImages);
+        if (response.data.data.projectImages?.length) {
+          setExistingProjectImageUrls(response.data.data.projectImages);
         }
       } catch (err: unknown) {
         const error = err as AxiosError<{ messege: string }>

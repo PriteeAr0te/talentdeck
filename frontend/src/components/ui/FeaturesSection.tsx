@@ -72,7 +72,7 @@ export default function FeaturesSection() {
             ref={ref}
             className="w-full px-4 sm:px-6 lg:px-12 py-16 bg-background border-t border-border"
         >
-            <div className="max-w-5xl mx-auto text-center mb-12">
+            <div className="max-w-5xl mx-auto text-center mb-8">
                 <motion.h2
                     className="text-3xl md:text-4xl xl:text-5xl font-bold text-foreground mb-4 leading-tight flex flex-wrap justify-center gap-x-2"
                     initial="hidden"

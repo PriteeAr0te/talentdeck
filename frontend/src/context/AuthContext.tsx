@@ -16,6 +16,7 @@ interface User {
     profileCreated?: boolean;
     bookmarks?: string[];
     profile?: ProfileSummary;
+    // likes?: string[];
 }
 
 interface AuthContextType {
