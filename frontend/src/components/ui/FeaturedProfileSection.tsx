@@ -15,7 +15,7 @@ export default function FeaturedProfilesSection() {
 
     useEffect(() => {
         if (isInView) controls.start("visible");
-    }, [isInView, controls]);
+    }, [isInView]);
 
     useEffect(() => {
         const fetchFeaturedProfiles = async () => {

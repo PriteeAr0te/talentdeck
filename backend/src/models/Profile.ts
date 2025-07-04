@@ -24,6 +24,7 @@ export interface IProfile extends Document {
     profilePicture: string;
     projectImages: string[];
     isVisible: boolean;
+    likes?: [mongoose.Types.ObjectId];
     createdAt: Date;
     updatedAt: Date;
 }
@@ -78,6 +79,12 @@ const profileSchema = new Schema<IProfile>(
         ],
         profilePicture: { type: String, default: '' },
         projectImages: [{ type: String }],
+        likes: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User"
+            }   
+        ]
     },
     { timestamps: true }
 );

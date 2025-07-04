@@ -1,13 +1,43 @@
-import { GetServerSideProps } from 'next';
-import TalentProfile from '@/components/ui/TalentProfile';
-import API from '@/lib/api';
-import { ProfileType } from '@/types/profile';
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import TalentProfile from "@/components/ui/TalentProfile";
+import { ProfileType } from "@/types/profile";
+import Seo from "@/components/layout/Seo";
+import API from "@/lib/api";
 
-interface Props {
-  profile: ProfileType | null;
-}
+export default function TalentPublicPage() {
+  const router = useRouter();
+  const { username } = router.query;
 
-export default function TalentPublicPage({ profile }: Props) {
+  const [profile, setProfile] = useState<ProfileType | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!username) return;
+
+      try {
+        const res = await API.get(`/profile/${username}`);
+        setProfile(res.data.data);
+        console.log("Profile fetched successfully:", res.data.data);
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+        setProfile(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [username]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-muted">
+        Loading profile...
+      </div>
+    );
+  }
 
   if (!profile) {
     return (
@@ -18,20 +48,15 @@ export default function TalentPublicPage({ profile }: Props) {
   }
 
   return (
-    <div className="min-h-screen text-gray-900 dark:text-white p-6">
-      <TalentProfile profile={profile} />
-    </div>
+    <>
+      <Seo
+        title={`${profile.username} – TalentDeck`}
+        description={profile.headline}
+        url={`https://talentdeck-next.netlify.app/talent/${profile.username}`}
+      />
+      <div className="min-h-screen text-gray-900 dark:text-white p-6">
+        <TalentProfile profile={profile} />
+      </div>
+    </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { username } = context.params!;
-
-  try {
-    const res = await API.get(`/profile/${username}`);
-    return { props: { profile: res.data.data } };
-  } catch (error) {
-    console.error('Failed to fetch profile:', error);
-    return { props: { profile: null } };
-  }
-};

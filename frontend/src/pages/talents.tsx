@@ -1,3 +1,4 @@
+import Seo from "@/components/layout/Seo";
 import SidebarLayout from "@/components/layout/SidebarLayout";
 import TalentFilterPanel from "@/components/ui/TalentFilterPanel";
 import TalentResults from "@/components/ui/TalentResults";
@@ -19,10 +20,17 @@ export default function TalentSearchPage() {
   });
 
   return (
-    <SidebarLayout
-      sidebar={<TalentFilterPanel filters={filters} setFilters={setFilters} />}
-    >
-      <TalentResults filters={filters} setFilters={setFilters} />
-    </SidebarLayout>
+    <>
+      <Seo
+        title="Explore Talents – Discover Creators & Developers on TalentDeck"
+        description="Browse through verified profiles of designers, developers, and creators. Filter by skills, category, and availability to find top talent instantly."
+        url="https://talentdeck-next.netlify.app/talents"
+      />
+      <SidebarLayout
+        sidebar={<TalentFilterPanel filters={filters} setFilters={setFilters} />}
+      >
+        <TalentResults filters={filters} setFilters={setFilters} />
+      </SidebarLayout>
+    </>
   );
 }

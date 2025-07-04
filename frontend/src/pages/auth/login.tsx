@@ -10,6 +10,7 @@ import { z } from "zod";
 import Link from "next/link";
 import ButtonComponent from "@/components/ui/ButtonComponent";
 import { toast } from "react-toastify";
+import Seo from "@/components/layout/Seo";
 
 type LoginFormValues = z.infer<typeof loginUserSchema>;
 
@@ -80,6 +81,11 @@ const Login = () => {
 
     return (
         <>
+            <Seo
+                title="Login – TalentDeck"
+                description="Login to your TalentDeck account to manage your profile and explore talent."
+                url="https://talentdeck-next.netlify.app/login"
+            />
             <main className="min-h-[calc(100vh-70px)] flex items-center justify-center bg-background p-4">
                 <div className="w-full max-w-md bg-background-secondary shadow-custom rounded-2xl p-8">
                     <h1 className="text-2xl font-bold text-foreground mb-6 text-center">

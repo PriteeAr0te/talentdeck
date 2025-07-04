@@ -5,11 +5,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import API from "@/lib/api";
 import { registerUserSchema } from "@/lib/validators/authValidators";
 import Link from "next/link";
-import Head from "next/head";
 import InputComponent from "@/components/ui/InputComponent";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import ButtonComponent from "@/components/ui/ButtonComponent";
+import Seo from "@/components/layout/Seo";
 
 type RegisterFormValues = z.infer<typeof registerUserSchema>;
 
@@ -46,13 +46,11 @@ const Register = () => {
 
     return (
         <>
-            <Head>
-                <title>Register | TalentDeck</title>
-                <meta
-                    name="description"
-                    content="Create your TalentDeck profile to showcase your developer journey."
-                />
-            </Head>
+            <Seo
+                title="Join TalentDeck – Create Your Account to Showcase or Discover Talent"
+                description="Register on TalentDeck to create your own profile or explore skilled creators across domains. Quick signup. No spam. Just pure talent."
+                url="https://talentdeck-next.netlify.app/register"
+            />
 
             <main className="flex items-center justify-center bg-background p-4 py-14">
                 <div className="w-full max-w-md bg-background-secondary shadow-custom rounded-2xl p-8">
@@ -107,7 +105,7 @@ const Register = () => {
                         <p className="mt-4 text-center text-sm text-foreground/80">
                             Already have an account?{' '}
                             <Link href="/login" className="text-primary font-medium hover:underline">
-                                Sign in
+                                Login
                             </Link>
                         </p>
                     </form>

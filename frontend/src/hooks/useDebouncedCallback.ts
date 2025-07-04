@@ -17,5 +17,5 @@ export function useDebouncedSearch<T>(
     return () => {
       if (timer.current) clearTimeout(timer.current);
     };
-  }, [value, delay, callback]);
+  }, [value]);
 }

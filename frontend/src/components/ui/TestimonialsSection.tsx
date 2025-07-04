@@ -39,7 +39,7 @@ export default function TestimonialsSection() {
 
     useEffect(() => {
         if (isInView) controls.start("visible");
-    }, [isInView, controls]);
+    }, [isInView]);
 
     return (
         <section

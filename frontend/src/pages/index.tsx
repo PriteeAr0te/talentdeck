@@ -4,22 +4,27 @@ import FeaturesSection from "@/components/ui/FeaturesSection";
 import FeaturedProfilesSection from "@/components/ui/FeaturedProfileSection";
 // import TestimonialsSection from "@/components/ui/TestimonialsSection";
 import CTAPromoSection from "@/components/ui/CTAPromoSection";
+import Seo from "@/components/layout/Seo";
 
 export default function HomePage() {
 
   return (
-    <div className="min-h-screen h-full bg-background text-foreground">
+    <>
+      <Seo />
 
-      <HeroSection/>
+      <div className="min-h-screen h-full bg-background text-foreground">
 
-      <FeaturesSection/>
+        <HeroSection />
 
-      <FeaturedProfilesSection/>
+        <FeaturesSection />
 
-      {/* <TestimonialsSection/> */}
+        <FeaturedProfilesSection />
 
-      <CTAPromoSection/>
+        {/* <TestimonialsSection/> */}
 
-    </div>
+        <CTAPromoSection />
+
+      </div>
+    </>
   );
 }

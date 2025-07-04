@@ -1,5 +1,5 @@
 import express from "express";
-import { createProfile, getMyProfile, updateProfile, deleteProfile, searchProfiles, getProfileByUsername, getAllSkills, getAllTags, toggleBookmark, getAllBookmarks } from "../controllers/ProfileController";
+import { createProfile, getMyProfile, updateProfile, deleteProfile, searchProfiles, getProfileByUsername, getAllSkills, getAllTags, toggleBookmark, getAllBookmarks, toggleLike } from "../controllers/ProfileController";
 import { protect } from "../middleware/authMiddleware";
 import { publicLimiter } from "../middleware/rateLimiter";
 import { upload } from "../middleware/uploadMiddleware";
@@ -34,5 +34,6 @@ router.get("/tags", getAllTags);
 router.get("/", publicLimiter, searchProfiles);
 router.get("/:username", publicLimiter, getProfileByUsername);
 router.post("/bookmarks/:profileId", protect, toggleBookmark)
+router.post("/likes/:profileId", protect, toggleLike)
 
 export default router;

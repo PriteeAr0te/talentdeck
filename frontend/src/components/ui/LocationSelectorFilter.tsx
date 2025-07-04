@@ -40,7 +40,7 @@ export default function LocationSelectorFilter({ location, onChange }: LocationS
 
   useEffect(() => {
     onChange({ country: selectedCountry, state: selectedState, city: selectedCity });
-  }, [selectedCountry, selectedState, selectedCity, onChange]);
+  }, [selectedCountry, selectedState, selectedCity]);
 
   return (
     <div className="space-y-4">

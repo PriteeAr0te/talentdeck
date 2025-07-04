@@ -37,7 +37,6 @@ export default function TalentResults({ filters, setFilters }: TalentResultsProp
         };
 
         const res = await API.get("/profile", { params: paramsToSend });
-
         setProfiles(res.data.data);
         setTotalPages(res.data.meta.pages);
         setTotalProfiles(res.data.meta.total);

@@ -1,11 +1,10 @@
 import { useAuth } from '@/hooks/useAuth';
 import API from '@/lib/api';
 import { ProfileType } from '@/types/profile';
-// import { Link } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { JSX, useState } from 'react';
-import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+import { JSX, useEffect, useState } from 'react';
+import { AiFillLike, AiFillStar, AiOutlineLike, AiOutlineStar } from 'react-icons/ai';
 import {
   FaGithub,
   FaLinkedin,
@@ -32,8 +31,21 @@ const iconMap: Record<string, JSX.Element> = {
 
 export default function TalentProfile({ profile }: Props) {
   const [bookmarked, setBookmarked] = useState<boolean>(false);
+  const [liked, setLiked] = useState<boolean>(false);
   const router = useRouter();
   const { isLoggedIn, user } = useAuth();
+
+  useEffect(() => {
+    if (!user?.id || !Array.isArray(profile.likes)) return;
+
+    const userLiked = profile.likes.some((like) => {
+      if (typeof like === "string") return like === user.id;
+      if (typeof like === "object" && "_id" in like) return like._id === user.id;
+      return false;
+    });
+
+    setLiked(userLiked);
+  }, [user?.id, profile.likes]);
 
   const handleBookmark = async () => {
     if (!isLoggedIn) {
@@ -62,6 +74,33 @@ export default function TalentProfile({ profile }: Props) {
     toast.success("Profile link copied!");
   };
 
+  const handleLike = async () => {
+    if (!isLoggedIn) {
+      toast.info("Please login to like this profile.");
+      return;
+    }
+
+    try {
+      const res = await API.post(`/profile/likes/${profile._id}`);
+      const hasLiked = res.data.liked;
+
+      setLiked(hasLiked);
+
+      if (hasLiked) {
+        profile.likes?.push({ _id: user!.id });
+      } else {
+        profile.likes = profile.likes?.filter((like) =>
+          typeof like === "string"
+            ? like !== user!.id
+            : (like as { _id: string })._id !== user!.id
+        );
+      }
+
+    } catch (err) {
+      toast.error("Something went wrong.");
+      console.log("Like toggle failed:", err);
+    }
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 p-4 md:p-6">
@@ -94,6 +133,17 @@ export default function TalentProfile({ profile }: Props) {
             >
               <FiShare2 size={22} />
             </button>
+
+            <span
+              className="dark:text-gray-100 mt-2 flex items-center gap-1"
+            >
+              <button
+                className='hover:text-primary cursor-pointer focus:outine-none'
+                title="React to this profile"
+                onClick={handleLike}>
+                {liked ? <AiFillLike size={22} /> : <AiOutlineLike size={22} />}
+              </button>
+            </span>
           </div>
           {profile.headline && (
             <p className="text-gray-600 dark:text-gray-400 mt-1">{profile.headline}</p>
@@ -197,7 +247,7 @@ export default function TalentProfile({ profile }: Props) {
                 alt={`Project ${index + 1}`}
                 width={400}
                 height={300}
-                style={{ height: 'auto' }}
+                style={{ height: '300px' }}
                 priority={true}
                 className="w-full h-auto object-cover rounded-md border dark:border-gray-700"
               />

@@ -127,14 +127,22 @@ export const getMyProfile = async (req: AuthRequest, res: Response): Promise<voi
             return;
         }
 
-        const profile = await Profile.findOne({ userId });
+        const profile = await Profile.findOne({ userId })
+            .populate("likes", "id")
+            .lean();
 
         if (!profile) {
             res.status(404).json({ error: "Profile not found" });
             return;
         }
 
-        res.status(200).json(profile);
+        res.status(200).json({
+            data: {
+                ...profile,
+                likes: profile.likes || [],
+                likesCount: profile.likes?.length || 0
+            }
+        });
     } catch (error) {
         console.error("Error getting profile:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -339,7 +347,7 @@ export const getProfileByUsername = async (req: Request, res: Response): Promise
             return;
         }
 
-        const profile = await Profile.findOne({ username, isVisible: true }).lean();
+        const profile = await Profile.findOne({ username, isVisible: true }).populate("likes", "_id").lean();
 
         if (!profile) {
             res.status(404).json({ error: "Profile not found." });
@@ -355,6 +363,8 @@ export const getProfileByUsername = async (req: Request, res: Response): Promise
                 ...profile,
                 profilePicture: profile.profilePicture || "",
                 projectImages: profile.projectImages || [],
+                likes: profile.likes || [],
+                likesCount: profile.likes?.length || 0,
             },
         });
 
@@ -456,3 +466,44 @@ export const getAllBookmarks = async (req: AuthRequest, res: Response): Promise<
         return;
     }
 };
+
+export const toggleLike = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+        const userId = req.user?.id;
+        const { profileId } = req.params;
+
+        if (!userId) {
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+        };
+
+        const profile = await Profile.findById(profileId);
+        if (!profile) {
+            res.status(404).json({ error: "Profile not found" });
+            return;
+        };
+
+        const index = profile.likes?.findIndex((id) => id.toString() === userId);
+
+        const mongoose = require("mongoose");
+        const objectIdUserId = new mongoose.Types.ObjectId(userId);
+
+        if (index !== undefined && index > -1) {
+            profile.likes?.splice(index, 1);
+        } else {
+            profile.likes?.push(objectIdUserId);
+        }
+
+        await profile.save();
+        await profile.populate("likes");
+
+        res.status(200).json({
+            liked: index === -1,
+            likesCount: profile.likes?.length,
+        });
+
+    } catch (error) {
+        console.error("Toggle like failed", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
