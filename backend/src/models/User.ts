@@ -46,6 +46,7 @@ const userSchema = new Schema<IUser>({
     {
       type: Schema.Types.ObjectId,
       ref: Profile,
+      index: true,
       default: [],
     }
   ]

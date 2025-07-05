@@ -31,16 +31,31 @@ const iconMap: Record<string, JSX.Element> = {
 export default function TalentProfile({ profile }: Props) {
   const [bookmarked, setBookmarked] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState<string[]>([]);
   const router = useRouter();
   const { isLoggedIn, user, setUser } = useAuth();
 
   useEffect(() => {
+    if (profile?.likes) {
+      const normalizedLikes: string[] = profile.likes.map((like) =>
+        typeof like === "string" ? like : like._id
+      );
+      setLikes(normalizedLikes);
+      console.log("Normalized likes:", normalizedLikes);
+    }
+  }, [profile]);
+
+  console.log("User ID:", user?._id);
+
+
+  useEffect(() => {
     if (!user || !profile?._id) return;
 
-    setLiked(profile.likes?.includes(user.id) || false);
-
+    setLiked(likes.includes(user._id));
+    console.log("Liked:", likes.includes(user?._id));
+    console.log("likes array:", likes);
     setBookmarked(user.bookmarks?.includes(profile._id) || false);
-  }, [user, profile]);
+  }, [user, profile, likes]);
 
 
   const handleBookmark = async () => {
@@ -72,7 +87,6 @@ export default function TalentProfile({ profile }: Props) {
     }
   };
 
-
   const handleCopy = async () => {
     const url = `${window.location.origin}/talent/${profile.username}`;
     await navigator.clipboard.writeText(url);
@@ -90,14 +104,10 @@ export default function TalentProfile({ profile }: Props) {
       const hasLiked = res.data.liked;
 
       setLiked(hasLiked);
+
       if (res.data.likes) {
-        profile.likes = res.data.likes;
+        setLikes(res.data.likes);
       }
-      // toast.success(
-      //   hasLiked
-      //     ? "Profile liked successfully!"
-      //     : "Like removed." 
-      // );
 
     } catch (err) {
       toast.error("Something went wrong.");

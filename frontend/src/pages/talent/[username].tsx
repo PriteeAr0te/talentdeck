@@ -18,7 +18,15 @@ export default function TalentPublicPage() {
 
       try {
         const res = await API.get(`/profile/${username}`);
-        setProfile(res.data.data);
+        const profileData = res.data.data;
+
+        const likes = Array.isArray(profileData.likes)
+          ? profileData.likes.map((like: { _id?: string } | string) =>
+            typeof like === "string" ? like : like?._id?.toString()
+          )
+          : [];
+
+        setProfile({ ...profileData, likes });
       } catch (error) {
         console.error("Failed to fetch profile:", error);
         setProfile(null);
@@ -29,6 +37,7 @@ export default function TalentPublicPage() {
 
     fetchProfile();
   }, [username]);
+
 
   if (loading) {
     return (

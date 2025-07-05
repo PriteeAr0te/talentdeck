@@ -82,7 +82,8 @@ const profileSchema = new Schema<IProfile>(
         likes: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "User"
+                ref: "User",
+                default: [],
             }   
         ]
     },

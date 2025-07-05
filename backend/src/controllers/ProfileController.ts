@@ -377,9 +377,11 @@ export const getProfileByUsername = async (req: Request, res: Response): Promise
         profile.bio = sanitizeHtml(profile.bio || "");
         profile.headline = sanitizeHtml(profile.headline || "");
 
-        const likes = profile.likes?.map((like: any) =>
-            typeof like === "object" && like !== null && "_id" in like ? like._id.toString() : like
-        );
+        const likes = Array.isArray(profile.likes)
+            ? profile.likes.map((like: any) =>
+                typeof like === "string" ? like : like?._id?.toString()
+            )
+            : [];
 
         res.status(200).json({
             success: true,
@@ -497,43 +499,45 @@ export const toggleLike = async (req: AuthRequest, res: Response): Promise<void>
         if (!userId) {
             res.status(401).json({ error: "Unauthorized" });
             return;
-        };
+        }
 
         const profile = await Profile.findById(profileId);
         if (!profile) {
             res.status(404).json({ error: "Profile not found" });
             return;
-        };
-
-        const index = profile.likes?.findIndex((id) => id.toString() === userId);
-
-        const mongoose = require("mongoose");
-        const objectIdUserId = new mongoose.Types.ObjectId(userId);
-
-        let liked = false;
-
-        if (index !== undefined && index > -1) {
-            profile.likes?.splice(index, 1);
-        } else {
-            profile.likes?.push(objectIdUserId);
-            liked = true;
         }
 
-        await profile.save();
-        await profile.populate("likes");
+        const hasLiked = profile.likes?.some((id) => id.toString() === userId);
 
-        const likes = Array.isArray(profile.likes)
-            ? profile.likes.map((b: any) => b._id.toString())
+        let updatedProfile;
+
+        if (hasLiked) {
+            updatedProfile = await Profile.findByIdAndUpdate(
+                profileId,
+                { $pull: { likes: userId } },
+                { new: true }
+            ).populate("likes", "_id");
+        } else {
+            updatedProfile = await Profile.findByIdAndUpdate(
+                profileId,
+                { $addToSet: { likes: userId } },
+                { new: true }
+            ).populate("likes", "_id");
+        }
+
+        const likes = Array.isArray(updatedProfile?.likes)
+            ? updatedProfile.likes.map((l: any) =>
+                typeof l === "string" ? l : l?._id?.toString()
+            )
             : [];
 
         res.status(200).json({
-            liked,
+            liked: !hasLiked,
             likes,
             likesCount: likes.length || 0,
         });
-
     } catch (error) {
         console.error("Toggle like failed", error);
         res.status(500).json({ error: "Internal server error" });
     }
-}
+};

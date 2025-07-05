@@ -8,7 +8,7 @@ interface ProfileSummary {
 }
 
 interface User {
-    id: string;
+    _id: string;
     fullName?: string;
     email: string;
     role?: string;
