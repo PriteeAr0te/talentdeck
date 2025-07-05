@@ -65,7 +65,6 @@ const EditProfile: React.FC = () => {
 
         const response = await API.get('/profile/me');
         const mappedProfile = mapProfileToFormValues(response.data.data);
-        console.log(mappedProfile)
         setProfile(mappedProfile);
 
         if (response.data.data.profilePicture) {

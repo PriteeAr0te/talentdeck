@@ -33,9 +33,8 @@ const Register = () => {
         setServerError(null);
 
         try {
-            const response = await API.post("/auth/register", data);
-            console.log("Registration successful", response.data);
-            toast.success("Registration successful");
+            await API.post("/auth/register", data);
+            toast.success("Registration Successful✅");
             router.push("/login");
 
         } catch (err: unknown) {

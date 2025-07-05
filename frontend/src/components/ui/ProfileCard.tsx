@@ -32,11 +32,9 @@ export default function ProfileCard({ profile }: { profile: ProfileType }) {
     try {
       const res = await API.post(`/profile/bookmarks/${profile._id}`);
       setBookmarked(res.data.bookmarked);
-      console.log("bookmarked", res.data.bookmarked);
       if (res.data.user) {
         localStorage.setItem("user", JSON.stringify(res.data.user));
         setUser(res.data.user);
-        console.log("Bookmarks: ", res.data.user)
       }
       toast.success(
         res.data.bookmarked
@@ -56,7 +54,7 @@ export default function ProfileCard({ profile }: { profile: ProfileType }) {
   };
 
   return (
-    <div className="border rounded-lg p-4 py-2 pb-4 bg-background-secondary shadow hover:shadow-lg transition h-fit relative">
+    <div className="border rounded-lg p-4 py-2 pb-4 bg-background-secondary shadow hover:shadow-lg transition h-fit sm:h-full relative">
       <div className="w-full flex justify-end items-center gap-2 mb-2">
 
         {profile.availableforwork && (
@@ -84,13 +82,19 @@ export default function ProfileCard({ profile }: { profile: ProfileType }) {
 
       <Link href={`/talent/${profile.username}`}>
         <div className="flex items-center gap-4">
-          <Image
-            src={profile.profilePicture || "/default-avatar.png"}
-            alt={profile.username}
-            width={70}
-            height={70}
-            className="rounded-full max-h-[70px] max-w-[70px] min-w-[70px] object-cover"
-          />
+          {profile.profilePicture ? (
+            <Image
+              src={profile.profilePicture}
+              alt={profile.username}
+              width={70}
+              height={70}
+              className="rounded-full max-h-[70px] max-w-[70px] min-w-[70px] object-cover"
+            />
+          ) : (
+            <div className="rounded-full max-h-[70px] max-w-[70px] min-w-[70px] min-h-[70px] bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-4xl">
+              {profile.username.charAt(0).toUpperCase()}
+            </div>
+          )}
           <div>
             <h3 className="font-semibold text-lg">{profile.username}</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">{profile.headline}</p>

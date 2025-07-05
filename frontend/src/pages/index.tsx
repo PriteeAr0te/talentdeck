@@ -2,7 +2,6 @@
 import HeroSection from "@/components/ui/HeroSection";
 import FeaturesSection from "@/components/ui/FeaturesSection";
 import FeaturedProfilesSection from "@/components/ui/FeaturedProfileSection";
-// import TestimonialsSection from "@/components/ui/TestimonialsSection";
 import CTAPromoSection from "@/components/ui/CTAPromoSection";
 import Seo from "@/components/layout/Seo";
 

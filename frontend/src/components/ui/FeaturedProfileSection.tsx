@@ -74,7 +74,7 @@ export default function FeaturedProfilesSection() {
             </div>
 
             <motion.div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 max-w-5xl mx-auto justify-center"
+                className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 gap-x-4 max-w-5xl mx-auto justify-center items-center"
                 initial="hidden"
                 animate={controls}
                 variants={{
@@ -89,7 +89,7 @@ export default function FeaturedProfilesSection() {
                 {profiles.map((profile, index) => (
                     <motion.div
                         key={index}
-                        className="bg-background shadow-md border border-border rounded-xl py-5 p-4 hover:shadow-xl hover:scale-[1.02] transition-all group"
+                        className="bg-background items-stretch h-full shadow-md border border-border rounded-xl py-5 p-4 hover:shadow-xl hover:scale-[1.02] transition-all group max-w-[380px]"
                         variants={{
                             hidden: { opacity: 0, y: 30 },
                             visible: { opacity: 1, y: 0 },
@@ -98,14 +98,20 @@ export default function FeaturedProfilesSection() {
                     >
                         <Link href={`/talent/${profile.username}`}>
                             <div className="flex flex-col items-center text-center">
-                                <Image
-                                    src={profile.profilePicture || "/default-avatar.png"}
-                                    alt={profile.username}
-                                    width={80}
-                                    height={80}
-                                    className="rounded-full w-20 h-20 object-cover"
-                                />
-                                <h3 className="text-xl font-semibold text-foreground">
+                                {profile.profilePicture ? (
+                                    <Image
+                                        src={profile.profilePicture || "/default-avatar.png"}
+                                        alt={profile.username}
+                                        width={80}
+                                        height={80}
+                                        className="rounded-full w-20 h-20 object-cover"
+                                    />
+                                ) : (
+                                    <div className="rounded-full w-20 h-20 bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-4xl">
+                                        {profile.username.charAt(0).toUpperCase()}
+                                    </div>
+                                )}
+                                <h3 className="text-xl font-semibold mt-2 text-foreground">
                                     {profile.username}
                                 </h3>
                                 <p className="text text-foreground/80 font-medium my-1.5">{profile.category}</p>

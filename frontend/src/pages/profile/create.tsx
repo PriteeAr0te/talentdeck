@@ -13,7 +13,7 @@ const CreateProfile: React.FC = () => {
 
         if (!isLoggedIn) {
             router.push('/');
-        } else if (user?.profileCreated && router.pathname === "/profile/create") {
+        } else if (user && user?.profileCreated && router.pathname === "/profile/create") {
             router.push(`/profile/view`);
         }
     }, [isLoggedIn, user, loading, isProfileCreated, router]);

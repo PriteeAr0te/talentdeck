@@ -45,7 +45,6 @@ const ViewProfile = () => {
         const res = await API.get('/profile/me');
         setProfile(res.data.data);
         setLikesCount(res.data.data.likesCount || 0);
-        console.log(likesCount)
       } catch (error) {
         console.error('Error fetching profile:', error);
         toast.error('Failed to load profile');
@@ -60,10 +59,10 @@ const ViewProfile = () => {
   if (loading) return <p className="text-center dark:text-white">Loading...</p>;
   if (!profile) return <p className="text-center dark:text-white">No profile data available</p>;
 
-  const imageUrl = (path?: string) => {
-    if (!path) return '';
-    return path.includes('cloudinary') ? path : `http://localhost:5000/${path.split('uploads')[1]}`;
-  };
+  // const imageUrl = (path?: string) => {
+  //   if (!path) return '';
+  //   return path.includes('cloudinary') ? path : `http://localhost:5000/${path.split('uploads')[1]}`;
+  // };
 
   return (
     <>
@@ -77,7 +76,7 @@ const ViewProfile = () => {
           <div className="w-32 h-32 rounded-full overflow-hidden border">
             {profile.profilePicture ? (
               <Image
-                src={imageUrl(profile.profilePicture)}
+                src={(profile.profilePicture)}
                 alt="Profile"
                 width={128}
                 height={128}
@@ -188,7 +187,7 @@ const ViewProfile = () => {
                 {profile.projectImages.map((img, idx) => (
                   <div key={idx} className="relative w-full h-48 rounded overflow-hidden">
                     <Image
-                      src={imageUrl(img)}
+                      src={(img)}
                       alt={`Project ${idx + 1}`}
                       fill
                       className="object-fill w-full h-full"

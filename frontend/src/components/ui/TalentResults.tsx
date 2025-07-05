@@ -50,7 +50,7 @@ export default function TalentResults({ filters, setFilters }: TalentResultsProp
 
   return (
     <>
-      <div className="h-fit sm:h-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch">
         {profiles.length > 0 ? (
           profiles.map((profile) => (
             <ProfileCard key={profile._id} profile={profile} />

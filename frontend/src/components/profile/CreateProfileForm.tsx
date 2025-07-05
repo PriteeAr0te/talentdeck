@@ -68,7 +68,6 @@ const CreateProfileForm: React.FC = () => {
     watch('category');
 
     const onSubmit = async (data: CreateProfileSchema) => {
-        console.log("create form data: ", data);
         try {
             setUploadError("");
             const formData = new FormData();

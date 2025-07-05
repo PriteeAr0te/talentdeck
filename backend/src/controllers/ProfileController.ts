@@ -168,7 +168,6 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
         }
 
         const rawData: any = { ...req.body };
-        console.log("Raw data received for profile update:", rawData);
 
         const stringFields = ["location", "skills", "tags", "portfolioLinks", "socialLinks"];
         for (const key of stringFields) {
@@ -260,6 +259,14 @@ export const deleteProfile = async (req: AuthRequest, res: Response): Promise<vo
             res.status(404).json({ error: "Profile not found" });
             return;
         }
+
+        await User.findByIdAndUpdate(userId, {
+            $set: {
+                profileCreated: false,
+                profile: undefined,
+                username: undefined
+            }
+        });
 
         res.status(200).json({ message: "Profile deleted successfully." });
 
@@ -402,7 +409,6 @@ export const getAllTags = async (_req: Request, res: Response): Promise<void> =>
 }
 
 export const toggleBookmark = async (req: AuthRequest, res: Response): Promise<void> => {
-    console.log("user: ", req.user);
     const userId = req.user?.id;
     const { profileId } = req.params;
 
@@ -455,7 +461,6 @@ export const toggleBookmark = async (req: AuthRequest, res: Response): Promise<v
 }
 
 export const getAllBookmarks = async (req: AuthRequest, res: Response): Promise<void> => {
-    console.log("📌 Hit GET /profile/bookmarks");
     try {
         const userId = req.user?.id;
 

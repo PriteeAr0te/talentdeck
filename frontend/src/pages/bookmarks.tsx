@@ -17,7 +17,6 @@ export default function BookmarkedProfilesPage() {
       try {
         const res = await API.get("/profile/bookmarks");
         setProfiles(res.data.data || []);
-        console.log("first", res.data.data);
       } catch (err) {
         console.error("Failed to load bookmarks", err);
       } finally {

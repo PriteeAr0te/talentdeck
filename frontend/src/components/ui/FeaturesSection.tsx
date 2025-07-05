@@ -97,7 +97,7 @@ export default function FeaturesSection() {
             </div>
 
             <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
+                className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl justify-center mx-auto"
                 initial="hidden"
                 animate={controls}
                 variants={{
@@ -109,7 +109,7 @@ export default function FeaturesSection() {
                     return (
                         <motion.div
                             key={index}
-                            className="p-6 rounded-xl bg-background-secondary border border-border shadow-sm hover:shadow-lg transition-transform hover:scale-[1.03] group"
+                            className="p-6 rounded-xl bg-background-secondary border border-border shadow-sm hover:shadow-lg transition-transform hover:scale-[1.03] group max-w-[380px]"
                             variants={cardVariants}
                         >
                             <div className="flex items-center justify-center mb-4">
