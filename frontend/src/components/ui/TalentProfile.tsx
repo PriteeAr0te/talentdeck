@@ -41,19 +41,13 @@ export default function TalentProfile({ profile }: Props) {
         typeof like === "string" ? like : like._id
       );
       setLikes(normalizedLikes);
-      console.log("Normalized likes:", normalizedLikes);
     }
   }, [profile]);
-
-  console.log("User ID:", user?._id);
-
 
   useEffect(() => {
     if (!user || !profile?._id) return;
 
     setLiked(likes.includes(user._id));
-    console.log("Liked:", likes.includes(user?._id));
-    console.log("likes array:", likes);
     setBookmarked(user.bookmarks?.includes(profile._id) || false);
   }, [user, profile, likes]);
 
