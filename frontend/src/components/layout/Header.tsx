@@ -45,7 +45,7 @@ const Header: React.FC = () => {
         onOpenChange={setShowDeleteDialog}
       />
       <nav className="shadow bg-background border-b border-br-primary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 xl:px-14 2xl:px-16">
           <div className="flex justify-between h-16 items-center">
 
             <Link href="/" className="flex-shrink-0 flex items-center">
