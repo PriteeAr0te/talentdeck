@@ -9,10 +9,11 @@ interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   registration: UseFormRegisterReturn;
   page?: PageVariant;
+  field?: string;
 }
 
 const InputComponent = React.forwardRef<HTMLInputElement, InputComponentProps>(
-  ({ label, error, registration, page = "form", type, ...props }, ref) => {
+  ({ label, error, registration, field= "", page = "form", type, ...props }, ref) => {
     const isAuth = page === "auth";
     const { ref: formRef, ...restRegistration } = registration;
 
@@ -28,9 +29,8 @@ const InputComponent = React.forwardRef<HTMLInputElement, InputComponentProps>(
         {label && (
           <label
             htmlFor={props.id}
-            className={`block text-base font-medium mb-1 ${
-              isAuth ? "text-foreground" : "text-black dark:text-gray-200"
-            }`}
+            className={`block ${field === 'location' ? 'text-sm' : 'text-base'} font-medium mb-1 ${isAuth ? "text-foreground" : "text-black dark:text-gray-200"
+              }`}
           >
             {label}
           </label>
@@ -44,15 +44,13 @@ const InputComponent = React.forwardRef<HTMLInputElement, InputComponentProps>(
             if (typeof ref === "function") ref(e);
           }}
           type={isPasswordField && showPassword ? "text" : type}
-          className={`w-full border px-3 py-2.5 text-foreground/90 text-sm rounded-lg focus:outline-none placeholder:text-foreground/60 ${
-            isAuth
+          className={`w-full border px-3 py-2.5 text-foreground/90 text-sm rounded-lg focus:outline-none placeholder:text-foreground/60 ${isAuth
               ? "text-foreground/90"
               : ""
-          } ${
-            error
+            } ${error
               ? "border-red-500 focus:ring-red-500"
               : "border-br-primary focus:border-primary"
-          } pr-10`}
+            } pr-10`}
         />
 
         {isPasswordField && (

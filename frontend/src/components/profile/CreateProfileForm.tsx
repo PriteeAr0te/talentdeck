@@ -3,7 +3,6 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProfileSchema, CreateProfileSchema } from "@/lib/validators/profileValidators";
 import InputComponent from "@/components/ui/InputComponent";
-// import TextareaComponent from "@/components/ui/TextareaComponent";
 import AddressSelector from "@/components/ui/AddressSelector";
 import ImageUploadComponent from "@/components/ui/ImageUploadComponent";
 import { DynamicLinksComponent } from "@/components/ui/DynamicLinksComponent";
@@ -18,6 +17,7 @@ import CheckboxField from "../ui/CheckboxField";
 import ProfilePhotoUpload from "../ui/ProfilePhotoUpload";
 import { cleanLinks } from "@/lib/utils";
 import RichTextEditorComponent from "../rich-text-editor/RichTextareaComponent";
+import axios from "axios";
 
 const CATEGORY_OPTIONS = [
     "Graphic Designer",
@@ -106,10 +106,25 @@ const CreateProfileForm: React.FC = () => {
                 setProjectImagesFiles([]);
                 router.push("/profile/view");
             }
-        } catch (err) {
-            console.log("Error creating profile:", err);
-            toast.error("Something went wrong. Please try again.");
+        } catch (error) {
+            console.log("Error creating profile:", error);
+
+            if (axios.isAxiosError(error)) {
+                const fieldErrors = error.response?.data?.error?.fieldErrors;
+                const generalError = error.response?.data?.error;
+
+                console.log("Errors:", fieldErrors, generalError);
+
+                const toastMessage =
+                    fieldErrors?.username?.[0] ??
+                    (typeof generalError === "string" ? generalError : "Something went wrong.");
+                toast.error(toastMessage);
+
+            } else {
+                toast.error("Something went wrong. Please try again.");
+            }
         }
+
     };
 
     return (

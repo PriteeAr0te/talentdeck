@@ -68,7 +68,7 @@ export const createProfile = async (req: AuthRequest, res: Response): Promise<vo
             socialLinks,
             availableforwork: req.body.availableforwork === "true",
             isVisible: req.body.isVisible === "true",
-            profilePicture: profilePictureFile.path || '',
+            profilePicture: profilePictureFile?.path || '',
             projectImages: projectImageFiles.map((file) => file.path),
         };
 
@@ -83,9 +83,18 @@ export const createProfile = async (req: AuthRequest, res: Response): Promise<vo
 
         const userId = req.user.id;
 
-        const existingProfile = await Profile.findOne({ userId });
-        if (existingProfile) {
+        const [existingProfileByUser, existingProfileByUsername] = await Promise.all([
+            Profile.findOne({ userId }),
+            Profile.findOne({ username: slugifyUserName(parsedData.data.username) }),
+        ]);
+
+        if (existingProfileByUser) {
             res.status(400).json({ error: "You have already created a profile." });
+            return;
+        }
+
+        if (existingProfileByUsername) {
+            res.status(400).json({ error: "Username already exists. Please choose a different username." });
             return;
         }
 
@@ -97,7 +106,7 @@ export const createProfile = async (req: AuthRequest, res: Response): Promise<vo
             username: slugifiedUsername,
             bio: sanitizeBio,
             headline: sanitizeHeadline,
-            profilePicture: profilePictureFile.path || '',
+            profilePicture: profilePictureFile?.path || '',
             projectImages: projectImageFiles.map((file) => file.path),
         };
 

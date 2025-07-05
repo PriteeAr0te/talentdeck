@@ -70,9 +70,9 @@ function DropdownComponent<FormValues extends FieldValues>({
 
       <details
         ref={dropdownRef}
-        className={`w-${width} cursor-pointer border border-gray-300 rounded-lg bg-background relative scale-z-105`}
+        className={`w-${width} cursor-pointer border border-gray-300 rounded-lg bg-transparent relative scale-z-105`}
       >
-        <summary className={`list-none px-4 py-2 text-gray-700 dark:text-gray-300 bg-background rounded-lg ${width === 'fit' ? 'min-w-[240px]' : ''}`}>
+        <summary className={`list-none px-4 py-2 text-gray-700 dark:text-gray-300 bg-transparent rounded-lg ${width === 'fit' ? 'min-w-[240px]' : ''}`}>
           {selected}
         </summary>
 

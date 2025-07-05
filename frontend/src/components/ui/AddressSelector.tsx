@@ -32,6 +32,7 @@ function AddressSelector<T extends FieldValues>({
         <InputComponent
           id="city"
           label="City"
+          field="location"
           registration={register("location.city" as Path<T>)}
           error={getError("city")}
           placeholder="e.g. Pune"
@@ -39,6 +40,7 @@ function AddressSelector<T extends FieldValues>({
         <InputComponent
           id="state"
           label="State"
+          field="location"
           registration={register("location.state" as Path<T>)}
           error={getError("state")}
           placeholder="e.g. Maharashtra"
@@ -46,6 +48,7 @@ function AddressSelector<T extends FieldValues>({
         <InputComponent
           id="country"
           label="Country"
+          field="location"
           registration={register("location.country" as Path<T>)}
           error={getError("country")}
           placeholder="e.g. India"
